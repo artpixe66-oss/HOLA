@@ -381,7 +381,44 @@ export default function RecherchePage() {
                     {r.address && <div className="text-xs text-gray-400 mt-0.5">{r.address}</div>}
                   </td>
                   <td className="px-4 py-3 text-gray-600">{r.city}</td>
-                  <td className="px-4 py-3 text-gray-600">{r.phone || '—'}</td>
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                    {r.phone ? (
+                      <div className="flex flex-col gap-1">
+                        <a href={`tel:${r.phone.replace(/\s/g, '')}`}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-gray-800 hover:text-blue-600">
+                          📞 {r.phone}
+                        </a>
+                        <a href={`https://wa.me/${r.phone.replace(/[\s\-().+]/g, '').replace(/^0/, '33')}`}
+                          target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-green-600 hover:underline">
+                          💬 WhatsApp
+                        </a>
+                        {r.website && (
+                          <a href={`https://www.google.com/search?q=email+contact+site:${new URL(r.website).hostname}`}
+                            target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs text-orange-500 hover:underline">
+                            ✉️ Trouver email
+                          </a>
+                        )}
+                        {!r.website && (
+                          <a href={`https://www.google.com/search?q=${encodeURIComponent(r.name + ' ' + r.city + ' email contact')}`}
+                            target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs text-orange-500 hover:underline">
+                            ✉️ Trouver email
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs text-gray-400">Tél. non renseigné</span>
+                        <a href={`https://www.google.com/search?q=${encodeURIComponent(r.name + ' ' + r.city + ' téléphone email contact')}`}
+                          target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-orange-500 hover:underline">
+                          🔍 Trouver contact
+                        </a>
+                      </div>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-gray-600">
                     {r.reviewCount != null ? (
                       <span>{r.reviewCount} {r.rating != null && <span className="text-xs text-yellow-500">★{r.rating}</span>}</span>
