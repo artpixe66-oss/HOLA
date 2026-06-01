@@ -5,9 +5,23 @@ import { useProspects } from '@/lib/useProspects';
 import type { SearchResult } from '@/app/api/search/route';
 import type { ProspectType } from '@/lib/types';
 
-const PRODUCTEUR_PRESETS = ['Vigneron', 'Maraîcher', 'Éleveur', 'Arboriculteur', 'Apiculteur'];
-const COMMERCANT_PRESETS = ['Boulanger', 'Boucher', 'Épicerie', 'Restaurant', 'Fleuriste', 'Coiffeur'];
-const ARTISAN_PRESETS = ['Plombier', 'Électricien', 'Menuisier', 'Maçon', 'Peintre', 'Charpentier', 'Carreleur', 'Serrurier'];
+const PRODUCTEUR_PRESETS = [
+  'Vigneron', 'Maraîcher', 'Éleveur', 'Arboriculteur', 'Apiculteur',
+  'Fromager', 'Céréalier', 'Horticulteur', 'Ostréiculteur', 'Pisciculteur',
+  'Champignonnier', 'Herboriste', 'Brasseur', 'Distillateur', 'Oléiculteur',
+];
+const COMMERCANT_PRESETS = [
+  'Boulanger', 'Boucher', 'Épicerie', 'Restaurant', 'Fleuriste', 'Coiffeur',
+  'Pâtissier', 'Traiteur', 'Poissonnier', 'Charcutier', 'Primeur', 'Caviste',
+  'Chocolatier', 'Glacier', 'Barbier', 'Esthéticienne', 'Pressing', 'Opticien',
+  'Pharmacie', 'Librairie', 'Bijouterie', 'Tabac', 'Bar', 'Brasserie',
+];
+const ARTISAN_PRESETS = [
+  'Plombier', 'Électricien', 'Menuisier', 'Maçon', 'Peintre', 'Charpentier',
+  'Carreleur', 'Serrurier', 'Couvreur', 'Chauffagiste', 'Vitrier', 'Jardinier',
+  'Cuisiniste', 'Photographe', 'Imprimeur', 'Cordonnier', 'Tailleur', 'Horloger',
+  'Ébéniste', 'Céramiste', 'Forgeron', 'Tapissier', 'Graphiste', 'Tatoueur',
+];
 
 const SCORE_BADGE: Record<SearchResult['qualificationLabel'], string> = {
   'Très qualifié': 'bg-green-100 text-green-700',
