@@ -18,6 +18,27 @@ function GeneratorContent() {
   const [script, setScript] = useState<PhoneScriptStep[] | null>(null);
   const [activeStep, setActiveStep] = useState<string>('intro');
   const [copied, setCopied] = useState('');
+  const [callNotes, setCallNotes] = useState('');
+  const [notesSaved, setNotesSaved] = useState(false);
+
+  const notesKey = `helpme_notes_${company || 'default'}`;
+
+  useEffect(() => {
+    const saved = localStorage.getItem(notesKey);
+    if (saved) setCallNotes(saved);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [company]);
+
+  function saveNotes() {
+    localStorage.setItem(notesKey, callNotes);
+    setNotesSaved(true);
+    setTimeout(() => setNotesSaved(false), 2000);
+  }
+
+  function clearNotes() {
+    setCallNotes('');
+    localStorage.removeItem(notesKey);
+  }
 
   useEffect(() => {
     if (name || company) {
@@ -212,7 +233,37 @@ function GeneratorContent() {
         </>
       )}
 
-      <div className="mt-6 bg-brand-surface rounded-xl border border-brand-blue/20 p-4">
+      {/* Call notes */}
+      <div className="mt-6 bg-brand-surface rounded-xl border border-brand-border p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+            🗒️ Notes d&apos;appel
+            {company && <span className="text-xs font-normal text-brand-muted">— {company}</span>}
+          </h3>
+          <div className="flex gap-2">
+            {callNotes && (
+              <button onClick={clearNotes} className="text-xs text-red-400 hover:text-red-300">
+                Effacer
+              </button>
+            )}
+            <button onClick={saveNotes}
+              className={`text-xs px-3 py-1 rounded-lg transition-colors ${notesSaved ? 'bg-green-500/20 text-green-400' : 'bg-brand-blue/20 text-brand-blue hover:bg-brand-blue/30'}`}>
+              {notesSaved ? '✓ Sauvegardé' : 'Sauvegarder'}
+            </button>
+          </div>
+        </div>
+        <textarea
+          value={callNotes}
+          onChange={e => setCallNotes(e.target.value)}
+          onBlur={saveNotes}
+          placeholder={`Prenez vos notes pendant l'appel...\n\n→ Besoins exprimés :\n→ Objections rencontrées :\n→ Pack intéressé :\n→ Prochain RDV :`}
+          rows={8}
+          className="w-full bg-brand-bg border border-brand-border text-white placeholder-brand-muted/50 rounded-lg px-4 py-3 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-brand-blue leading-relaxed"
+        />
+        <p className="text-xs text-brand-muted mt-2">Sauvegarde automatique à chaque fois que vous cliquez ailleurs.</p>
+      </div>
+
+      <div className="mt-4 bg-brand-surface rounded-xl border border-brand-blue/20 p-4">
         <h3 className="text-sm font-semibold text-white mb-2">Nos packs HelpMe</h3>
         <ul className="text-sm text-brand-muted space-y-1">
           <li><strong className="text-white">Pack Essentiel</strong> — Google Business, photos pro, référencement local</li>
