@@ -96,7 +96,7 @@ async function searchGooglePlaces(
 
     // Extract city from address components
     const cityComponent = place.addressComponents?.find(c =>
-      c.types.includes('locality') || c.types.includes('postal_town')
+      c.types?.includes('locality') || c.types?.includes('postal_town')
     );
     const detectedCity = cityComponent?.longText || city;
 
