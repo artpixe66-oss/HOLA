@@ -10,10 +10,12 @@ export interface SearchResult {
   address: string;
   city: string;
   phone: string;
+  email: string | null;
   website: string | null;
   googleMapsUri: string | null;
   facebookSearchUrl: string | null;
   instagramSearchUrl: string | null;
+  linkedinUrl: string | null;
   rating: number | null;
   reviewCount: number | null;
   qualificationScore: number;
@@ -127,10 +129,12 @@ async function searchGooglePlaces(
       address: place.formattedAddress || '',
       city: detectedCity,
       phone,
+      email: null,
       website,
       googleMapsUri,
       facebookSearchUrl: `https://www.facebook.com/search/top?q=${fbQuery}`,
       instagramSearchUrl: `https://www.instagram.com/explore/search/keyword/?q=${igQuery}`,
+      linkedinUrl: null,
       rating,
       reviewCount,
       qualificationScore: score,
@@ -294,10 +298,12 @@ async function searchOSM(
         address,
         city: addrCity,
         phone,
+        email: null,
         website,
         googleMapsUri: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addrCity)}`,
         facebookSearchUrl: `https://www.facebook.com/search/top?q=${fbQuery}`,
         instagramSearchUrl: `https://www.instagram.com/explore/search/keyword/?q=${igQuery}`,
+        linkedinUrl: null,
         rating: null,
         reviewCount: null,
         qualificationScore: score,
