@@ -15,13 +15,15 @@ export interface SearchResult {
   reviewCount: number | null;
   qualificationScore: number;
   qualificationLabel: 'Très qualifié' | 'Qualifié' | 'Peu qualifié';
-  type: 'producteur' | 'commercant';
+  type: 'producteur' | 'commercant' | 'artisan';
 }
 
 const SMALL_BIZ_KEYWORDS = [
   'artisan', 'maraîcher', 'maraicher', 'vigneron', 'épicerie', 'epicerie',
   'boulanger', 'boucher', 'éleveur', 'eleveur', 'arboriculteur', 'apiculteur',
   'fleuriste', 'coiffeur', 'fromagerie', 'charcuterie', 'pâtissier', 'patissier',
+  'plombier', 'électricien', 'electricien', 'menuisier', 'maçon', 'macon',
+  'peintre', 'charpentier', 'carreleur', 'serrurier', 'couvreur', 'chauffagiste',
 ];
 
 function computeScore(hasWebsite: boolean, hasPhone: boolean, reviewCount: number | null, name: string): number {
@@ -58,7 +60,7 @@ interface GooglePlace {
 async function searchGooglePlaces(
   keyword: string,
   city: string,
-  type: 'producteur' | 'commercant',
+  type: 'producteur' | 'commercant' | 'artisan',
   apiKey: string
 ): Promise<SearchResult[]> {
   const query = `${keyword} à ${city} France`;
@@ -143,6 +145,18 @@ const KEYWORD_TO_OSM: Record<string, { key: string; value: string }[]> = {
   librairie: [{ key: 'shop', value: 'books' }],
   bar: [{ key: 'amenity', value: 'bar' }],
   pharmacie: [{ key: 'amenity', value: 'pharmacy' }],
+  plombier: [{ key: 'craft', value: 'plumber' }],
+  électricien: [{ key: 'craft', value: 'electrician' }],
+  electricien: [{ key: 'craft', value: 'electrician' }],
+  menuisier: [{ key: 'craft', value: 'carpenter' }],
+  charpentier: [{ key: 'craft', value: 'carpenter' }],
+  maçon: [{ key: 'craft', value: 'mason' }],
+  macon: [{ key: 'craft', value: 'mason' }],
+  peintre: [{ key: 'craft', value: 'painter' }],
+  carreleur: [{ key: 'craft', value: 'tiler' }],
+  serrurier: [{ key: 'craft', value: 'locksmith' }],
+  couvreur: [{ key: 'craft', value: 'roofer' }],
+  chauffagiste: [{ key: 'craft', value: 'hvac' }],
 };
 
 interface OsmElement {
@@ -154,7 +168,7 @@ interface OsmElement {
 async function searchOSM(
   keyword: string,
   city: string,
-  type: 'producteur' | 'commercant'
+  type: 'producteur' | 'commercant' | 'artisan'
 ): Promise<SearchResult[]> {
   // Step 1: geocode city to bounding box via Nominatim
   const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}%2C+France&format=json&limit=1`;
@@ -233,7 +247,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const keyword = searchParams.get('keyword') || '';
   const city = searchParams.get('city') || '';
-  const type = (searchParams.get('type') || 'commercant') as 'producteur' | 'commercant';
+  const type = (searchParams.get('type') || 'commercant') as 'producteur' | 'commercant' | 'artisan';
   const googleApiKey = searchParams.get('googleApiKey') || '';
 
   if (!keyword || !city) {

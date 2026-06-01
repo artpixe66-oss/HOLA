@@ -7,6 +7,7 @@ import type { ProspectType } from '@/lib/types';
 
 const PRODUCTEUR_PRESETS = ['Vigneron', 'Maraîcher', 'Éleveur', 'Arboriculteur', 'Apiculteur'];
 const COMMERCANT_PRESETS = ['Boulanger', 'Boucher', 'Épicerie', 'Restaurant', 'Fleuriste', 'Coiffeur'];
+const ARTISAN_PRESETS = ['Plombier', 'Électricien', 'Menuisier', 'Maçon', 'Peintre', 'Charpentier', 'Carreleur', 'Serrurier'];
 
 const SCORE_BADGE: Record<SearchResult['qualificationLabel'], string> = {
   'Très qualifié': 'bg-green-100 text-green-700',
@@ -21,7 +22,7 @@ export default function RecherchePage() {
 
   const [city, setCity] = useState('');
   const [keyword, setKeyword] = useState('');
-  const [type, setType] = useState<'producteur' | 'commercant'>('commercant');
+  const [type, setType] = useState<'producteur' | 'commercant' | 'artisan'>('commercant');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [source, setSource] = useState<'google' | 'osm' | null>(null);
@@ -105,7 +106,7 @@ export default function RecherchePage() {
     const rows = toImport.map(r => ({
       name: r.name,
       company: r.company,
-      type: (r.type === 'producteur' ? 'producteur' : 'commerçant') as ProspectType,
+      type: (r.type === 'producteur' ? 'producteur' : r.type === 'artisan' ? 'artisan' : 'commerçant') as ProspectType,
       email: '',
       phone: r.phone || '',
       city: r.city,
@@ -227,6 +228,7 @@ export default function RecherchePage() {
               >
                 <option value="commercant">Commerçant</option>
                 <option value="producteur">Producteur</option>
+                <option value="artisan">Artisan</option>
               </select>
             </div>
           </div>
@@ -261,6 +263,23 @@ export default function RecherchePage() {
                     keyword.toLowerCase() === p.toLowerCase() && type === 'commercant'
                       ? 'bg-orange-600 text-white border-orange-600'
                       : 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-xs text-gray-500 font-medium w-20">Artisans :</span>
+              {ARTISAN_PRESETS.map(p => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => { setKeyword(p.toLowerCase()); setType('artisan'); }}
+                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                    keyword.toLowerCase() === p.toLowerCase() && type === 'artisan'
+                      ? 'bg-teal-600 text-white border-teal-600'
+                      : 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100'
                   }`}
                 >
                   {p}
