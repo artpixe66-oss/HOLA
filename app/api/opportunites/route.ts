@@ -104,54 +104,65 @@ async function searchFranceTravail(keyword: string, city: string): Promise<JobOp
   });
 }
 
-// ── Fallback: scrape French job XML sitemap via Arbeitnow (EU jobs API) ─────────
-async function searchArbeitnow(keyword: string, city: string): Promise<JobOpportunity[]> {
-  // Arbeitnow has a free public API for European jobs
-  const params = new URLSearchParams({ search: keyword });
-  if (city) params.set('location', city);
-
-  const resp = await fetch(`https://www.arbeitnow.com/api/job-board-api?${params}`, {
-    headers: { 'Accept': 'application/json' },
-    signal: AbortSignal.timeout(8000),
+// ── Fallback: APEC (French jobs, no auth) ──────────────────────────────────────
+async function searchAPEC(keyword: string, city: string): Promise<JobOpportunity[]> {
+  const params = new URLSearchParams({
+    motsCles: keyword,
+    nbParPage: '50',
+    debut: '0',
+    tempsPartiel: 'false',
   });
 
-  if (!resp.ok) throw new Error(`Arbeitnow ${resp.status}`);
+  const resp = await fetch(
+    `https://www.apec.fr/cms/webservices/rechercheOffre/result?${params}`,
+    {
+      headers: {
+        'Accept': 'application/json',
+        'Referer': 'https://www.apec.fr/',
+        'User-Agent': 'Mozilla/5.0',
+      },
+      signal: AbortSignal.timeout(10000),
+    }
+  );
 
+  if (!resp.ok) throw new Error(`APEC ${resp.status}`);
   const data = await resp.json() as {
-    data?: {
-      slug: string;
-      title: string;
-      company_name: string;
-      location: string;
-      created_at: number;
-      url: string;
-      description: string;
-      tags: string[];
+    resultats?: {
+      numOffre?: string;
+      intitule?: string;
+      nomEntreprise?: string;
+      lieuDeTravail?: string;
+      datePublication?: string;
+      description?: string;
+      typeContrat?: string;
     }[];
   };
 
-  return (data.data || [])
-    .filter(j => {
-      // Keep only French jobs or those matching city
-      const loc = j.location.toLowerCase();
-      return loc.includes('france') || loc.includes('fr') ||
-        (city && loc.includes(city.toLowerCase()));
+  return (data.resultats || [])
+    .filter(o => {
+      if (!city) return true;
+      return (o.lieuDeTravail || '').toLowerCase().includes(city.toLowerCase());
     })
     .slice(0, 30)
-    .map(j => {
-      const date = new Date(j.created_at * 1000).toISOString().split('T')[0];
+    .map((o, i) => {
+      const title = o.intitule || '';
+      const company = o.nomEntreprise || 'Entreprise confidentielle';
+      const jobCity = o.lieuDeTravail || city || 'France';
+      const date = o.datePublication || '';
+      const url2 = `https://www.apec.fr/candidat/recherche-emploi.html/emploi/detail-offre/${o.numOffre || i}`;
+      const description = (o.description || '').replace(/<[^>]+>/g, '').slice(0, 300);
       return {
-        id: `arb-${j.slug}`,
-        title: j.title,
-        company: j.company_name,
-        city: j.location,
+        id: `apec-${o.numOffre || i}`,
+        title,
+        company,
+        city: jobCity,
         date,
-        url: j.url,
+        url: url2,
         source: 'other' as const,
-        description: j.description.replace(/<[^>]+>/g, '').slice(0, 300),
-        isAlternance: isAlternanceTitle(j.title, j.description),
-        linkedinSearchUrl: buildLinkedinUrl(j.company_name),
-        generatorUrl: buildGeneratorUrl(j.company_name, j.location),
+        description,
+        isAlternance: isAlternanceTitle(title, o.typeContrat || ''),
+        linkedinSearchUrl: buildLinkedinUrl(company),
+        generatorUrl: buildGeneratorUrl(company, jobCity),
       };
     });
 }
@@ -173,7 +184,7 @@ export async function GET(req: NextRequest) {
   } catch (e1) {
     lastError = e1 instanceof Error ? e1.message : String(e1);
     try {
-      jobs = await searchArbeitnow(keyword, city);
+      jobs = await searchAPEC(keyword, city);
       lastError = '';
     } catch (e2) {
       lastError = e2 instanceof Error ? e2.message : String(e2);
