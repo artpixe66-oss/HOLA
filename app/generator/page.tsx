@@ -36,85 +36,85 @@ function GeneratorContent() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Générateur de messages</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">Générateur de messages</h1>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-brand-surface rounded-xl border border-brand-border p-6 mb-6">
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Type de prospect</label>
+            <label className="block text-xs font-medium text-brand-muted mb-1">Type de prospect</label>
             <select value={type} onChange={e => setType(e.target.value as ProspectType)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              className="w-full bg-brand-bg border border-brand-border text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue">
               <option value="commerçant">Commerçant</option>
               <option value="producteur">Producteur</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Type de message</label>
-            <div className="flex rounded-lg border border-gray-300 overflow-hidden">
+            <label className="block text-xs font-medium text-brand-muted mb-1">Type de message</label>
+            <div className="flex rounded-lg border border-brand-border overflow-hidden">
               {(['email', 'sms'] as const).map(t => (
                 <button key={t} onClick={() => setMsgType(t)}
-                  className={`flex-1 py-2 text-sm font-medium transition-colors ${msgType === t ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+                  className={`flex-1 py-2 text-sm font-medium transition-colors ${msgType === t ? 'bg-brand-blue text-white' : 'bg-brand-bg text-brand-muted hover:bg-brand-border'}`}>
                   {t === 'email' ? 'Email' : 'SMS'}
                 </button>
               ))}
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Nom du contact</label>
+            <label className="block text-xs font-medium text-brand-muted mb-1">Nom du contact</label>
             <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="ex: Jean Dupont"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Entreprise / enseigne</label>
+            <label className="block text-xs font-medium text-brand-muted mb-1">Entreprise / enseigne</label>
             <input type="text" value={company} onChange={e => setCompany(e.target.value)} placeholder="ex: Boulangerie Martin"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue" />
           </div>
           <div className="col-span-2">
-            <label className="block text-xs font-medium text-gray-600 mb-1">Ville</label>
+            <label className="block text-xs font-medium text-brand-muted mb-1">Ville</label>
             <input type="text" value={city} onChange={e => setCity(e.target.value)} placeholder="ex: Lyon"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue" />
           </div>
         </div>
         <button onClick={generate} disabled={loading}
-          className="w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors">
+          className="w-full py-2.5 bg-brand-blue text-white rounded-lg text-sm font-medium hover:bg-brand-blue-hover disabled:opacity-50 transition-colors">
           {loading ? 'Génération...' : 'Générer le message'}
         </button>
       </div>
 
       {result && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-brand-surface rounded-xl border border-brand-border p-6 space-y-4">
           {result.subject && (
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-medium text-gray-600">Objet</label>
+                <label className="text-xs font-medium text-brand-muted">Objet</label>
                 <button onClick={() => copy(result.subject!, 'subject')}
-                  className="text-xs text-blue-600 hover:underline">{copied === 'subject' ? 'Copié !' : 'Copier'}</button>
+                  className="text-xs text-brand-blue hover:underline">{copied === 'subject' ? 'Copié !' : 'Copier'}</button>
               </div>
-              <div className="bg-gray-50 rounded-lg px-3 py-2 text-sm font-medium">{result.subject}</div>
+              <div className="bg-brand-bg border border-brand-border rounded-lg px-3 py-2 text-sm font-medium text-white">{result.subject}</div>
             </div>
           )}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-medium text-gray-600">Message</label>
+              <label className="text-xs font-medium text-brand-muted">Message</label>
               <button onClick={() => copy(result.body!, 'body')}
-                className="text-xs text-blue-600 hover:underline">{copied === 'body' ? 'Copié !' : 'Copier'}</button>
+                className="text-xs text-brand-blue hover:underline">{copied === 'body' ? 'Copié !' : 'Copier'}</button>
             </div>
             <textarea readOnly value={result.body || ''} rows={msgType === 'sms' ? 4 : 14}
-              className="w-full bg-gray-50 rounded-lg px-3 py-2 text-sm font-mono resize-none focus:outline-none" />
+              className="w-full bg-brand-bg border border-brand-border text-white rounded-lg px-3 py-2 text-sm font-mono resize-none focus:outline-none" />
           </div>
           <button onClick={() => copy((result.subject ? `Objet : ${result.subject}\n\n` : '') + (result.body || ''), 'all')}
-            className="w-full py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
+            className="w-full py-2 border border-brand-border text-brand-muted rounded-lg text-sm hover:bg-brand-bg hover:text-white transition-colors">
             {copied === 'all' ? 'Copié !' : 'Tout copier'}
           </button>
         </div>
       )}
 
-      <div className="mt-6 bg-blue-50 rounded-xl border border-blue-100 p-4">
-        <h3 className="text-sm font-semibold text-blue-800 mb-2">Nos packs HelpMe</h3>
-        <ul className="text-sm text-blue-700 space-y-1">
-          <li><strong>Pack Essentiel</strong> — Google Business, photos pro, référencement local</li>
-          <li><strong>Pack Pro</strong> — Essentiel + réseaux sociaux gérés, contenu mensuel</li>
-          <li><strong>Pack Premium</strong> — Pro + site vitrine, Google Ads, bilan mensuel</li>
+      <div className="mt-6 bg-brand-surface rounded-xl border border-brand-blue/20 p-4">
+        <h3 className="text-sm font-semibold text-white mb-2">Nos packs HelpMe</h3>
+        <ul className="text-sm text-brand-muted space-y-1">
+          <li><strong className="text-white">Pack Essentiel</strong> — Google Business, photos pro, référencement local</li>
+          <li><strong className="text-white">Pack Pro</strong> — Essentiel + réseaux sociaux gérés, contenu mensuel</li>
+          <li><strong className="text-white">Pack Premium</strong> — Pro + site vitrine, Google Ads, bilan mensuel</li>
         </ul>
       </div>
     </div>
