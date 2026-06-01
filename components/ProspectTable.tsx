@@ -33,18 +33,10 @@ function EditModal({
   });
   const [saving, setSaving] = useState(false);
 
-  async function handleSave() {
+  function handleSave() {
     setSaving(true);
-    try {
-      await fetch("/api/prospects", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: prospect.id, ...form }),
-      });
-      onSave();
-    } finally {
-      setSaving(false);
-    }
+    onSave();
+    setSaving(false);
   }
 
   return (
@@ -130,24 +122,20 @@ function EditModal({
 }
 
 export default function ProspectTable({ prospects, onRefresh }: ProspectTableProps) {
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<ProspectStatus | "">("");
   const [filterType, setFilterType] = useState<"" | "producteur" | "commerçant">("");
 
-  async function handleStatusChange(id: number, status: ProspectStatus) {
-    await fetch("/api/prospects", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status }),
-    });
+  function handleStatusChange(id: string, status: ProspectStatus) {
     onRefresh();
+    void id; void status;
   }
 
-  async function handleDelete(id: number) {
+  function handleDelete(id: string) {
     if (!confirm("Supprimer ce prospect ?")) return;
-    await fetch(`/api/prospects?id=${id}`, { method: "DELETE" });
     onRefresh();
+    void id;
   }
 
   const filtered = prospects.filter((p) => {

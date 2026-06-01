@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { ProspectType } from '@/lib/types';
+import { generateMessage } from '@/lib/messages';
 
 function GeneratorContent() {
   const params = useSearchParams();
@@ -20,14 +21,10 @@ function GeneratorContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function generate() {
+  function generate() {
     setLoading(true);
-    const res = await fetch('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, messageType: msgType, name, company, city }),
-    });
-    setResult(await res.json());
+    const msg = generateMessage(type, msgType, name, company, city);
+    setResult(msg);
     setLoading(false);
   }
 
