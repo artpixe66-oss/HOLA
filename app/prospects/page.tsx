@@ -52,7 +52,7 @@ export default function ProspectsPage() {
 
   async function deleteProspect(id: number) {
     if (!confirm('Supprimer ce prospect ?')) return;
-    await fetch('/api/prospects', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+    await fetch(`/api/prospects?id=${id}`, { method: 'DELETE' });
     load();
   }
 
