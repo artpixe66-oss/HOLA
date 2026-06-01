@@ -66,7 +66,7 @@ export default function RecherchePage() {
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    if (!city.trim() || !keyword.trim()) return;
+    if (!city.trim()) return;
     setLoading(true);
     setError(null);
     setResults(null);
@@ -228,10 +228,9 @@ export default function RecherchePage() {
               <label className="block text-xs font-medium text-gray-600 mb-1">Catégorie / métier *</label>
               <input
                 type="text"
-                placeholder="ex: boulanger, vigneron..."
+                placeholder="ex: boulanger, vigneron... (optionnel)"
                 value={keyword}
                 onChange={e => setKeyword(e.target.value)}
-                required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

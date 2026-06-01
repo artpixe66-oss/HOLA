@@ -68,7 +68,7 @@ async function searchGooglePlaces(
   apiKey: string,
   radiusKm: number
 ): Promise<SearchResult[]> {
-  const query = `${keyword} ${city} France`;
+  const query = keyword ? `${keyword} ${city} France` : `commerce artisan ${city} France`;
   const { lat, lon } = await geocodeCity(city);
 
   const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
@@ -234,16 +234,27 @@ async function searchOSM(
   const radiusM = radiusKm * 1000;
   const around = `around:${radiusM},${lat},${lon}`;
 
-  const lower = keyword.toLowerCase();
-  const osmTags = Object.entries(KEYWORD_TO_OSM).find(([k]) => lower.includes(k))?.[1];
-
   let nodeQueries: string;
-  if (osmTags) {
-    nodeQueries = osmTags.map(t =>
-      `node["${t.key}"="${t.value}"](${around});\nway["${t.key}"="${t.value}"](${around});`
-    ).join('\n');
+  if (!keyword) {
+    // No keyword: search all shops, crafts and amenities (restaurants, etc.)
+    nodeQueries = [
+      `node["shop"](${around});`,
+      `way["shop"](${around});`,
+      `node["craft"](${around});`,
+      `way["craft"](${around});`,
+      `node["amenity"~"restaurant|cafe|bar|pub|fast_food"](${around});`,
+      `way["amenity"~"restaurant|cafe|bar|pub|fast_food"](${around});`,
+    ].join('\n');
   } else {
-    nodeQueries = `node["name"~"${keyword}",i](${around});\nway["name"~"${keyword}",i](${around});`;
+    const lower = keyword.toLowerCase();
+    const osmTags = Object.entries(KEYWORD_TO_OSM).find(([k]) => lower.includes(k))?.[1];
+    if (osmTags) {
+      nodeQueries = osmTags.map(t =>
+        `node["${t.key}"="${t.value}"](${around});\nway["${t.key}"="${t.value}"](${around});`
+      ).join('\n');
+    } else {
+      nodeQueries = `node["name"~"${keyword}",i](${around});\nway["name"~"${keyword}",i](${around});`;
+    }
   }
 
   const query = `[out:json][timeout:30];\n(\n${nodeQueries}\n);\nout body center 50;`;
@@ -306,8 +317,8 @@ export async function GET(request: NextRequest) {
   const googleApiKey = searchParams.get('googleApiKey') || '';
   const radiusKm = Math.min(Math.max(parseInt(searchParams.get('radius') || '10'), 1), 100);
 
-  if (!keyword || !city) {
-    return NextResponse.json({ error: 'keyword et city sont requis', results: [] }, { status: 400 });
+  if (!city) {
+    return NextResponse.json({ error: 'city est requis', results: [] }, { status: 400 });
   }
 
   try {
