@@ -24,9 +24,9 @@ const ARTISAN_PRESETS = [
 ];
 
 const SCORE_BADGE: Record<SearchResult['qualificationLabel'], string> = {
-  'Très qualifié': 'bg-green-100 text-green-700',
-  'Qualifié': 'bg-yellow-100 text-yellow-700',
-  'Peu qualifié': 'bg-gray-100 text-gray-600',
+  'Très qualifié': 'bg-emerald-900/50 text-emerald-400',
+  'Qualifié': 'bg-amber-900/50 text-amber-400',
+  'Peu qualifié': 'bg-[#1e2d4a] text-brand-muted',
 };
 
 const GOOGLE_API_KEY_STORAGE = 'helpme_google_api_key';
@@ -153,12 +153,12 @@ export default function RecherchePage() {
       )}
 
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Recherche de Prospects</h1>
+        <h1 className="text-2xl font-bold text-white">Recherche de Prospects</h1>
         <button
           onClick={() => setShowApiSettings(v => !v)}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-50"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-brand-border text-sm text-brand-muted hover:bg-brand-surface hover:text-white transition-colors"
         >
-          ⚙️ {googleApiKey ? <span className="text-green-600 font-medium">Google Places actif</span> : 'Configurer Google API'}
+          ⚙️ {googleApiKey ? <span className="text-emerald-400 font-medium">Google Places actif</span> : 'Configurer Google API'}
         </button>
       </div>
 
