@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useProspects } from '@/lib/useProspects';
 import type { SearchResult } from '@/app/api/search/route';
 import type { ProspectType } from '@/lib/types';
@@ -14,6 +14,8 @@ const SCORE_BADGE: Record<SearchResult['qualificationLabel'], string> = {
   'Peu qualifié': 'bg-gray-100 text-gray-600',
 };
 
+const GOOGLE_API_KEY_STORAGE = 'helpme_google_api_key';
+
 export default function RecherchePage() {
   const { importProspects } = useProspects();
 
@@ -22,9 +24,24 @@ export default function RecherchePage() {
   const [type, setType] = useState<'producteur' | 'commercant'>('commercant');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<SearchResult[] | null>(null);
+  const [source, setSource] = useState<'google' | 'osm' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
+  const [googleApiKey, setGoogleApiKey] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [showApiSettings, setShowApiSettings] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(GOOGLE_API_KEY_STORAGE) || '';
+    setGoogleApiKey(saved);
+  }, []);
+
+  function saveApiKey() {
+    localStorage.setItem(GOOGLE_API_KEY_STORAGE, googleApiKey);
+    setShowApiSettings(false);
+    showToast('Clé API Google sauvegardée !');
+  }
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -37,18 +54,25 @@ export default function RecherchePage() {
     setLoading(true);
     setError(null);
     setResults(null);
+    setSource(null);
     setSelected(new Set());
 
     try {
-      const res = await fetch(
-        `/api/search?keyword=${encodeURIComponent(keyword.trim())}&city=${encodeURIComponent(city.trim())}`
-      );
+      const params = new URLSearchParams({
+        keyword: keyword.trim(),
+        city: city.trim(),
+        type,
+      });
+      if (googleApiKey) params.set('googleApiKey', googleApiKey);
+
+      const res = await fetch(`/api/search?${params}`);
       const data = await res.json();
       if (data.error) {
         setError(data.error);
         setResults(data.results || []);
       } else {
         setResults(data.results || []);
+        setSource(data.source || null);
       }
     } catch (err) {
       setError(`Erreur réseau : ${err instanceof Error ? err.message : String(err)}`);
@@ -69,11 +93,8 @@ export default function RecherchePage() {
 
   function toggleAll() {
     if (!results) return;
-    if (selected.size === results.length) {
-      setSelected(new Set());
-    } else {
-      setSelected(new Set(results.map(r => r.id)));
-    }
+    if (selected.size === results.length) setSelected(new Set());
+    else setSelected(new Set(results.map(r => r.id)));
   }
 
   function handleImport() {
@@ -92,7 +113,7 @@ export default function RecherchePage() {
       notes: [
         r.address ? `Adresse : ${r.address}` : '',
         r.website ? `Site web : ${r.website}` : '',
-        r.rating != null ? `Note : ${r.rating}/5` : '',
+        r.rating != null ? `Note Google : ${r.rating}/5` : '',
         r.reviewCount != null ? `Avis : ${r.reviewCount}` : '',
         `Score qualification : ${r.qualificationScore}/10 (${r.qualificationLabel})`,
       ].filter(Boolean).join('\n'),
@@ -108,17 +129,68 @@ export default function RecherchePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      {/* Toast */}
       {toast && (
-        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium animate-pulse">
+        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
           {toast}
         </div>
       )}
 
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Recherche de Prospects</h1>
-        <p className="text-sm text-gray-500">Recherche sur PagesJaunes</p>
+        <button
+          onClick={() => setShowApiSettings(v => !v)}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-50"
+        >
+          ⚙️ {googleApiKey ? <span className="text-green-600 font-medium">Google Places actif</span> : 'Configurer Google API'}
+        </button>
       </div>
+
+      {/* API Key Settings */}
+      {showApiSettings && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+          <h2 className="text-sm font-semibold text-blue-800 mb-1">Clé API Google Places</h2>
+          <p className="text-xs text-blue-600 mb-3">
+            Avec Google Places, vous obtenez les vraies notes, avis, sites web et coordonnées.
+            Créez votre clé sur <strong>console.cloud.google.com</strong> → APIs → Places API (New).
+            Gratuit jusqu&apos;à $200/mois de crédit.
+          </p>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type={showApiKey ? 'text' : 'password'}
+                placeholder="AIzaSy..."
+                value={googleApiKey}
+                onChange={e => setGoogleApiKey(e.target.value)}
+                className="w-full border border-blue-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowApiKey(v => !v)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
+              >
+                {showApiKey ? 'Masquer' : 'Afficher'}
+              </button>
+            </div>
+            <button
+              onClick={saveApiKey}
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+            >
+              Sauvegarder
+            </button>
+            {googleApiKey && (
+              <button
+                onClick={() => { setGoogleApiKey(''); localStorage.removeItem(GOOGLE_API_KEY_STORAGE); }}
+                className="px-4 py-2 rounded-lg border border-red-300 text-red-600 text-sm font-medium hover:bg-red-50"
+              >
+                Supprimer
+              </button>
+            )}
+          </div>
+          {!googleApiKey && (
+            <p className="text-xs text-blue-500 mt-2">Sans clé : données OpenStreetMap (moins complètes mais 100% gratuit).</p>
+          )}
+        </div>
+      )}
 
       {/* Search Form */}
       <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
@@ -202,7 +274,7 @@ export default function RecherchePage() {
             disabled={loading}
             className="px-6 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? 'Recherche en cours...' : 'Rechercher'}
+            {loading ? 'Recherche en cours...' : '🔍 Rechercher'}
           </button>
         </form>
       </div>
@@ -211,7 +283,9 @@ export default function RecherchePage() {
       {loading && (
         <div className="text-center py-16">
           <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-3" />
-          <p className="text-gray-500 text-sm">Récupération des données sur PagesJaunes...</p>
+          <p className="text-gray-500 text-sm">
+            {googleApiKey ? 'Recherche via Google Places...' : 'Recherche via OpenStreetMap...'}
+          </p>
         </div>
       )}
 
@@ -220,124 +294,104 @@ export default function RecherchePage() {
         <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 mb-4">
           <p className="text-red-700 text-sm font-medium mb-1">Erreur lors de la récupération</p>
           <p className="text-red-600 text-sm">{error}</p>
-          {results && results.length === 0 && (
+          {!googleApiKey && (
             <p className="text-red-500 text-xs mt-2">
-              PagesJaunes peut bloquer les requêtes automatiques. Essayez une autre recherche ou réessayez dans quelques instants.
+              Conseil : configurez une clé API Google Places pour des résultats plus fiables.
             </p>
           )}
         </div>
       )}
 
-      {/* Results */}
-      {!loading && results !== null && (
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-sm text-gray-600">
-              {results.length === 0
-                ? 'Aucun résultat trouvé.'
-                : `${results.length} résultat${results.length > 1 ? 's' : ''} trouvé${results.length > 1 ? 's' : ''}`}
-            </p>
-            {results.length > 0 && selected.size > 0 && (
-              <button
-                onClick={handleImport}
-                className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
-              >
-                Importer les sélectionnés ({selected.size})
-              </button>
-            )}
-          </div>
-
-          {results.length === 0 && !error && (
-            <div className="text-center py-16 text-gray-400">
-              <p className="text-lg mb-1">Aucun résultat</p>
-              <p className="text-sm">Essayez avec une autre ville ou catégorie.</p>
-            </div>
-          )}
-
-          {results.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-4 py-3 text-left">
-                      <input
-                        type="checkbox"
-                        checked={allSelected}
-                        onChange={toggleAll}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                        title="Tout sélectionner"
-                      />
-                    </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Nom / Entreprise</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Ville</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Téléphone</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Site web</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Avis</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600">Score qualification</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {results.map(r => (
-                    <tr
-                      key={r.id}
-                      className={`hover:bg-gray-50 cursor-pointer ${selected.has(r.id) ? 'bg-blue-50' : ''}`}
-                      onClick={() => toggleSelect(r.id)}
-                    >
-                      <td className="px-4 py-3">
-                        <input
-                          type="checkbox"
-                          checked={selected.has(r.id)}
-                          onChange={() => toggleSelect(r.id)}
-                          onClick={e => e.stopPropagation()}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                        />
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-gray-900">{r.name}</div>
-                        {r.address && <div className="text-xs text-gray-400 mt-0.5">{r.address}</div>}
-                      </td>
-                      <td className="px-4 py-3 text-gray-600">{r.city}</td>
-                      <td className="px-4 py-3 text-gray-600">{r.phone || '—'}</td>
-                      <td className="px-4 py-3">
-                        {r.website ? (
-                          <a
-                            href={r.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={e => e.stopPropagation()}
-                            className="text-blue-600 hover:underline text-xs"
-                          >
-                            ✓
-                          </a>
-                        ) : (
-                          <span className="text-gray-400">✗</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        {r.reviewCount != null ? r.reviewCount : '—'}
-                        {r.rating != null && (
-                          <span className="text-xs text-gray-400 ml-1">({r.rating}/5)</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${SCORE_BADGE[r.qualificationLabel]}`}>
-                          {r.qualificationLabel}
-                        </span>
-                        <span className="text-xs text-gray-400 ml-1">{r.qualificationScore}/10</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
+      {/* Source badge */}
+      {!loading && results !== null && source && (
+        <div className="flex items-center gap-2 mb-3">
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+            source === 'google' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+          }`}>
+            {source === 'google' ? '🌐 Google Places' : '🗺️ OpenStreetMap'}
+          </span>
+          <span className="text-sm text-gray-600">
+            {results.length === 0
+              ? 'Aucun résultat trouvé.'
+              : `${results.length} résultat${results.length > 1 ? 's' : ''} trouvé${results.length > 1 ? 's' : ''}`}
+          </span>
           {results.length > 0 && selected.size > 0 && (
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={handleImport}
-                className="px-5 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
-              >
+            <button
+              onClick={handleImport}
+              className="ml-auto px-4 py-1.5 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
+            >
+              Importer les sélectionnés ({selected.size})
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Results */}
+      {!loading && results !== null && results.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-4 py-3 text-left">
+                  <input type="checkbox" checked={allSelected} onChange={toggleAll}
+                    className="rounded border-gray-300 text-blue-600 cursor-pointer" />
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-gray-600">Nom / Entreprise</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-600">Ville</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-600">Téléphone</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-600">Site web</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-600">Avis Google</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-600">Qualification</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {results.map(r => (
+                <tr
+                  key={r.id}
+                  className={`hover:bg-gray-50 cursor-pointer ${selected.has(r.id) ? 'bg-blue-50' : ''}`}
+                  onClick={() => toggleSelect(r.id)}
+                >
+                  <td className="px-4 py-3">
+                    <input type="checkbox" checked={selected.has(r.id)}
+                      onChange={() => toggleSelect(r.id)}
+                      onClick={e => e.stopPropagation()}
+                      className="rounded border-gray-300 text-blue-600 cursor-pointer" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-gray-900">{r.name}</div>
+                    {r.address && <div className="text-xs text-gray-400 mt-0.5">{r.address}</div>}
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">{r.city}</td>
+                  <td className="px-4 py-3 text-gray-600">{r.phone || '—'}</td>
+                  <td className="px-4 py-3">
+                    {r.website ? (
+                      <a href={r.website} target="_blank" rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        className="text-blue-600 hover:underline text-xs">✓ Oui</a>
+                    ) : (
+                      <span className="text-red-400 text-xs">✗ Non</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">
+                    {r.reviewCount != null ? (
+                      <span>{r.reviewCount} {r.rating != null && <span className="text-xs text-gray-400">({r.rating}★)</span>}</span>
+                    ) : '—'}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${SCORE_BADGE[r.qualificationLabel]}`}>
+                      {r.qualificationLabel}
+                    </span>
+                    <span className="text-xs text-gray-400 ml-1">{r.qualificationScore}/10</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {selected.size > 0 && (
+            <div className="px-4 py-3 border-t border-gray-200 flex justify-end">
+              <button onClick={handleImport}
+                className="px-5 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors">
                 Importer les sélectionnés ({selected.size})
               </button>
             </div>
