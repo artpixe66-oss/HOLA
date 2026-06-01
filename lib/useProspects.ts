@@ -77,7 +77,23 @@ export function useProspects() {
     return newProspects.length;
   }, []);
 
-  return { prospects, loaded, addProspect, updateProspect, deleteProspect, importProspects };
+  const addProspects = useCallback((inputs: Omit<Prospect, 'id' | 'created_at' | 'updated_at'>[]) => {
+    const now = new Date().toISOString();
+    const newProspects: Prospect[] = inputs.map(input => ({
+      ...input,
+      id: crypto.randomUUID(),
+      created_at: now,
+      updated_at: now,
+    }));
+    setProspects(prev => {
+      const next = [...newProspects, ...prev];
+      writeStorage(next);
+      return next;
+    });
+    return newProspects.length;
+  }, []);
+
+  return { prospects, loaded, addProspect, addProspects, updateProspect, deleteProspect, importProspects };
 }
 
 export function computeStats(prospects: Prospect[]) {
