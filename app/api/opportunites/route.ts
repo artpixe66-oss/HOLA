@@ -41,27 +41,58 @@ function buildExternalLinks(keyword: string, city: string) {
   };
 }
 
-// ── France Travail scraping via their public search page (no auth) ──────────────
-// Uses the non-authenticated public search API
-async function searchFranceTravail(keyword: string, city: string): Promise<JobOpportunity[]> {
-  // France Travail public API (no auth required for basic search)
-  const params = new URLSearchParams({ motsCles: keyword, typeContrat: '' });
-  if (city) params.set('lieuTravail', city);
-
-  // Try their public JSON API endpoint
-  const url = `https://candidat.francetravail.fr/offres/recherche/results?${params}&page=1&tri=1&nbParPage=50`;
-
-  const resp = await fetch(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Accept': 'application/json, text/plain, */*',
-      'Referer': 'https://candidat.francetravail.fr/offres/recherche',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
-    signal: AbortSignal.timeout(10000),
+// ── France Travail official OAuth API ─────────────────────────────────────────
+async function getFranceTravailToken(clientId: string, clientSecret: string): Promise<string> {
+  const body = new URLSearchParams({
+    grant_type: 'client_credentials',
+    client_id: clientId,
+    client_secret: clientSecret,
+    scope: 'api_offresdemploiv2 o2dsoffre',
   });
 
-  if (!resp.ok) throw new Error(`France Travail ${resp.status}`);
+  const resp = await fetch(
+    'https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+      signal: AbortSignal.timeout(10000),
+    }
+  );
+
+  if (!resp.ok) throw new Error(`Auth France Travail ${resp.status}`);
+  const data = await resp.json() as { access_token?: string };
+  if (!data.access_token) throw new Error('Token manquant');
+  return data.access_token;
+}
+
+async function searchFranceTravailAPI(
+  keyword: string,
+  city: string,
+  clientId: string,
+  clientSecret: string
+): Promise<JobOpportunity[]> {
+  const token = await getFranceTravailToken(clientId, clientSecret);
+
+  const params = new URLSearchParams({
+    motsCles: keyword,
+    range: '0-49',
+    sort: '1',
+  });
+  if (city) params.set('commune', city);
+
+  const resp = await fetch(
+    `https://api.francetravail.fr/partenaire/offresdemploi/v2/offres/search?${params}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+      },
+      signal: AbortSignal.timeout(15000),
+    }
+  );
+
+  if (!resp.ok) throw new Error(`France Travail API ${resp.status}`);
 
   const data = await resp.json() as {
     resultats?: {
@@ -77,8 +108,6 @@ async function searchFranceTravail(keyword: string, city: string): Promise<JobOp
   };
 
   const resultats = data.resultats || [];
-  if (!resultats.length) throw new Error('Aucun résultat');
-
   return resultats.map((o, i) => {
     const title = o.intitule || '';
     const company = o.entreprise?.nom || 'Entreprise confidentielle';
@@ -104,101 +133,46 @@ async function searchFranceTravail(keyword: string, city: string): Promise<JobOp
   });
 }
 
-// ── Fallback: APEC (French jobs, no auth) ──────────────────────────────────────
-async function searchAPEC(keyword: string, city: string): Promise<JobOpportunity[]> {
-  const params = new URLSearchParams({
-    motsCles: keyword,
-    nbParPage: '50',
-    debut: '0',
-    tempsPartiel: 'false',
-  });
-
-  const resp = await fetch(
-    `https://www.apec.fr/cms/webservices/rechercheOffre/result?${params}`,
-    {
-      headers: {
-        'Accept': 'application/json',
-        'Referer': 'https://www.apec.fr/',
-        'User-Agent': 'Mozilla/5.0',
-      },
-      signal: AbortSignal.timeout(10000),
-    }
-  );
-
-  if (!resp.ok) throw new Error(`APEC ${resp.status}`);
-  const data = await resp.json() as {
-    resultats?: {
-      numOffre?: string;
-      intitule?: string;
-      nomEntreprise?: string;
-      lieuDeTravail?: string;
-      datePublication?: string;
-      description?: string;
-      typeContrat?: string;
-    }[];
-  };
-
-  return (data.resultats || [])
-    .filter(o => {
-      if (!city) return true;
-      return (o.lieuDeTravail || '').toLowerCase().includes(city.toLowerCase());
-    })
-    .slice(0, 30)
-    .map((o, i) => {
-      const title = o.intitule || '';
-      const company = o.nomEntreprise || 'Entreprise confidentielle';
-      const jobCity = o.lieuDeTravail || city || 'France';
-      const date = o.datePublication || '';
-      const url2 = `https://www.apec.fr/candidat/recherche-emploi.html/emploi/detail-offre/${o.numOffre || i}`;
-      const description = (o.description || '').replace(/<[^>]+>/g, '').slice(0, 300);
-      return {
-        id: `apec-${o.numOffre || i}`,
-        title,
-        company,
-        city: jobCity,
-        date,
-        url: url2,
-        source: 'other' as const,
-        description,
-        isAlternance: isAlternanceTitle(title, o.typeContrat || ''),
-        linkedinSearchUrl: buildLinkedinUrl(company),
-        generatorUrl: buildGeneratorUrl(company, jobCity),
-      };
-    });
-}
-
 // ── Handler ────────────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const keyword = searchParams.get('keyword') || 'Community Manager';
   const city = searchParams.get('city') || '';
-  const radius = searchParams.get('radius') || '50';
+  const clientId = searchParams.get('ftClientId') || '';
+  const clientSecret = searchParams.get('ftClientSecret') || '';
   const links = buildExternalLinks(keyword, city);
 
-  // Try France Travail first, then Arbeitnow
-  let jobs: JobOpportunity[] = [];
-  let lastError = '';
-
-  try {
-    jobs = await searchFranceTravail(keyword, city);
-  } catch (e1) {
-    lastError = e1 instanceof Error ? e1.message : String(e1);
-    try {
-      jobs = await searchAPEC(keyword, city);
-      lastError = '';
-    } catch (e2) {
-      lastError = e2 instanceof Error ? e2.message : String(e2);
-    }
-  }
-
-  if (jobs.length === 0) {
+  // Require France Travail credentials
+  if (!clientId || !clientSecret) {
     return NextResponse.json({
       jobs: [],
       blocked: true,
-      message: `Aucune offre trouvée automatiquement (${lastError}). Utilisez les liens de recherche ci-dessous.`,
+      needsCredentials: true,
+      message: 'Clés API France Travail requises. Inscrivez-vous gratuitement sur francetravail.io',
       externalLinks: links,
     });
   }
 
-  return NextResponse.json({ jobs, blocked: false, externalLinks: links, count: jobs.length });
+  try {
+    const jobs = await searchFranceTravailAPI(keyword, city, clientId, clientSecret);
+
+    if (jobs.length === 0) {
+      return NextResponse.json({
+        jobs: [],
+        blocked: false,
+        message: `Aucune offre trouvée pour "${keyword}"${city ? ` à ${city}` : ''}.`,
+        externalLinks: links,
+      });
+    }
+
+    return NextResponse.json({ jobs, blocked: false, externalLinks: links, count: jobs.length });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return NextResponse.json({
+      jobs: [],
+      blocked: true,
+      message: `Erreur API France Travail : ${msg}`,
+      externalLinks: links,
+    });
+  }
 }
