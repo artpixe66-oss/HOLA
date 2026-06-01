@@ -11,6 +11,9 @@ export interface SearchResult {
   city: string;
   phone: string;
   website: string | null;
+  googleMapsUri: string | null;
+  facebookSearchUrl: string | null;
+  instagramSearchUrl: string | null;
   rating: number | null;
   reviewCount: number | null;
   qualificationScore: number;
@@ -55,6 +58,7 @@ interface GooglePlace {
   rating?: number;
   userRatingCount?: number;
   addressComponents?: { longText: string; types: string[] }[];
+  googleMapsUri?: string;
 }
 
 async function searchGooglePlaces(
@@ -70,7 +74,7 @@ async function searchGooglePlaces(
     headers: {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
-      'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents',
+      'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents,places.googleMapsUri',
     },
     body: JSON.stringify({
       textQuery: query,
@@ -103,6 +107,9 @@ async function searchGooglePlaces(
     const detectedCity = cityComponent?.longText || city;
 
     const score = computeScore(!!website, !!phone, reviewCount, name);
+    const googleMapsUri = place.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (place.formattedAddress || city))}`;
+    const fbQuery = encodeURIComponent(`${name} ${detectedCity}`);
+    const igQuery = encodeURIComponent(name.toLowerCase().replace(/\s+/g, ''));
 
     return {
       id: `google-${place.id}`,
@@ -113,6 +120,9 @@ async function searchGooglePlaces(
       city: detectedCity,
       phone,
       website,
+      googleMapsUri,
+      facebookSearchUrl: `https://www.facebook.com/search/top?q=${fbQuery}`,
+      instagramSearchUrl: `https://www.instagram.com/explore/search/keyword/?q=${igQuery}`,
       rating,
       reviewCount,
       qualificationScore: score,
@@ -222,6 +232,8 @@ async function searchOSM(
       const addrCity = tags['addr:city'] || city;
       const address = [housenumber, street, postcode, addrCity].filter(Boolean).join(' ');
       const score = computeScore(!!website, !!phone, null, name);
+      const fbQuery = encodeURIComponent(`${name} ${addrCity}`);
+      const igQuery = encodeURIComponent(name.toLowerCase().replace(/\s+/g, ''));
 
       return {
         id: `osm-${el.type}-${el.id}`,
@@ -232,6 +244,9 @@ async function searchOSM(
         city: addrCity,
         phone,
         website,
+        googleMapsUri: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addrCity)}`,
+        facebookSearchUrl: `https://www.facebook.com/search/top?q=${fbQuery}`,
+        instagramSearchUrl: `https://www.instagram.com/explore/search/keyword/?q=${igQuery}`,
         rating: null,
         reviewCount: null,
         qualificationScore: score,

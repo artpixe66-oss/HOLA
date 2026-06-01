@@ -358,8 +358,8 @@ export default function RecherchePage() {
                 <th className="px-4 py-3 text-left font-medium text-gray-600">Nom / Entreprise</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-600">Ville</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-600">Téléphone</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-600">Site web</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-600">Avis Google</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-600">Avis</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-600">Présence digitale</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-600">Qualification</th>
               </tr>
             </thead>
@@ -382,19 +382,40 @@ export default function RecherchePage() {
                   </td>
                   <td className="px-4 py-3 text-gray-600">{r.city}</td>
                   <td className="px-4 py-3 text-gray-600">{r.phone || '—'}</td>
-                  <td className="px-4 py-3">
-                    {r.website ? (
-                      <a href={r.website} target="_blank" rel="noopener noreferrer"
-                        onClick={e => e.stopPropagation()}
-                        className="text-blue-600 hover:underline text-xs">✓ Oui</a>
-                    ) : (
-                      <span className="text-red-400 text-xs">✗ Non</span>
-                    )}
-                  </td>
                   <td className="px-4 py-3 text-gray-600">
                     {r.reviewCount != null ? (
-                      <span>{r.reviewCount} {r.rating != null && <span className="text-xs text-gray-400">({r.rating}★)</span>}</span>
+                      <span>{r.reviewCount} {r.rating != null && <span className="text-xs text-yellow-500">★{r.rating}</span>}</span>
                     ) : '—'}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col gap-1" onClick={e => e.stopPropagation()}>
+                      {/* Fiche Google */}
+                      <a href={r.googleMapsUri!} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline">
+                        <span>📍</span> Fiche Google
+                      </a>
+                      {/* Site web */}
+                      {r.website ? (
+                        <a href={r.website} target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs font-medium text-green-600 hover:underline">
+                          <span>🌐</span> Site web ✓
+                        </a>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs text-red-400">
+                          <span>🌐</span> Pas de site ✗
+                        </span>
+                      )}
+                      {/* Facebook */}
+                      <a href={r.facebookSearchUrl!} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-blue-500 hover:underline">
+                        <span>📘</span> Chercher Facebook
+                      </a>
+                      {/* Instagram */}
+                      <a href={r.instagramSearchUrl!} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-pink-500 hover:underline">
+                        <span>📸</span> Chercher Instagram
+                      </a>
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${SCORE_BADGE[r.qualificationLabel]}`}>
