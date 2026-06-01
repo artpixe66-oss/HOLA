@@ -65,9 +65,11 @@ async function searchGooglePlaces(
   keyword: string,
   city: string,
   type: 'producteur' | 'commercant' | 'artisan',
-  apiKey: string
+  apiKey: string,
+  radiusKm: number
 ): Promise<SearchResult[]> {
-  const query = `${keyword} à ${city} France`;
+  const query = `${keyword} ${city} France`;
+  const { lat, lon } = await geocodeCity(city);
 
   const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
     method: 'POST',
@@ -81,6 +83,12 @@ async function searchGooglePlaces(
       languageCode: 'fr',
       regionCode: 'FR',
       maxResultCount: 20,
+      locationBias: {
+        circle: {
+          center: { latitude: lat, longitude: lon },
+          radius: radiusKm * 1000,
+        },
+      },
     }),
     signal: AbortSignal.timeout(15000),
   });
@@ -175,38 +183,41 @@ interface OsmElement {
   tags?: Record<string, string>;
 }
 
-async function searchOSM(
-  keyword: string,
-  city: string,
-  type: 'producteur' | 'commercant' | 'artisan'
-): Promise<SearchResult[]> {
-  // Step 1: geocode city to bounding box via Nominatim
-  const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}%2C+France&format=json&limit=1`;
-  const geoResp = await fetch(nominatimUrl, {
+async function geocodeCity(city: string): Promise<{ lat: number; lon: number }> {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}%2C+France&format=json&limit=1`;
+  const resp = await fetch(url, {
     headers: { 'User-Agent': 'HelpMe-Prospection/1.0' },
     signal: AbortSignal.timeout(10000),
   });
-  if (!geoResp.ok) throw new Error(`Nominatim ${geoResp.status}`);
-  const geoData = await geoResp.json() as { boundingbox?: string[] }[];
-  if (!geoData.length || !geoData[0].boundingbox) throw new Error('Ville introuvable');
+  if (!resp.ok) throw new Error(`Nominatim ${resp.status}`);
+  const data = await resp.json() as { lat: string; lon: string }[];
+  if (!data.length) throw new Error(`Ville introuvable : ${city}`);
+  return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+}
 
-  const [minlat, maxlat, minlon, maxlon] = geoData[0].boundingbox;
-  const bbox = `${minlat},${minlon},${maxlat},${maxlon}`;
+async function searchOSM(
+  keyword: string,
+  city: string,
+  type: 'producteur' | 'commercant' | 'artisan',
+  radiusKm: number
+): Promise<SearchResult[]> {
+  const { lat, lon } = await geocodeCity(city);
+  const radiusM = radiusKm * 1000;
+  const around = `around:${radiusM},${lat},${lon}`;
 
-  // Step 2: Overpass query with bounding box
   const lower = keyword.toLowerCase();
   const osmTags = Object.entries(KEYWORD_TO_OSM).find(([k]) => lower.includes(k))?.[1];
 
   let nodeQueries: string;
   if (osmTags) {
     nodeQueries = osmTags.map(t =>
-      `node["${t.key}"="${t.value}"](${bbox});\nway["${t.key}"="${t.value}"](${bbox});`
+      `node["${t.key}"="${t.value}"](${around});\nway["${t.key}"="${t.value}"](${around});`
     ).join('\n');
   } else {
-    nodeQueries = `node["name"~"${keyword}",i](${bbox});\nway["name"~"${keyword}",i](${bbox});`;
+    nodeQueries = `node["name"~"${keyword}",i](${around});\nway["name"~"${keyword}",i](${around});`;
   }
 
-  const query = `[out:json][timeout:25];\n(\n${nodeQueries}\n);\nout body center 40;`;
+  const query = `[out:json][timeout:30];\n(\n${nodeQueries}\n);\nout body center 50;`;
 
   const ovResp = await fetch('https://overpass-api.de/api/interpreter', {
     method: 'POST',
@@ -264,6 +275,7 @@ export async function GET(request: NextRequest) {
   const city = searchParams.get('city') || '';
   const type = (searchParams.get('type') || 'commercant') as 'producteur' | 'commercant' | 'artisan';
   const googleApiKey = searchParams.get('googleApiKey') || '';
+  const radiusKm = Math.min(Math.max(parseInt(searchParams.get('radius') || '10'), 1), 100);
 
   if (!keyword || !city) {
     return NextResponse.json({ error: 'keyword et city sont requis', results: [] }, { status: 400 });
@@ -274,10 +286,10 @@ export async function GET(request: NextRequest) {
     let source: string;
 
     if (googleApiKey) {
-      results = await searchGooglePlaces(keyword, city, type, googleApiKey);
+      results = await searchGooglePlaces(keyword, city, type, googleApiKey, radiusKm);
       source = 'google';
     } else {
-      results = await searchOSM(keyword, city, type);
+      results = await searchOSM(keyword, city, type, radiusKm);
       source = 'osm';
     }
 

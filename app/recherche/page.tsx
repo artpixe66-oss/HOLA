@@ -23,6 +23,7 @@ export default function RecherchePage() {
   const [city, setCity] = useState('');
   const [keyword, setKeyword] = useState('');
   const [type, setType] = useState<'producteur' | 'commercant' | 'artisan'>('commercant');
+  const [radius, setRadius] = useState(10);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [source, setSource] = useState<'google' | 'osm' | null>(null);
@@ -63,6 +64,7 @@ export default function RecherchePage() {
         keyword: keyword.trim(),
         city: city.trim(),
         type,
+        radius: String(radius),
       });
       if (googleApiKey) params.set('googleApiKey', googleApiKey);
 
@@ -232,7 +234,33 @@ export default function RecherchePage() {
               </select>
             </div>
           </div>
-
+          {/* Radius slider */}
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-2">
+              Rayon de recherche : <span className="text-blue-600 font-bold">{radius} km</span> autour de {city || 'la ville'}
+            </label>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-400">1 km</span>
+              <input
+                type="range"
+                min={1}
+                max={100}
+                step={5}
+                value={radius}
+                onChange={e => setRadius(Number(e.target.value))}
+                className="flex-1 accent-blue-600"
+              />
+              <span className="text-xs text-gray-400">100 km</span>
+            </div>
+            <div className="flex justify-between text-xs text-gray-400 mt-1 px-1">
+              {[5, 10, 20, 30, 50].map(v => (
+                <button key={v} type="button" onClick={() => setRadius(v)}
+                  className={`px-2 py-0.5 rounded ${radius === v ? 'bg-blue-100 text-blue-600 font-medium' : 'hover:bg-gray-100'}`}>
+                  {v} km
+                </button>
+              ))}
+            </div>
+          </div>
           {/* Preset chips */}
           <div className="space-y-2">
             <div className="flex flex-wrap gap-2 items-center">
