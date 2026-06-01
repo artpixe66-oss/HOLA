@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
-import type { ProspectType } from '@/lib/types';
+import type { ProspectType } from './types';
 
 const PACKS = `
 - Pack Essentiel : fiche Google Business optimisée, photos professionnelles, référencement local
@@ -49,28 +48,26 @@ function substitute(template: string, vars: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => vars[key] || `{${key}}`);
 }
 
-export async function POST(req: NextRequest) {
-  try {
-    const { type, messageType, name, company, city } = await req.json() as {
-      type: ProspectType;
-      messageType: 'email' | 'sms';
-      name: string;
-      company: string;
-      city: string;
-    };
+export function generateMessage(
+  type: ProspectType,
+  messageType: 'email' | 'sms',
+  name: string,
+  company: string,
+  city: string
+): { subject?: string; body: string } {
+  const vars = {
+    name: name || 'vous',
+    company: company || 'votre entreprise',
+    city: city || 'votre ville',
+  };
 
-    const vars = { name: name || 'vous', company: company || 'votre entreprise', city: city || 'votre ville' };
-
-    if (messageType === 'sms') {
-      return NextResponse.json({ body: substitute(SMS_TEMPLATES[type] || SMS_TEMPLATES['commerçant'], vars) });
-    }
-
-    const tpl = EMAIL_TEMPLATES[type] || EMAIL_TEMPLATES['commerçant'];
-    return NextResponse.json({
-      subject: substitute(tpl.subject, vars),
-      body: substitute(tpl.body, vars),
-    });
-  } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+  if (messageType === 'sms') {
+    return { body: substitute(SMS_TEMPLATES[type] || SMS_TEMPLATES['commerçant'], vars) };
   }
+
+  const tpl = EMAIL_TEMPLATES[type] || EMAIL_TEMPLATES['commerçant'];
+  return {
+    subject: substitute(tpl.subject, vars),
+    body: substitute(tpl.body, vars),
+  };
 }

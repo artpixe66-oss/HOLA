@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { Prospect, ProspectStatus, ProspectType } from '@/lib/types';
+import { useProspects } from '@/lib/useProspects';
 import Link from 'next/link';
 
 const STATUSES: ProspectStatus[] = ['À contacter', 'Contacté', 'Intéressé', 'Client', 'Perdu'];
@@ -13,26 +14,44 @@ const STATUS_COLORS: Record<ProspectStatus, string> = {
   'Perdu':       'bg-red-100 text-red-700',
 };
 
-const EMPTY: Partial<Prospect> = { name: '', company: '', type: 'commerçant', email: '', phone: '', city: '', status: 'À contacter', notes: '' };
+type EditState = Omit<Prospect, 'id' | 'created_at' | 'updated_at'> & { id?: string };
+
+const EMPTY: EditState = {
+  name: '', company: '', type: 'commerçant', email: '', phone: '',
+  city: '', status: 'À contacter', notes: '', follow_up_date: null,
+};
+
+function parseCSV(text: string): EditState[] {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
+  return lines.slice(1).map(line => {
+    const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+    const row: Record<string, string> = {};
+    headers.forEach((h, i) => { row[h] = values[i] || ''; });
+    return {
+      name: row['name'] || row['nom'] || 'Inconnu',
+      company: row['company'] || row['entreprise'] || '',
+      type: (['producteur', 'commerçant'].includes(row['type']) ? row['type'] : 'commerçant') as ProspectType,
+      email: row['email'] || '',
+      phone: row['phone'] || row['téléphone'] || row['telephone'] || '',
+      city: row['city'] || row['ville'] || '',
+      status: (STATUSES.includes(row['status'] as ProspectStatus) ? row['status'] : 'À contacter') as ProspectStatus,
+      notes: row['notes'] || '',
+      follow_up_date: row['follow_up_date'] || row['relance'] || null,
+    };
+  });
+}
 
 export default function ProspectsPage() {
-  const [prospects, setProspects] = useState<Prospect[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { prospects, loaded, addProspect, updateProspect, deleteProspect, importProspects } = useProspects();
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<ProspectStatus | ''>('');
   const [filterType, setFilterType] = useState<ProspectType | ''>('');
-  const [editing, setEditing] = useState<Partial<Prospect> | null>(null);
+  const [editing, setEditing] = useState<EditState | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [importStatus, setImportStatus] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
-
-  async function load() {
-    const res = await fetch('/api/prospects');
-    setProspects(await res.json());
-    setLoading(false);
-  }
-
-  useEffect(() => { load(); }, []);
 
   const filtered = prospects.filter(p => {
     const matchSearch = !search || [p.name, p.company, p.city, p.email, p.phone].some(v => v.toLowerCase().includes(search.toLowerCase()));
@@ -41,37 +60,36 @@ export default function ProspectsPage() {
     return matchSearch && matchStatus && matchType;
   });
 
-  async function saveProspect() {
+  function saveProspect() {
     if (!editing) return;
-    const method = editing.id ? 'PATCH' : 'POST';
-    await fetch('/api/prospects', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing) });
+    if (editing.id) {
+      const { id, ...updates } = editing;
+      updateProspect(id, updates);
+    } else {
+      addProspect(editing);
+    }
     setShowForm(false);
     setEditing(null);
-    load();
   }
 
-  async function deleteProspect(id: number) {
+  function handleDelete(id: string) {
     if (!confirm('Supprimer ce prospect ?')) return;
-    await fetch(`/api/prospects?id=${id}`, { method: 'DELETE' });
-    load();
-  }
-
-  async function updateStatus(id: number, status: ProspectStatus) {
-    await fetch('/api/prospects', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) });
-    load();
+    deleteProspect(id);
   }
 
   async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setImportStatus('Import en cours...');
-    const fd = new FormData();
-    fd.append('file', file);
-    const res = await fetch('/api/import', { method: 'POST', body: fd });
-    const data = await res.json();
-    if (data.error) { setImportStatus(`Erreur : ${data.error}`); return; }
-    setImportStatus(`${data.inserted} prospects importés avec succès.`);
-    load();
+    try {
+      const text = await file.text();
+      const rows = parseCSV(text);
+      if (rows.length === 0) { setImportStatus('Aucune ligne valide trouvée dans le CSV.'); return; }
+      const count = importProspects(rows);
+      setImportStatus(`${count} prospects importés avec succès.`);
+    } catch (err) {
+      setImportStatus(`Erreur : ${err}`);
+    }
     if (fileRef.current) fileRef.current.value = '';
   }
 
@@ -119,7 +137,7 @@ export default function ProspectsPage() {
         <span className="text-sm text-gray-500 self-center">{filtered.length} résultat{filtered.length !== 1 ? 's' : ''}</span>
       </div>
 
-      {loading ? (
+      {!loaded ? (
         <div className="text-center py-12 text-gray-500">Chargement...</div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -152,7 +170,7 @@ export default function ProspectsPage() {
                   <td className="px-4 py-3">
                     <select
                       value={p.status}
-                      onChange={e => updateStatus(p.id, e.target.value as ProspectStatus)}
+                      onChange={e => updateProspect(p.id, { status: e.target.value as ProspectStatus })}
                       className={`text-xs font-medium rounded-full px-2 py-1 border-0 focus:outline-none cursor-pointer ${STATUS_COLORS[p.status]}`}
                     >
                       {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -164,7 +182,7 @@ export default function ProspectsPage() {
                       <Link href={`/generator?name=${encodeURIComponent(p.name)}&company=${encodeURIComponent(p.company)}&city=${encodeURIComponent(p.city)}&type=${p.type}`}
                         className="text-blue-600 hover:underline text-xs">Message</Link>
                       <button onClick={() => { setEditing({ ...p }); setShowForm(true); }} className="text-gray-500 hover:text-gray-800 text-xs">Éditer</button>
-                      <button onClick={() => deleteProspect(p.id)} className="text-red-500 hover:text-red-700 text-xs">Suppr.</button>
+                      <button onClick={() => handleDelete(p.id)} className="text-red-500 hover:text-red-700 text-xs">Suppr.</button>
                     </div>
                   </td>
                 </tr>
@@ -179,11 +197,13 @@ export default function ProspectsPage() {
           <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
             <h2 className="text-lg font-bold mb-4">{editing.id ? 'Modifier le prospect' : 'Nouveau prospect'}</h2>
             <div className="grid grid-cols-2 gap-3">
-              {([['name','Nom *'], ['company','Entreprise'], ['email','Email'], ['phone','Téléphone'], ['city','Ville']] as [keyof Prospect, string][]).map(([field, label]) => (
+              {(['name', 'company', 'email', 'phone', 'city'] as const).map(field => (
                 <div key={field}>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    {field === 'name' ? 'Nom *' : field === 'company' ? 'Entreprise' : field === 'email' ? 'Email' : field === 'phone' ? 'Téléphone' : 'Ville'}
+                  </label>
                   <input
-                    type="text" value={(editing[field] as string) || ''}
+                    type="text" value={editing[field] || ''}
                     onChange={e => setEditing({ ...editing, [field]: e.target.value })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />

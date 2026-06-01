@@ -1,4 +1,6 @@
-import { getDashboardStats } from '@/lib/db';
+'use client';
+
+import { useProspects, computeStats } from '@/lib/useProspects';
 import type { ProspectStatus } from '@/lib/types';
 
 const STATUS_COLORS: Record<ProspectStatus, string> = {
@@ -9,13 +11,16 @@ const STATUS_COLORS: Record<ProspectStatus, string> = {
   'Perdu':       'bg-red-400',
 };
 
-export const dynamic = 'force-dynamic';
-
 export default function DashboardPage() {
-  const stats = getDashboardStats();
+  const { prospects, loaded } = useProspects();
+  const stats = computeStats(prospects);
 
   const statusEntries = Object.entries(stats.byStatus) as [ProspectStatus, number][];
   const maxStatus = Math.max(...statusEntries.map(([, v]) => v), 1);
+
+  if (!loaded) {
+    return <div className="text-center py-12 text-gray-500">Chargement...</div>;
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
