@@ -8,56 +8,71 @@ const PACKS = `
 
 const EMAIL_TEMPLATES: Record<ProspectType, { subject: string; body: string }> = {
   producteur: {
-    subject: 'Boostez la visibilité de {company} avec HelpMe',
+    subject: '{company} — votre visibilité digitale mérite mieux',
     body: `Bonjour {name},
 
-Je me permets de vous contacter au sujet de la visibilité en ligne de {company} à {city}.
+Je me permets de vous contacter au sujet de la visibilité en ligne de {company}.
 
-Chez HelpMe, nous accompagnons les producteurs locaux avec des packs clé en main pour être trouvés par vos clients :
+Je m'appelle [Prénom], j'ai fondé HelpMe — une structure que j'ai créée pour aider les TPE et PME comme la vôtre à prendre leur vraie place sur le digital. Je suis moi-même du nord toulousain et j'accompagne des producteurs de la région depuis quelques années.
+
+En regardant votre présence en ligne, j'ai vu plusieurs opportunités concrètes pour {company} — notamment sur Google, Instagram et Maps, là où vos clients vous cherchent déjà sans vous trouver.
+
+Ce que je propose :
 ${PACKS}
-En tant que producteur, vos clients cherchent vos produits directement sur Google et les réseaux sociaux. Nos packs vous permettent d'être visible là où ils cherchent, sans vous soucier de la technique.
+Tout est géré de mon côté, vous ne vous occupez de rien techniquement.
 
-Seriez-vous disponible pour un échange de 15 minutes cette semaine afin que je vous présente ce qu'on pourrait faire pour {company} ?
+Seriez-vous disponible pour un échange de 15 minutes cette semaine ? Je vous ferai un retour honnête sur ce qu'on peut améliorer, sans engagement.
 
-Cordialement,
-L'équipe HelpMe`,
+À bientôt,
+[Prénom]
+Fondateur — HelpMe`,
   },
   'commerçant': {
-    subject: 'Développez votre clientèle locale avec HelpMe — {company}',
+    subject: '{company} à {city} — un potentiel digital sous-exploité',
     body: `Bonjour {name},
 
-J'ai remarqué que {company} à {city} mérite une meilleure visibilité en ligne pour attirer plus de clients locaux.
+Je me permets de vous écrire au sujet de la visibilité en ligne de {company}.
 
-HelpMe propose des packs visibilité clé en main adaptés aux commerçants :
+Je m'appelle [Prénom], j'ai créé HelpMe pour accompagner les commerçants et TPE de la région sur tout ce qui touche au digital. Je suis du nord de Toulouse et je travaille avec des enseignes locales depuis plusieurs années.
+
+Ce qui m'a poussé à vous contacter : {company} mérite clairement plus de visibilité. Vos clients potentiels vous cherchent sur Google et les réseaux — et aujourd'hui ils ne vous trouvent pas toujours facilement.
+
+Ce que je mets en place :
 ${PACKS}
-Nos clients commerçants voient en moyenne +40% de visites en magasin dans les 3 mois suivant le démarrage. Tout est géré par notre équipe, vous n'avez rien à faire techniquement.
+Tout est géré par mon équipe, vous vous concentrez sur votre commerce.
 
-Je serais ravi(e) de vous présenter un audit gratuit de votre visibilité actuelle. Avez-vous 15 minutes cette semaine ?
+Avez-vous 15 minutes cette semaine pour qu'on en parle ? Je vous proposerai un audit gratuit de votre situation actuelle.
 
-Cordialement,
-L'équipe HelpMe`,
+À bientôt,
+[Prénom]
+Fondateur — HelpMe`,
   },
   artisan: {
-    subject: 'Trouvez plus de clients à {city} — HelpMe pour {company}',
+    subject: 'Faire connaître {company} à {city} — j\'ai une idée',
     body: `Bonjour {name},
 
-Je me permets de vous contacter concernant la visibilité en ligne de {company} à {city}.
+Je me permets de vous contacter concernant la visibilité de {company} en ligne.
 
-Chez HelpMe, nous aidons les artisans à être trouvés facilement sur Google par des clients proches de chez eux :
+Je m'appelle [Prénom], j'ai monté HelpMe — une boîte que j'ai créée pour aider les artisans et TPE à être mieux trouvés sur internet. Je suis moi-même du nord toulousain et j'accompagne des artisans de la région sur Google, les réseaux sociaux et Maps.
+
+J'ai regardé votre présence en ligne et je pense qu'on peut faire quelque chose de concret pour vous amener de nouveaux clients — sans que vous n'ayez à vous occuper de la partie digitale.
+
+Ce que je propose :
 ${PACKS}
-La plupart de vos futurs clients vous cherchent sur Google avant d'appeler. Nos packs vous permettent d'apparaître en premier, de collecter des avis et de vous démarquer sans effort de votre part.
+La plupart de vos futurs clients vous cherchent sur Google avant d'appeler. Mon rôle c'est de faire en sorte qu'ils vous trouvent en premier.
 
-Seriez-vous disponible 15 minutes cette semaine pour un audit gratuit de votre présence en ligne ?
+Seriez-vous disponible 15 minutes cette semaine pour un audit gratuit ?
 
-Cordialement,
-L'équipe HelpMe`,
+À bientôt,
+[Prénom]
+Fondateur — HelpMe`,
   },
 };
 
 const SMS_TEMPLATES: Record<ProspectType, string> = {
-  producteur: `Bonjour {name}, je suis de l'équipe HelpMe. On aide les producteurs comme vous à être trouvés sur Google et les réseaux. Dispo pour un appel rapide ? 📞`,
-  'commerçant': `Bonjour {name}, HelpMe propose des packs visibilité clé en main pour les commerçants de {city}. Intéressé(e) par un audit gratuit ? Répondez OUI 😊`,
-  artisan: `Bonjour {name}, HelpMe aide les artisans à {city} à être trouvés sur Google. Audit gratuit offert. Dispo pour un appel de 10 min ? 📞`,
+  producteur: `Bonjour {name}, c'est [Prénom], fondateur de HelpMe. J'ai monté cette boîte pour aider des producteurs comme vous à être trouvés sur Google et les réseaux. Dispo pour un appel rapide ? 📞`,
+  'commerçant': `Bonjour {name}, c'est [Prénom] de HelpMe — j'aide les commerçants de {city} à développer leur visibilité digitale. Intéressé(e) par un audit gratuit ? Répondez OUI 😊`,
+  artisan: `Bonjour {name}, c'est [Prénom], j'ai fondé HelpMe pour aider les artisans comme vous à être trouvés sur Google à {city}. Audit gratuit offert. Dispo 10 min ? 📞`,
 };
 
 // ── Script téléphonique ────────────────────────────────────────────────────────
@@ -72,9 +87,9 @@ export interface PhoneScriptStep {
 }
 
 const INTRO: Record<ProspectType, string> = {
-  producteur: `Bonjour, je suis [Votre prénom] de l'agence HelpMe à Toulouse. Je vous contacte car on accompagne les producteurs locaux comme {company} à développer leur visibilité sur internet. Est-ce que vous êtes {name} ?`,
-  'commerçant': `Bonjour, je suis [Votre prénom] de l'agence HelpMe à Toulouse. On travaille avec des commerçants de {city} pour les aider à attirer plus de clients locaux. Je souhaitais échanger avec la personne qui gère {company}, c'est bien vous ?`,
-  artisan: `Bonjour, je suis [Votre prénom] de l'agence HelpMe à Toulouse. On accompagne des artisans comme vous à {city} pour qu'ils soient mieux trouvés sur Google. Je souhaitais parler avec {name} de {company}, c'est bien vous ?`,
+  producteur: `Bonjour, je m'appelle [Votre prénom], j'ai fondé HelpMe — une boîte que j'ai montée pour aider les producteurs et TPE de la région à être mieux visibles sur internet. Je vous contacte car j'ai vu {company} et j'ai trouvé votre projet vraiment intéressant. C'est bien {name} que j'ai en ligne ?`,
+  'commerçant': `Bonjour, c'est [Votre prénom], je suis le fondateur de HelpMe — j'aide les commerçants et TPE de la région à se développer sur le digital. Je souhaitais échanger avec la personne qui gère {company} à {city}. C'est bien vous ?`,
+  artisan: `Bonjour, je m'appelle [Votre prénom], j'ai créé HelpMe pour accompagner les artisans comme vous à être mieux trouvés sur Google. Je voulais parler avec {name} de {company} — c'est bien vous ?`,
 };
 
 const ACCROCHE: Record<ProspectType, string> = {
@@ -273,35 +288,42 @@ export function generatePhoneScript(
 const WHATSAPP_TEMPLATES: Record<ProspectType, string> = {
   producteur: `Salut 👋
 
-Je m'appelle [Prénom], je suis du nord toulousain et je travaille avec des producteurs de la région.
+Je m'appelle [Prénom], je suis du nord toulousain. J'ai monté *HelpMe*, une boîte que j'ai créée pour aider les TPE/PME de la région à mieux exister sur le digital.
 
-Je suis tombé sur *{company}* et franchement j'ai trouvé ça vraiment cool ce que vous faites 🌱 Ce genre de projet, c'est exactement ce que j'aime mettre en avant.
+Je suis tombé sur *{company}* et franchement j'adore ce que vous faites 🌱 C'est exactement le genre de beau projet que j'aime mettre en avant — et pourtant on vous trouve à peine sur internet, c'est dommage 😅
 
-Je bosse chez *HelpMe*, une agence basée à Toulouse — on aide des producteurs comme vous à être mieux visibles sur internet (Google, Instagram, Facebook). Souvent les meilleurs projets de la région sont ceux qu'on trouve le moins facilement en ligne 😅
+Mon taf c'est de changer ça : Google, Instagram, Maps... tout ce qui fait qu'un nouveau client vous trouve avant vos concurrents.
 
-Est-ce que vous seriez dispo pour un échange de 15 min cette semaine ? Juste pour voir si on peut faire quelque chose de sympa ensemble pour {company} 🙌
+Vous seriez dispo 15 min cette semaine pour qu'on échange ? Juste pour voir si je peux vous aider 🙌
 
-À bientôt j'espère !`,
+À bientôt j'espère !
+[Prénom] — HelpMe`,
 
   'commerçant': `Salut 👋
 
-Je m'appelle [Prénom], je suis du nord de Toulouse. Je suis passé devant *{company}* et j'ai vraiment trouvé ça chouette ce que vous proposez ✨
+Je m'appelle [Prénom], je suis du nord de Toulouse. J'ai créé *HelpMe* pour aider les commerçants et TPE de la région à prendre leur place sur le digital.
 
-Je bosse chez *HelpMe*, on aide les commerçants locaux à se rendre visibles là où leurs clients cherchent — Google, Instagram, Maps. Des fois les meilleurs commerces sont les moins connus sur internet, et c'est dommage 😅
+Je suis passé voir *{company}* et j'ai trouvé ça vraiment bien ce que vous faites ✨ Honnêtement c'est le genre d'enseigne que je cherche — des projets avec du sens, pas des grandes chaînes.
 
-J'aimerais beaucoup mettre en avant ce que vous faites. Vous seriez dispo 15 minutes cette semaine pour qu'on en parle ? 🙌
+Le truc c'est que les meilleurs commerces sont souvent les moins visibles en ligne. Je m'occupe de ça : Google Business, réseaux sociaux, Maps... tout clé en main.
 
-Belle journée !`,
+Vous avez 15 min cette semaine pour qu'on en parle ? 🙌
+
+Belle journée !
+[Prénom] — HelpMe`,
 
   artisan: `Salut 👋
 
-Je m'appelle [Prénom], je suis du nord toulousain. J'ai vu le travail de *{company}* et franchement c'est du beau boulot 🔨✨
+Je m'appelle [Prénom], je suis du nord toulousain. J'ai fondé *HelpMe* pour accompagner les artisans et TPE sur la partie digitale — c'est un secteur que j'aime vraiment.
 
-Je bosse chez *HelpMe* à Toulouse — on aide les artisans de la région à être trouvés par de nouveaux clients sur Google et les réseaux. Les meilleurs artisans méritent d'être vus 💪
+J'ai vu le travail de *{company}* et franchement c'est du beau boulot 🔨✨ Ce genre de savoir-faire mérite d'être vu par plus de monde.
 
-Est-ce que vous auriez 15 minutes cette semaine pour qu'on voit ensemble ce qu'on pourrait faire pour {company} ? C'est sans engagement, juste pour échanger 🙌
+Mon rôle c'est de vous amener les clients qui vous cherchent sur Google sans vous trouver. Tout géré de mon côté, vous vous concentrez sur votre métier.
 
-À bientôt !`,
+Est-ce qu'on peut échanger 15 min cette semaine ? Sans engagement, juste pour voir 🙌
+
+À bientôt !
+[Prénom] — HelpMe`,
 };
 
 // ── Message generator ──────────────────────────────────────────────────────────
