@@ -288,43 +288,43 @@ export function generatePhoneScript(
 const WHATSAPP_TEMPLATES: Record<ProspectType, string> = {
   producteur: `Salut 👋
 
-C'est Kyllian, je suis du nord toulousain. J'ai monté *HelpMe* pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
+C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte *HelpMe* pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
 
-Je travaille déjà avec des acteurs de la scène toulousaine — brasseurs artisanaux, bars à cocktails... et je cherche activement de nouveaux secteurs comme le vôtre 🌱
+Je travaille déjà avec des acteurs de la scène toulousaine — brasseurs artisanaux, bars... et je cherche activement de nouveaux secteurs comme le vôtre 🌱
 
-Je suis tombé sur *{company}* et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter — et pourtant on vous trouve à peine sur internet, dommage 😅
+Je suis tombé sur *{company}* et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
 
 Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
 
-Vous seriez dispo 15 min cette semaine ? Juste pour voir ce qu'on peut faire ensemble 🙌
+Vous seriez dispo 5 min cette semaine pour un appel ou même se rencontrer ? Juste pour voir ce qu'on peut faire ensemble 🙌
 
 Kyllian — HelpMe`,
 
   'commerçant': `Salut 👋
 
-C'est Kyllian, je suis du nord de Toulouse. J'ai créé *HelpMe* pour mettre en avant les bons projets locaux sur le digital.
+C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte *HelpMe* pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
 
-Je bosse déjà avec des acteurs toulousains — brasseurs, bars à cocktails, artisans... et je cherche des nouveaux secteurs comme le vôtre ✨
+Je travaille déjà avec des acteurs de la scène toulousaine — brasseurs artisanaux, bars... et je cherche activement de nouveaux secteurs comme le vôtre ✨
 
-Je suis passé sur *{company}* et j'ai trouvé ça vraiment chouette — c'est le genre d'enseigne que j'aime défendre, pas les grandes chaînes.
+Je suis tombé sur *{company}* et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
 
-Les meilleurs commerces sont souvent les moins visibles en ligne. Je change ça : Google Business, réseaux sociaux, Maps — tout clé en main.
+Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
 
-Vous avez 15 min cette semaine pour qu'on échange ? 🙌
+Vous seriez dispo 5 min cette semaine pour un appel ou même se rencontrer ? Juste pour voir ce qu'on peut faire ensemble 🙌
 
 Kyllian — HelpMe`,
 
   artisan: `Salut 👋
 
-C'est Kyllian, je suis du nord toulousain. J'ai fondé *HelpMe* pour accompagner les TPE et artisans de la région sur le digital.
+C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte *HelpMe* pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
 
-Je travaille déjà avec des acteurs locaux — brasseurs, bars à cocktails... et je cherche des artisans comme vous avec du vrai savoir-faire à mettre en avant 🔨
+Je travaille déjà avec des acteurs de la scène toulousaine — brasseurs artisanaux, bars... et je cherche des artisans avec du vrai savoir-faire à mettre en avant 🔨
 
-J'ai vu le travail de *{company}* et c'est du sérieux ✨ Ce genre de boulot mérite d'être trouvé facilement sur Google, pas d'être invisible.
+Je suis tombé sur *{company}* et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
 
-Je m'occupe de tout : fiche Google, réseaux sociaux, photos pros — vous vous concentrez sur votre métier.
+Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
 
-On peut échanger 15 min cette semaine ? Sans engagement, juste pour voir 🙌
+Vous seriez dispo 5 min cette semaine pour un appel ou même se rencontrer ? Juste pour voir ce qu'on peut faire ensemble 🙌
 
 Kyllian — HelpMe`,
 };
