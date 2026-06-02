@@ -18,6 +18,7 @@ type EditState = Omit<Prospect, 'id' | 'created_at' | 'updated_at'> & { id?: str
 
 const EMPTY: EditState = {
   name: '', company: '', type: 'commerçant', email: '', phone: '',
+  website: '', facebook: '', instagram: '',
   city: '', status: 'À contacter', notes: '', follow_up_date: null,
 };
 
@@ -32,15 +33,47 @@ function parseCSV(text: string): EditState[] {
     return {
       name: row['name'] || row['nom'] || 'Inconnu',
       company: row['company'] || row['entreprise'] || '',
-      type: (['producteur', 'commerçant'].includes(row['type']) ? row['type'] : 'commerçant') as ProspectType,
+      type: (['producteur', 'commerçant', 'artisan'].includes(row['type']) ? row['type'] : 'commerçant') as ProspectType,
       email: row['email'] || '',
       phone: row['phone'] || row['téléphone'] || row['telephone'] || '',
+      website: row['website'] || row['site'] || '',
+      facebook: row['facebook'] || '',
+      instagram: row['instagram'] || '',
       city: row['city'] || row['ville'] || '',
       status: (STATUSES.includes(row['status'] as ProspectStatus) ? row['status'] : 'À contacter') as ProspectStatus,
       notes: row['notes'] || '',
       follow_up_date: row['follow_up_date'] || row['relance'] || null,
     };
   });
+}
+
+function DigitalLinks({ p }: { p: Prospect }) {
+  const phone = p.phone?.replace(/\s/g, '');
+  const wa = phone ? `https://wa.me/${phone.startsWith('+') ? phone.slice(1) : '33' + phone.replace(/^0/, '')}` : null;
+
+  const links = [
+    p.phone && { href: `tel:${p.phone}`, icon: '📞', label: p.phone, color: 'text-emerald-400 hover:text-emerald-300' },
+    wa && { href: wa, icon: '💬', label: 'WhatsApp', color: 'text-[#25D366] hover:text-[#1ebe5d]' },
+    p.email && { href: `mailto:${p.email}`, icon: '✉️', label: p.email, color: 'text-brand-blue hover:text-blue-300' },
+    p.website && { href: p.website.startsWith('http') ? p.website : `https://${p.website}`, icon: '🌐', label: 'Site web', color: 'text-sky-400 hover:text-sky-300' },
+    p.instagram && { href: p.instagram.startsWith('http') ? p.instagram : `https://instagram.com/${p.instagram.replace('@', '')}`, icon: '📸', label: 'Instagram', color: 'text-pink-400 hover:text-pink-300' },
+    p.facebook && { href: p.facebook.startsWith('http') ? p.facebook : `https://facebook.com/${p.facebook}`, icon: '👥', label: 'Facebook', color: 'text-blue-400 hover:text-blue-300' },
+  ].filter(Boolean) as { href: string; icon: string; label: string; color: string }[];
+
+  if (!links.length) return <span className="text-brand-muted text-xs">—</span>;
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {links.map(l => (
+        <a key={l.href} href={l.href} target={l.href.startsWith('tel:') || l.href.startsWith('mailto:') ? undefined : '_blank'} rel="noopener noreferrer"
+          title={l.label}
+          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-brand-bg border border-brand-border text-xs font-medium transition-colors ${l.color}`}>
+          <span>{l.icon}</span>
+          <span className="hidden xl:inline max-w-[100px] truncate">{l.label}</span>
+        </a>
+      ))}
+    </div>
+  );
 }
 
 export default function ProspectsPage() {
@@ -54,7 +87,7 @@ export default function ProspectsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const filtered = prospects.filter(p => {
-    const matchSearch = !search || [p.name, p.company, p.city, p.email, p.phone].some(v => v.toLowerCase().includes(search.toLowerCase()));
+    const matchSearch = !search || [p.name, p.company, p.city, p.email, p.phone, p.website].some(v => (v || '').toLowerCase().includes(search.toLowerCase()));
     const matchStatus = !filterStatus || p.status === filterStatus;
     const matchType = !filterType || p.type === filterType;
     return matchSearch && matchStatus && matchType;
@@ -121,21 +154,20 @@ export default function ProspectsPage() {
         </div>
       )}
 
-      <div className="flex gap-3 mb-4">
+      <div className="flex gap-3 mb-4 flex-wrap">
         <input
           type="text" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)}
-          className={`flex-1 max-w-xs ${inputClass}`}
+          className={`flex-1 min-w-[180px] max-w-xs ${inputClass}`}
         />
-        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as ProspectStatus | '')}
-          className={inputClass}>
+        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as ProspectStatus | '')} className={inputClass}>
           <option value="">Tous les statuts</option>
           {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
-        <select value={filterType} onChange={e => setFilterType(e.target.value as ProspectType | '')}
-          className={inputClass}>
+        <select value={filterType} onChange={e => setFilterType(e.target.value as ProspectType | '')} className={inputClass}>
           <option value="">Tous les types</option>
           <option value="producteur">Producteur</option>
           <option value="commerçant">Commerçant</option>
+          <option value="artisan">Artisan</option>
         </select>
         <span className="text-sm text-brand-muted self-center">{filtered.length} résultat{filtered.length !== 1 ? 's' : ''}</span>
       </div>
@@ -143,32 +175,37 @@ export default function ProspectsPage() {
       {!loaded ? (
         <div className="text-center py-12 text-brand-muted">Chargement...</div>
       ) : (
-        <div className="bg-brand-surface rounded-xl border border-brand-border overflow-hidden">
+        <div className="bg-brand-surface rounded-xl border border-brand-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-brand-bg border-b border-brand-border">
               <tr>
-                {['Nom', 'Entreprise', 'Type', 'Ville', 'Contact', 'Statut', 'Relance', 'Actions'].map(h => (
-                  <th key={h} className="text-left px-4 py-3 font-medium text-brand-muted">{h}</th>
+                {['Entreprise', 'Type', 'Ville', 'Présence digitale', 'Statut', 'Relance', 'Actions'].map(h => (
+                  <th key={h} className="text-left px-4 py-3 font-medium text-brand-muted whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-brand-border">
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="text-center py-10 text-brand-muted">Aucun prospect trouvé</td></tr>
+                <tr><td colSpan={7} className="text-center py-10 text-brand-muted">Aucun prospect trouvé</td></tr>
               )}
               {filtered.map(p => (
                 <tr key={p.id} className="hover:bg-brand-bg/50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-white">{p.name}</td>
-                  <td className="px-4 py-3 text-brand-muted">{p.company}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.type === 'producteur' ? 'bg-purple-900/50 text-purple-300' : 'bg-orange-900/50 text-orange-300'}`}>
+                    <div className="font-medium text-white">{p.company || '—'}</div>
+                    <div className="text-xs text-brand-muted">{p.name}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      p.type === 'producteur' ? 'bg-purple-900/50 text-purple-300' :
+                      p.type === 'artisan' ? 'bg-teal-900/50 text-teal-300' :
+                      'bg-orange-900/50 text-orange-300'
+                    }`}>
                       {p.type}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-brand-muted">{p.city}</td>
-                  <td className="px-4 py-3 text-brand-muted">
-                    {p.email && <div>{p.email}</div>}
-                    {p.phone && <div>{p.phone}</div>}
+                  <td className="px-4 py-3 text-brand-muted whitespace-nowrap">{p.city || '—'}</td>
+                  <td className="px-4 py-3">
+                    <DigitalLinks p={p} />
                   </td>
                   <td className="px-4 py-3">
                     <select
@@ -179,13 +216,15 @@ export default function ProspectsPage() {
                       {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </td>
-                  <td className="px-4 py-3 text-brand-muted text-xs">{p.follow_up_date || '—'}</td>
+                  <td className="px-4 py-3 text-brand-muted text-xs whitespace-nowrap">{p.follow_up_date || '—'}</td>
                   <td className="px-4 py-3">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
                       <Link href={`/generator?name=${encodeURIComponent(p.name)}&company=${encodeURIComponent(p.company)}&city=${encodeURIComponent(p.city)}&type=${p.type}`}
-                        className="text-brand-blue hover:underline text-xs">Message</Link>
+                        className="px-2 py-1 rounded-lg bg-brand-blue/20 border border-brand-blue/30 text-xs font-medium text-brand-blue hover:bg-brand-blue hover:text-white transition-colors whitespace-nowrap">
+                        ✉️ Message
+                      </Link>
                       <button onClick={() => { setEditing({ ...p }); setShowForm(true); }} className="text-brand-muted hover:text-white text-xs">Éditer</button>
-                      <button onClick={() => handleDelete(p.id)} className="text-red-400 hover:text-red-300 text-xs">Suppr.</button>
+                      <button onClick={() => handleDelete(p.id)} className="text-red-400 hover:text-red-300 text-xs">✕</button>
                     </div>
                   </td>
                 </tr>
@@ -196,55 +235,68 @@ export default function ProspectsPage() {
       )}
 
       {showForm && editing && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-brand-surface rounded-xl shadow-2xl border border-brand-border w-full max-w-lg p-6">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={e => { if (e.target === e.currentTarget) { setShowForm(false); setEditing(null); } }}>
+          <div className="bg-brand-surface rounded-xl shadow-2xl border border-brand-border w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
             <h2 className="text-lg font-bold text-white mb-4">{editing.id ? 'Modifier le prospect' : 'Nouveau prospect'}</h2>
             <div className="grid grid-cols-2 gap-3">
-              {(['name', 'company', 'email', 'phone', 'city'] as const).map(field => (
-                <div key={field}>
-                  <label className={labelClass}>
-                    {field === 'name' ? 'Nom *' : field === 'company' ? 'Entreprise' : field === 'email' ? 'Email' : field === 'phone' ? 'Téléphone' : 'Ville'}
-                  </label>
-                  <input
-                    type="text" value={editing[field] || ''}
-                    onChange={e => setEditing({ ...editing, [field]: e.target.value })}
-                    className={`w-full ${inputClass}`}
-                  />
-                </div>
-              ))}
+              <div>
+                <label className={labelClass}>Nom *</label>
+                <input type="text" value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })} className={`w-full ${inputClass}`} />
+              </div>
+              <div>
+                <label className={labelClass}>Entreprise</label>
+                <input type="text" value={editing.company} onChange={e => setEditing({ ...editing, company: e.target.value })} className={`w-full ${inputClass}`} />
+              </div>
+              <div>
+                <label className={labelClass}>Email</label>
+                <input type="email" value={editing.email} onChange={e => setEditing({ ...editing, email: e.target.value })} className={`w-full ${inputClass}`} />
+              </div>
+              <div>
+                <label className={labelClass}>Téléphone</label>
+                <input type="text" value={editing.phone} onChange={e => setEditing({ ...editing, phone: e.target.value })} placeholder="+33 6 00 00 00 00" className={`w-full ${inputClass}`} />
+              </div>
+              <div className="col-span-2">
+                <label className={labelClass}>Site web</label>
+                <input type="text" value={editing.website || ''} onChange={e => setEditing({ ...editing, website: e.target.value })} placeholder="https://..." className={`w-full ${inputClass}`} />
+              </div>
+              <div>
+                <label className={labelClass}>📸 Instagram</label>
+                <input type="text" value={editing.instagram || ''} onChange={e => setEditing({ ...editing, instagram: e.target.value })} placeholder="@ou URL" className={`w-full ${inputClass}`} />
+              </div>
+              <div>
+                <label className={labelClass}>👥 Facebook</label>
+                <input type="text" value={editing.facebook || ''} onChange={e => setEditing({ ...editing, facebook: e.target.value })} placeholder="nom ou URL" className={`w-full ${inputClass}`} />
+              </div>
+              <div>
+                <label className={labelClass}>Ville</label>
+                <input type="text" value={editing.city} onChange={e => setEditing({ ...editing, city: e.target.value })} className={`w-full ${inputClass}`} />
+              </div>
               <div>
                 <label className={labelClass}>Type</label>
-                <select value={editing.type} onChange={e => setEditing({ ...editing, type: e.target.value as ProspectType })}
-                  className={`w-full ${inputClass}`}>
+                <select value={editing.type} onChange={e => setEditing({ ...editing, type: e.target.value as ProspectType })} className={`w-full ${inputClass}`}>
                   <option value="commerçant">Commerçant</option>
                   <option value="producteur">Producteur</option>
+                  <option value="artisan">Artisan</option>
                 </select>
               </div>
               <div>
                 <label className={labelClass}>Statut</label>
-                <select value={editing.status} onChange={e => setEditing({ ...editing, status: e.target.value as ProspectStatus })}
-                  className={`w-full ${inputClass}`}>
+                <select value={editing.status} onChange={e => setEditing({ ...editing, status: e.target.value as ProspectStatus })} className={`w-full ${inputClass}`}>
                   {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label className={labelClass}>Date de relance</label>
-                <input type="date" value={editing.follow_up_date || ''}
-                  onChange={e => setEditing({ ...editing, follow_up_date: e.target.value || null })}
-                  className={`w-full ${inputClass}`}
-                />
+                <input type="date" value={editing.follow_up_date || ''} onChange={e => setEditing({ ...editing, follow_up_date: e.target.value || null })} className={`w-full ${inputClass}`} />
               </div>
             </div>
             <div className="mt-3">
               <label className={labelClass}>Notes</label>
-              <textarea value={editing.notes || ''} onChange={e => setEditing({ ...editing, notes: e.target.value })}
-                rows={3} className={`w-full ${inputClass} resize-none`} />
+              <textarea value={editing.notes || ''} onChange={e => setEditing({ ...editing, notes: e.target.value })} rows={3} className={`w-full ${inputClass} resize-none`} />
             </div>
             <div className="flex gap-3 mt-4 justify-end">
-              <button onClick={() => { setShowForm(false); setEditing(null); }}
-                className="px-4 py-2 text-sm rounded-lg border border-brand-border text-white hover:bg-brand-bg transition-colors">Annuler</button>
-              <button onClick={saveProspect}
-                className="px-4 py-2 text-sm rounded-lg bg-brand-blue text-white hover:bg-brand-blue-hover transition-colors">Enregistrer</button>
+              <button onClick={() => { setShowForm(false); setEditing(null); }} className="px-4 py-2 text-sm rounded-lg border border-brand-border text-white hover:bg-brand-bg transition-colors">Annuler</button>
+              <button onClick={saveProspect} className="px-4 py-2 text-sm rounded-lg bg-brand-blue text-white hover:bg-brand-blue-hover transition-colors">Enregistrer</button>
             </div>
           </div>
         </div>

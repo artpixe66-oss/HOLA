@@ -8,6 +8,9 @@ export interface Prospect {
   type: ProspectType;
   email: string;
   phone: string;
+  website: string;
+  facebook: string;
+  instagram: string;
   city: string;
   status: ProspectStatus;
   notes: string;
