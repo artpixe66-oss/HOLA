@@ -22,6 +22,19 @@ const ARTISAN_PRESETS = [
   'Cuisiniste', 'Photographe', 'Imprimeur', 'Cordonnier', 'Tailleur', 'Horloger',
   'Ébéniste', 'Céramiste', 'Forgeron', 'Tapissier', 'Graphiste', 'Tatoueur',
 ];
+const LOISIR_PRESETS = [
+  'Laser game', 'Padel', 'Salle de sport', 'Escape game', 'Bowling',
+  'Karting', 'Accrobranche', 'Trampoline', 'Parc enfants', 'Jeux enfants',
+  'Piscine', 'Tennis', 'Golf', 'Équitation', 'Yoga', 'Danse',
+  'Cinéma', 'Théâtre', 'Musée', 'Zoo', 'Aquarium',
+];
+const DIVERS_PRESETS = [
+  'Hôtel', 'Camping', 'Gîte', 'Chambre d\'hôtes', 'Airbnb',
+  'Agence immobilière', 'Agence de voyage', 'École', 'Crèche',
+  'Cabinet médical', 'Vétérinaire', 'Garage automobile', 'Auto-école',
+  'Pressing', 'Blanchisserie', 'Déménageur', 'Traiteur événementiel',
+  'Salle de mariage', 'Studio photo', 'Spa', 'Institut de beauté',
+];
 
 const SCORE_BADGE: Record<SearchResult['qualificationLabel'], string> = {
   'Très qualifié': 'bg-emerald-900/50 text-emerald-400',
@@ -446,6 +459,40 @@ export default function RecherchePage() {
                     keyword.toLowerCase() === p.toLowerCase() && type === 'artisan'
                       ? 'bg-teal-600 text-white border-teal-600'
                       : 'bg-teal-900/30 text-teal-300 border-teal-800 hover:bg-teal-800/40'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-xs text-brand-muted font-medium w-20">Loisirs :</span>
+              {LOISIR_PRESETS.map(p => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => { setKeyword(p.toLowerCase()); setType('commercant'); }}
+                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                    keyword.toLowerCase() === p.toLowerCase()
+                      ? 'bg-pink-600 text-white border-pink-600'
+                      : 'bg-pink-900/30 text-pink-300 border-pink-800 hover:bg-pink-800/40'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-xs text-brand-muted font-medium w-20">Divers :</span>
+              {DIVERS_PRESETS.map(p => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => { setKeyword(p.toLowerCase()); setType('commercant'); }}
+                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                    keyword.toLowerCase() === p.toLowerCase()
+                      ? 'bg-slate-500 text-white border-slate-500'
+                      : 'bg-slate-800/50 text-slate-400 border-slate-700 hover:bg-slate-700/50'
                   }`}
                 >
                   {p}
