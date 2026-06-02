@@ -219,7 +219,7 @@ export default function ProspectsPage() {
                   <td className="px-4 py-3 text-brand-muted text-xs whitespace-nowrap">{p.follow_up_date || '—'}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2 items-center">
-                      <Link href={`/generator?name=${encodeURIComponent(p.name)}&company=${encodeURIComponent(p.company)}&city=${encodeURIComponent(p.city)}&type=${p.type}`}
+                      <Link href={`/generator?name=${encodeURIComponent(p.name)}&company=${encodeURIComponent(p.company)}&city=${encodeURIComponent(p.city)}&type=${p.type}&email=${encodeURIComponent(p.email || '')}&phone=${encodeURIComponent(p.phone || '')}`}
                         className="px-2 py-1 rounded-lg bg-brand-blue/20 border border-brand-blue/30 text-xs font-medium text-brand-blue hover:bg-brand-blue hover:text-white transition-colors whitespace-nowrap">
                         ✉️ Message
                       </Link>

@@ -14,6 +14,8 @@ function GeneratorContent() {
   const [company, setCompany] = useState(params.get('company') || '');
   const [city, setCity] = useState(params.get('city') || '');
   const [category, setCategory] = useState(params.get('category') || '');
+  const [email, setEmail] = useState(params.get('email') || '');
+  const [phone, setPhone] = useState(params.get('phone') || '');
   const [result, setResult] = useState<{ subject?: string; body?: string } | null>(null);
   const [script, setScript] = useState<PhoneScriptStep[] | null>(null);
   const [activeStep, setActiveStep] = useState<string>('intro');
@@ -98,9 +100,19 @@ function GeneratorContent() {
             <input type="text" value={company} onChange={e => setCompany(e.target.value)} placeholder="ex: Boulangerie Martin"
               className="w-full bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue" />
           </div>
-          <div className="col-span-2">
+          <div>
             <label className="block text-xs font-medium text-brand-muted mb-1">Ville</label>
             <input type="text" value={city} onChange={e => setCity(e.target.value)} placeholder="ex: Lyon"
+              className="w-full bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-brand-muted mb-1">📞 Téléphone</label>
+            <input type="text" value={phone} onChange={e => setPhone(e.target.value)} placeholder="ex: 06 00 00 00 00"
+              className="w-full bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue" />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-brand-muted mb-1">✉️ Email</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="ex: contact@entreprise.fr"
               className="w-full bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue" />
           </div>
         </div>
@@ -131,6 +143,29 @@ function GeneratorContent() {
           {/* Message tab */}
           {tab === 'message' && result && (
             <div className="bg-brand-surface rounded-xl border border-brand-border p-6 space-y-4">
+              {/* Contact banner */}
+              {(email || phone) && (
+                <div className="flex flex-wrap gap-2 pb-3 border-b border-brand-border">
+                  {msgType === 'email' && email && (
+                    <a href={`mailto:${email}`}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-blue/10 border border-brand-blue/30 text-sm font-medium text-brand-blue hover:bg-brand-blue hover:text-white transition-colors">
+                      ✉️ {email}
+                    </a>
+                  )}
+                  {msgType === 'sms' && phone && (
+                    <a href={`sms:${phone}`}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-900/30 border border-emerald-700/40 text-sm font-medium text-emerald-400 hover:bg-emerald-700 hover:text-white transition-colors">
+                      💬 {phone}
+                    </a>
+                  )}
+                  {msgType === 'sms' && !phone && email && (
+                    <span className="text-xs text-brand-muted">Aucun numéro renseigné</span>
+                  )}
+                  {msgType === 'email' && !email && phone && (
+                    <span className="text-xs text-brand-muted">Aucun email renseigné</span>
+                  )}
+                </div>
+              )}
               <div className="flex rounded-lg border border-brand-border overflow-hidden mb-2">
                 {(['email', 'sms'] as const).map(t => (
                   <button key={t} onClick={() => { setMsgType(t); setResult(generateMessage(type, t, name, company, city)); }}
@@ -170,6 +205,19 @@ function GeneratorContent() {
           {/* WhatsApp tab */}
           {tab === 'whatsapp' && (
             <div className="space-y-4">
+              {/* WhatsApp contact banner */}
+              {phone ? (
+                <a
+                  href={`https://wa.me/${phone.replace(/\s/g, '').replace(/^0/, '33').replace(/^\+/, '')}`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-sm font-medium text-[#25D366] hover:bg-[#25D366] hover:text-white transition-colors">
+                  💬 Ouvrir la conversation WhatsApp avec {phone}
+                </a>
+              ) : (
+                <div className="px-4 py-2.5 rounded-xl bg-brand-surface border border-brand-border text-xs text-brand-muted">
+                  ℹ️ Renseignez un numéro de téléphone dans le formulaire pour obtenir le lien WhatsApp direct.
+                </div>
+              )}
               {/* Phone mockup */}
               <div className="flex justify-center">
                 <div className="w-full max-w-sm">
@@ -252,6 +300,17 @@ function GeneratorContent() {
           {/* Phone script tab */}
           {tab === 'script' && script && (
             <div className="space-y-4">
+              {/* Phone contact banner */}
+              {phone ? (
+                <a href={`tel:${phone}`}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-900/20 border border-emerald-700/40 text-sm font-medium text-emerald-400 hover:bg-emerald-700 hover:text-white transition-colors">
+                  📞 Appeler {name || company || ''} — {phone}
+                </a>
+              ) : (
+                <div className="px-4 py-2.5 rounded-xl bg-brand-surface border border-brand-border text-xs text-brand-muted">
+                  ℹ️ Renseignez un numéro de téléphone dans le formulaire pour obtenir le lien d&apos;appel direct.
+                </div>
+              )}
               {/* Step nav */}
               <div className="flex gap-2 flex-wrap">
                 {script.map(step => (
