@@ -288,45 +288,48 @@ export function generatePhoneScript(
 const WHATSAPP_TEMPLATES: Record<ProspectType, string> = {
   producteur: `Salut 👋
 
-C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte *HelpMe* pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
+C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte HelpMe pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
 
-Je travaille déjà avec des acteurs de la scène toulousaine — brasseurs artisanaux, bars... et je cherche activement de nouveaux secteurs comme le vôtre 🌱
+Je travaille déjà avec des acteurs de la scène toulousaine, brasseurs artisanaux, bars... et je cherche activement de nouveaux secteurs comme le vôtre 🌱
 
-Je suis tombé sur *{company}* et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
+Je suis tombé sur {company} et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
 
 Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
 
 Vous seriez dispo 5 min cette semaine pour un appel ou même se rencontrer ? Juste pour voir ce qu'on peut faire ensemble 🙌
 
-Kyllian — HelpMe`,
+Kyllian
+HelpMe`,
 
   'commerçant': `Salut 👋
 
-C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte *HelpMe* pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
+C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte HelpMe pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
 
-Je travaille déjà avec des acteurs de la scène toulousaine — brasseurs artisanaux, bars... et je cherche activement de nouveaux secteurs comme le vôtre ✨
+Je travaille déjà avec des acteurs de la scène toulousaine, brasseurs artisanaux, bars... et je cherche activement de nouveaux secteurs comme le vôtre ✨
 
-Je suis tombé sur *{company}* et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
+Je suis tombé sur {company} et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
 
 Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
 
 Vous seriez dispo 5 min cette semaine pour un appel ou même se rencontrer ? Juste pour voir ce qu'on peut faire ensemble 🙌
 
-Kyllian — HelpMe`,
+Kyllian
+HelpMe`,
 
   artisan: `Salut 👋
 
-C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte *HelpMe* pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
+C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte HelpMe pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
 
-Je travaille déjà avec des acteurs de la scène toulousaine — brasseurs artisanaux, bars... et je cherche des artisans avec du vrai savoir-faire à mettre en avant 🔨
+Je travaille déjà avec des acteurs de la scène toulousaine, brasseurs artisanaux, bars... et je cherche des artisans avec du vrai savoir-faire à mettre en avant 🔨
 
-Je suis tombé sur *{company}* et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
+Je suis tombé sur {company} et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
 
 Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
 
 Vous seriez dispo 5 min cette semaine pour un appel ou même se rencontrer ? Juste pour voir ce qu'on peut faire ensemble 🙌
 
-Kyllian — HelpMe`,
+Kyllian
+HelpMe`,
 };
 
 // ── Message generator ──────────────────────────────────────────────────────────
