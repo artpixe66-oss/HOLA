@@ -78,6 +78,7 @@ async function searchGooglePlaces(
     headers: {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
+      'Referer': 'https://hola-murex.vercel.app',
       'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents,places.googleMapsUri',
     },
     body: JSON.stringify({
