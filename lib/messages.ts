@@ -268,6 +268,42 @@ export function generatePhoneScript(
   ];
 }
 
+// ── WhatsApp templates ─────────────────────────────────────────────────────────
+
+const WHATSAPP_TEMPLATES: Record<ProspectType, string> = {
+  producteur: `Salut 👋
+
+Je m'appelle [Prénom], je suis du nord toulousain et je travaille avec des producteurs de la région.
+
+Je suis tombé sur *{company}* et franchement j'ai trouvé ça vraiment cool ce que vous faites 🌱 Ce genre de projet, c'est exactement ce que j'aime mettre en avant.
+
+Je bosse chez *HelpMe*, une agence basée à Toulouse — on aide des producteurs comme vous à être mieux visibles sur internet (Google, Instagram, Facebook). Souvent les meilleurs projets de la région sont ceux qu'on trouve le moins facilement en ligne 😅
+
+Est-ce que vous seriez dispo pour un échange de 15 min cette semaine ? Juste pour voir si on peut faire quelque chose de sympa ensemble pour {company} 🙌
+
+À bientôt j'espère !`,
+
+  'commerçant': `Salut 👋
+
+Je m'appelle [Prénom], je suis du nord de Toulouse. Je suis passé devant *{company}* et j'ai vraiment trouvé ça chouette ce que vous proposez ✨
+
+Je bosse chez *HelpMe*, on aide les commerçants locaux à se rendre visibles là où leurs clients cherchent — Google, Instagram, Maps. Des fois les meilleurs commerces sont les moins connus sur internet, et c'est dommage 😅
+
+J'aimerais beaucoup mettre en avant ce que vous faites. Vous seriez dispo 15 minutes cette semaine pour qu'on en parle ? 🙌
+
+Belle journée !`,
+
+  artisan: `Salut 👋
+
+Je m'appelle [Prénom], je suis du nord toulousain. J'ai vu le travail de *{company}* et franchement c'est du beau boulot 🔨✨
+
+Je bosse chez *HelpMe* à Toulouse — on aide les artisans de la région à être trouvés par de nouveaux clients sur Google et les réseaux. Les meilleurs artisans méritent d'être vus 💪
+
+Est-ce que vous auriez 15 minutes cette semaine pour qu'on voit ensemble ce qu'on pourrait faire pour {company} ? C'est sans engagement, juste pour échanger 🙌
+
+À bientôt !`,
+};
+
 // ── Message generator ──────────────────────────────────────────────────────────
 
 function substitute(template: string, vars: Record<string, string>): string {
@@ -276,7 +312,7 @@ function substitute(template: string, vars: Record<string, string>): string {
 
 export function generateMessage(
   type: ProspectType,
-  messageType: 'email' | 'sms',
+  messageType: 'email' | 'sms' | 'whatsapp',
   name: string,
   company: string,
   city: string
@@ -289,6 +325,10 @@ export function generateMessage(
 
   if (messageType === 'sms') {
     return { body: substitute(SMS_TEMPLATES[type] || SMS_TEMPLATES['commerçant'], vars) };
+  }
+
+  if (messageType === 'whatsapp') {
+    return { body: substitute(WHATSAPP_TEMPLATES[type] || WHATSAPP_TEMPLATES['commerçant'], vars) };
   }
 
   const tpl = EMAIL_TEMPLATES[type] || EMAIL_TEMPLATES['commerçant'];

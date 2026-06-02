@@ -8,7 +8,7 @@ import { generateMessage, generatePhoneScript, type PhoneScriptStep } from '@/li
 function GeneratorContent() {
   const params = useSearchParams();
   const [type, setType] = useState<ProspectType>((params.get('type') as ProspectType) || 'commerçant');
-  const [tab, setTab] = useState<'message' | 'script'>('message');
+  const [tab, setTab] = useState<'message' | 'whatsapp' | 'script'>('message');
   const [msgType, setMsgType] = useState<'email' | 'sms'>('email');
   const [name, setName] = useState(params.get('name') || '');
   const [company, setCompany] = useState(params.get('company') || '');
@@ -118,9 +118,13 @@ function GeneratorContent() {
               className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'message' ? 'bg-brand-blue text-white' : 'text-brand-muted hover:text-white'}`}>
               ✉️ Email / SMS
             </button>
+            <button onClick={() => setTab('whatsapp')}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'whatsapp' ? 'bg-[#25D366] text-white' : 'text-brand-muted hover:text-white'}`}>
+              💬 WhatsApp
+            </button>
             <button onClick={() => setTab('script')}
               className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${tab === 'script' ? 'bg-brand-blue text-white' : 'text-brand-muted hover:text-white'}`}>
-              📞 Script téléphonique
+              📞 Script
             </button>
           </div>
 
@@ -160,6 +164,88 @@ function GeneratorContent() {
                 className="w-full py-2 border border-brand-border text-brand-muted rounded-lg text-sm hover:bg-brand-bg hover:text-white transition-colors">
                 {copied === 'all' ? 'Copié !' : 'Tout copier'}
               </button>
+            </div>
+          )}
+
+          {/* WhatsApp tab */}
+          {tab === 'whatsapp' && (
+            <div className="space-y-4">
+              {/* Phone mockup */}
+              <div className="flex justify-center">
+                <div className="w-full max-w-sm">
+                  {/* Phone chrome */}
+                  <div className="bg-[#111b21] rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+                    {/* Status bar */}
+                    <div className="bg-[#202c33] px-4 py-2 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#25D366]/30 flex items-center justify-center text-sm">
+                        {company ? company[0].toUpperCase() : '?'}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white text-xs font-semibold">{company || 'Nom de l\'entreprise'}</p>
+                        <p className="text-[#8696a0] text-[10px]">en ligne</p>
+                      </div>
+                      <div className="flex gap-3 text-[#aebac1]">
+                        <span className="text-xs">📞</span>
+                        <span className="text-xs">⋮</span>
+                      </div>
+                    </div>
+                    {/* Chat background */}
+                    <div className="bg-[#0b141a] px-3 py-4 min-h-48"
+                      style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0)', backgroundSize: '24px 24px' }}>
+                      {/* Message bubble */}
+                      <div className="flex justify-end">
+                        <div className="bg-[#005c4b] rounded-2xl rounded-tr-sm px-3 py-2 max-w-[85%] shadow-md">
+                          <p className="text-[#e9edef] text-xs leading-relaxed whitespace-pre-wrap">
+                            {generateMessage(type, 'whatsapp', name, company, city).body}
+                          </p>
+                          <div className="flex items-center justify-end gap-1 mt-1">
+                            <span className="text-[#8696a0] text-[10px]">{new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                            <span className="text-[#53bdeb] text-xs">✓✓</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Input bar */}
+                    <div className="bg-[#202c33] px-3 py-2 flex items-center gap-2">
+                      <div className="flex-1 bg-[#2a3942] rounded-full px-4 py-2 text-[#8696a0] text-xs">
+                        Message
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-[#00a884] flex items-center justify-center">
+                        <span className="text-white text-xs">🎤</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Raw text + actions */}
+              <div className="bg-brand-surface rounded-xl border border-[#25D366]/30 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-[#25D366]">💬 Message WhatsApp</label>
+                  <button
+                    onClick={() => { copy(generateMessage(type, 'whatsapp', name, company, city).body, 'wa'); }}
+                    className="text-xs text-[#25D366] hover:underline">
+                    {copied === 'wa' ? '✓ Copié !' : 'Copier le texte'}
+                  </button>
+                </div>
+                <textarea
+                  readOnly
+                  value={generateMessage(type, 'whatsapp', name, company, city).body}
+                  rows={8}
+                  className="w-full bg-brand-bg border border-brand-border text-white rounded-lg px-3 py-2 text-sm font-mono resize-none focus:outline-none"
+                />
+                {/* Open in WhatsApp */}
+                {(company || name) && (
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(generateMessage(type, 'whatsapp', name, company, city).body)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-[#25D366] text-white text-sm font-medium hover:bg-[#1ebe5d] transition-colors"
+                  >
+                    <span>💬</span> Ouvrir dans WhatsApp
+                  </a>
+                )}
+              </div>
             </div>
           )}
 
