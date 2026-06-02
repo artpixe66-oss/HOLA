@@ -16,6 +16,9 @@ function GeneratorContent() {
   const [category, setCategory] = useState(params.get('category') || '');
   const [email, setEmail] = useState(params.get('email') || '');
   const [phone, setPhone] = useState(params.get('phone') || '');
+  const [website, setWebsite] = useState(params.get('website') || '');
+  const [instagram, setInstagram] = useState(params.get('instagram') || '');
+  const [facebook, setFacebook] = useState(params.get('facebook') || '');
   const [result, setResult] = useState<{ subject?: string; body?: string } | null>(null);
   const [script, setScript] = useState<PhoneScriptStep[] | null>(null);
   const [activeStep, setActiveStep] = useState<string>('intro');
@@ -123,24 +126,45 @@ function GeneratorContent() {
       </div>
 
       {/* Contact rapide — toujours visible */}
-      {(phone || email) && (
+      {(phone || email || website || instagram || facebook) && (
         <div className="flex flex-wrap gap-2 mb-4">
           {phone && (
             <a href={`tel:${phone}`}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-900/20 border border-emerald-700/40 text-sm font-semibold text-emerald-400 hover:bg-emerald-700 hover:text-white transition-colors">
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-900/20 border border-emerald-700/40 text-sm font-semibold text-emerald-400 hover:bg-emerald-700 hover:text-white transition-colors">
               📞 {phone}
             </a>
           )}
           {phone && (
             <a href={`https://wa.me/${phone.replace(/\s/g,'').replace(/^0/,'33').replace(/^\+/,'')}`}
               target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-sm font-semibold text-[#25D366] hover:bg-[#25D366] hover:text-white transition-colors">
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-sm font-semibold text-[#25D366] hover:bg-[#25D366] hover:text-white transition-colors">
               💬 WhatsApp
+            </a>
+          )}
+          {website && (
+            <a href={website.startsWith('http') ? website : `https://${website}`}
+              target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-sky-900/20 border border-sky-700/40 text-sm font-semibold text-sky-400 hover:bg-sky-700 hover:text-white transition-colors">
+              🌐 Site web
+            </a>
+          )}
+          {instagram && (
+            <a href={instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace('@','')}`}
+              target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-pink-900/20 border border-pink-700/40 text-sm font-semibold text-pink-400 hover:bg-pink-700 hover:text-white transition-colors">
+              📸 Instagram
+            </a>
+          )}
+          {facebook && (
+            <a href={facebook.startsWith('http') ? facebook : `https://facebook.com/${facebook}`}
+              target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-900/20 border border-blue-700/40 text-sm font-semibold text-blue-400 hover:bg-blue-700 hover:text-white transition-colors">
+              👥 Facebook
             </a>
           )}
           {email && (
             <a href={`mailto:${email}`}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-blue/10 border border-brand-blue/30 text-sm font-semibold text-brand-blue hover:bg-brand-blue hover:text-white transition-colors">
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-blue/10 border border-brand-blue/30 text-sm font-semibold text-brand-blue hover:bg-brand-blue hover:text-white transition-colors">
               ✉️ {email}
             </a>
           )}
