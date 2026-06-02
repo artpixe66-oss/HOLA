@@ -122,6 +122,31 @@ function GeneratorContent() {
         </button>
       </div>
 
+      {/* Contact rapide — toujours visible */}
+      {(phone || email) && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {phone && (
+            <a href={`tel:${phone}`}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-900/20 border border-emerald-700/40 text-sm font-semibold text-emerald-400 hover:bg-emerald-700 hover:text-white transition-colors">
+              📞 {phone}
+            </a>
+          )}
+          {phone && (
+            <a href={`https://wa.me/${phone.replace(/\s/g,'').replace(/^0/,'33').replace(/^\+/,'')}`}
+              target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-sm font-semibold text-[#25D366] hover:bg-[#25D366] hover:text-white transition-colors">
+              💬 WhatsApp
+            </a>
+          )}
+          {email && (
+            <a href={`mailto:${email}`}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-blue/10 border border-brand-blue/30 text-sm font-semibold text-brand-blue hover:bg-brand-blue hover:text-white transition-colors">
+              ✉️ {email}
+            </a>
+          )}
+        </div>
+      )}
+
       {/* Tabs */}
       {(result || script) && (
         <>
