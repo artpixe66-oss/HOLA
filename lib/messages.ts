@@ -87,132 +87,78 @@ export interface PhoneScriptStep {
 }
 
 const INTRO: Record<ProspectType, string> = {
-  producteur: `Bonjour, je m'appelle Kyllian, j'ai fondé HelpMe — une boîte que j'ai montée pour aider les producteurs et TPE de la région à être mieux visibles sur internet. Je vous contacte car j'ai vu {company} et j'ai trouvé votre projet vraiment intéressant. C'est bien {name} que j'ai en ligne ?`,
-  'commerçant': `Bonjour, c'est Kyllian, je suis le fondateur de HelpMe — j'aide les commerçants et TPE de la région à se développer sur le digital. Je souhaitais échanger avec la personne qui gère {company} à {city}. C'est bien vous ?`,
-  artisan: `Bonjour, je m'appelle Kyllian, j'ai créé HelpMe pour accompagner les artisans comme vous à être mieux trouvés sur Google. Je voulais parler avec {name} de {company} — c'est bien vous ?`,
+  producteur: `Bonjour, c'est Kyllian, je suis du nord de Toulouse, je travaille avec des producteurs et petites structures locales sur la partie digitale. Je vous appelle car je suis tombé sur {company} et ça m'a vraiment parlé. C'est bien {name} que j'ai en ligne ?`,
+  'commerçant': `Bonjour, c'est Kyllian, je suis du nord de Toulouse. Je travaille avec des commerçants et TPE locaux sur tout ce qui touche au digital. Je vous appelle car j'ai vu {company} et j'ai trouvé ça vraiment bien. C'est vous qui gérez ?`,
+  artisan: `Bonjour, c'est Kyllian, je suis du nord de Toulouse. J'accompagne des artisans et TPE de la région sur la partie digitale. Je vous appelle car j'ai vu le travail de {company} et ça m'a vraiment impressionné. C'est bien {name} ?`,
 };
 
 const ACCROCHE: Record<ProspectType, string> = {
-  producteur: `Super ! Je vous appelle car beaucoup de vos clients potentiels cherchent des producteurs locaux directement sur Google, et j'ai regardé votre présence en ligne — il y a clairement des opportunités pour {company}. J'aurais besoin de 2 minutes pour vous poser quelques questions, vous avez un instant ?`,
-  'commerçant': `Parfait ! Je vous appelle car on voit que les commerces à {city} qui ont une bonne présence en ligne font jusqu'à 40% de visites en plus. J'ai regardé rapidement {company} et il y a des choses simples à mettre en place. Vous avez 2 minutes ?`,
-  artisan: `Super ! Je vous contacte car on voit que de nombreux clients cherchent des artisans sur Google avant d'appeler, et la plupart des artisans à {city} ne sont pas encore bien positionnés. C'est une vraie opportunité pour {company}. Vous avez 2 minutes ?`,
-};
-
-const DECOUVERTE: Record<ProspectType, string> = {
-  producteur: `Quelques questions rapides :
-→ "Est-ce que vos clients vous trouvent facilement sur internet aujourd'hui ?"
-→ "Vous avez une fiche Google Business ? Elle est à jour avec vos horaires et produits ?"
-→ "Est-ce que vous êtes présent sur Instagram ou Facebook pour montrer votre production ?"
-→ "D'où viennent principalement vos nouveaux clients en ce moment ?"
-
-[ Écoutez attentivement et notez les manques. ]`,
-  'commerçant': `Quelques questions rapides :
-→ "Si un nouveau client cherche '{category}' sur Google à {city}, il vous trouve facilement ?"
-→ "Vous avez des avis Google ? Combien à peu près ?"
-→ "Vous avez un site internet ou une page Facebook active ?"
-→ "Aujourd'hui vos nouveaux clients, ils vous trouvent comment ?"
-
-[ Chaque "non" ou "je sais pas" est un levier à activer. ]`,
-  artisan: `Quelques questions rapides :
-→ "Quand quelqu'un cherche un {category} à {city} sur Google, vous apparaissez ?"
-→ "Vous avez une fiche Google Business ? Elle a des avis clients ?"
-→ "Est-ce que vous avez un site ou une page Facebook ?"
-→ "Comment vos clients vous trouvent en ce moment — bouche à oreille surtout ?"
-
-[ Notez les points de faiblesse pour personnaliser votre pitch. ]`,
-};
-
-const PITCH: Record<ProspectType, string> = {
-  producteur: `"Très bien, justement c'est exactement ce qu'on règle chez HelpMe. On a 3 formules adaptées aux producteurs :
-
-🟢 Pack Essentiel — On optimise votre fiche Google, on fait des photos pro de vos produits et on vous positionne dans les recherches locales. À partir de 149€/mois.
-
-🔵 Pack Pro — En plus, on gère vos réseaux sociaux (Instagram & Facebook), on crée du contenu sur votre production chaque mois. À partir de 249€/mois.
-
-⭐ Pack Premium — Le tout + un site vitrine, de la pub Google Ads et un bilan mensuel. À partir de 399€/mois.
-
-Tout est clé en main, vous n'avez rien à gérer. Nos clients producteurs voient leurs premières demandes en ligne en moins d'un mois."`,
-  'commerçant': `"C'est exactement pour ça que je vous appelle. Chez HelpMe on a des packs conçus pour les commerçants :
-
-🟢 Pack Essentiel — Fiche Google optimisée, photos pro de votre commerce, référencement local. À partir de 149€/mois.
-
-🔵 Pack Pro — En plus on gère vos réseaux sociaux et on crée du contenu mensuel pour votre enseigne. À partir de 249€/mois.
-
-⭐ Pack Premium — Le tout + site vitrine, pub Google Ads et bilan mensuel. À partir de 399€/mois.
-
-On travaille déjà avec des commerçants à {city}, ils ont vu +40% de trafic en boutique. Et vous ne gérez rien, on s'occupe de tout."`,
-  artisan: `"C'est exactement ce qu'on résout. Chez HelpMe on accompagne les artisans comme vous :
-
-🟢 Pack Essentiel — Fiche Google complète avec photos pro, positionnement dans les recherches de votre zone. À partir de 149€/mois.
-
-🔵 Pack Pro — En plus, gestion de vos réseaux sociaux et publications mensuelles de vos réalisations. À partir de 249€/mois.
-
-⭐ Pack Premium — Le tout + site vitrine pour présenter vos chantiers, pub Google Ads ciblée, bilan mensuel. À partir de 399€/mois.
-
-Résultat : vos clients vous trouvent avant vos concurrents. Et vous n'avez rien à gérer côté communication."`,
+  producteur: `Super ! Je vous appelle juste pour voir si on pourrait se retrouver 20-30 minutes, en physique, sur votre site ou autour de Toulouse. Pas pour vous vendre quoi que ce soit — juste pour vous montrer ce que je fais concrètement et voir si ça peut vous servir. Vous seriez dispo cette semaine ou la semaine prochaine ?`,
+  'commerçant': `Parfait ! Je vous appelle simplement pour qu'on se retrouve en physique, 20-30 minutes, chez vous ou autour de Toulouse. L'idée c'est juste de se rencontrer, voir ce que vous faites de près et vous montrer comment je travaille. Vous auriez un créneau cette semaine ?`,
+  artisan: `Super ! Je vous contacte juste pour qu'on puisse se voir, 20-30 minutes, sur votre atelier ou quelque part autour de Toulouse. Je préfère toujours rencontrer les gens avant tout — voir votre travail en vrai, vous expliquer ce que je fais. Vous seriez dispo cette semaine ?`,
 };
 
 const OBJECTIONS: Record<ProspectType, string> = {
-  producteur: `Objections fréquentes :
+  producteur: `Objections courantes :
 
-💬 "C'est trop cher"
-→ "Je comprends. Dites-moi, si vous gagnez 3 ou 4 nouveaux clients réguliers grâce à ça, c'est rentabilisé en combien de temps ? On commence par le Pack Essentiel à 149€, sans engagement."
+💬 "C'est quoi exactement ce que vous faites ?"
+→ "Je préfère vous le montrer en vrai plutôt que l'expliquer au téléphone — c'est beaucoup plus parlant. C'est pour ça que je vous propose qu'on se voie."
 
-💬 "J'ai pas le temps de m'en occuper"
-→ "C'est justement pourquoi on existe — vous n'avez rien à faire. On gère tout, vous vous occupez de votre production."
-
-💬 "Je passe déjà par le bouche-à-oreille, ça suffit"
-→ "Le bouche-à-oreille c'est excellent, mais vos clients en parlent aussi sur Google. Si votre fiche n'est pas là, vous ratez ces recommandations numériques."
+💬 "J'ai pas trop le temps"
+→ "Je vous prends 20 minutes max, pas plus. Et je me déplace chez vous si c'est plus simple."
 
 💬 "J'ai déjà quelqu'un pour ça"
-→ "D'accord, et est-ce que vous êtes satisfait des résultats ? Je vous propose juste un audit gratuit pour voir s'il y a des points à améliorer, sans engagement."`,
-  'commerçant': `Objections fréquentes :
+→ "Pas de souci, je viens juste en curieux. Ça peut toujours être intéressant de voir ce qui se fait."
 
-💬 "C'est trop cher"
-→ "Je comprends. Si on vous amène 5 nouveaux clients par mois grâce à Google, ça couvre largement les 149€. Et on peut commencer petit avec le Pack Essentiel sans engagement."
+💬 "Envoyez-moi un email d'abord"
+→ "Je peux le faire, mais honnêtement une rencontre de 20 minutes vaut mieux que 10 emails. Je me déplace, c'est moi qui me bouge."`,
+  'commerçant': `Objections courantes :
 
-💬 "J'ai pas de temps"
-→ "Justement — vous ne faites rien. On gère tout de A à Z : photos, rédaction, publication. Votre seul rôle c'est de valider ce qu'on produit."
+💬 "C'est quoi exactement ?"
+→ "Je préfère vous montrer en vrai plutôt qu'expliquer au téléphone. Juste 20 minutes chez vous, c'est tout."
 
-💬 "Internet c'est pas pour moi"
-→ "Vos clients sont sur internet, même s'ils ne vous le disent pas. 80% des gens regardent Google avant d'entrer dans un magasin. Si vous n'êtes pas là, c'est votre concurrent qu'ils appellent."
+💬 "J'ai pas le temps"
+→ "20 minutes, je me déplace, et on voit ensemble ce que ça peut donner pour {company}. Vous choisissez le créneau."
 
-💬 "Je réfléchis"
-→ "Bien sûr ! Pour ne pas partir dans le vide, on vous propose un audit gratuit de votre visibilité actuelle — ça prend 20 minutes et vous repartez avec des recommandations concrètes."`,
-  artisan: `Objections fréquentes :
+💬 "J'ai déjà quelqu'un"
+→ "C'est bien ! Je viens juste en curieux, même pour voir ce que vous avez mis en place. Ça m'intéresse aussi."
 
-💬 "J'ai déjà assez de travail"
-→ "C'est une excellente position ! Mais quand votre carnet se libère, vos clients seront là grâce à votre visibilité Google. Mieux vaut anticiper que chercher en urgence."
+💬 "Envoyez un devis d'abord"
+→ "Je travaille pas comme ça — je préfère qu'on se voie, comprendre votre situation, et après je vous fais quelque chose de personnalisé."`,
+  artisan: `Objections courantes :
 
-💬 "C'est trop cher"
-→ "Un seul chantier trouvé via Google couvre souvent plusieurs mois d'abonnement. Et on commence à 149€ sans engagement."
+💬 "Vous faites quoi exactement ?"
+→ "Je préfère vous montrer en vrai — 20 minutes chez vous et c'est beaucoup plus clair qu'une explication au téléphone."
 
-💬 "J'ai pas de site, c'est compliqué"
-→ "Pas du tout — on part de zéro avec vous. La fiche Google seule suffit pour commencer à être trouvé."
+💬 "J'ai pas le temps"
+→ "Je me déplace, 20 minutes max. Vous dites quand, je m'adapte."
 
-💬 "Je vais en parler à ma femme / mon associé"
-→ "Bien sûr ! Et pour vous aider à en parler, je vous envoie notre présentation par email. Je peux aussi faire un audit gratuit pour montrer concrètement ce qui manque."`,
+💬 "J'ai pas besoin de ça"
+→ "C'est possible ! Mais je viens juste voir votre travail de toute façon, ça m'intéresse vraiment. Et après on voit ensemble si ça a du sens."
+
+💬 "Envoyez-moi quelque chose par écrit"
+→ "Je préfère d'abord vous voir pour comprendre ce que vous faites. Comme ça ce que je vous envoie sera vraiment adapté à vous."`,
 };
 
 const CLOSING: Record<ProspectType, string> = {
-  producteur: `"Très bien {name}, ce que je vous propose c'est qu'on se retrouve 20 minutes — en visio ou à {city} si vous préférez — pour vous montrer concrètement ce qu'on ferait pour {company}. C'est gratuit et sans engagement.
+  producteur: `"Parfait {name} ! Vous seriez plutôt dispo en début de semaine ou en fin de semaine ?
+[ Attendre la réponse — proposer deux créneaux précis ]
 
-Est-ce que vous seriez disponible cette semaine, plutôt en début de semaine ou en fin de semaine ?
-[ Proposez deux créneaux précis, ex: mardi à 10h ou jeudi à 14h ]
+Parfait, on se retrouve le [jour] à [heure] chez vous à {city}. Je confirme ça par SMS.
 
-Parfait ! Je vous envoie une confirmation par SMS avec le lien de visio. Et si jamais vous avez des questions avant, mon numéro c'est le [votre numéro]. À très vite {name} !"`,
-  'commerçant': `"Parfait {name} ! Ce que je vous propose c'est un audit gratuit de 20 minutes — je regarde votre présence en ligne en direct avec vous et je vous montre ce qu'on peut améliorer. Sans engagement.
+À très vite !"`,
+  'commerçant': `"Super {name} ! Vous préférez en semaine ou le week-end ?
+[ Attendre la réponse ]
 
-Vous seriez dispo cette semaine ? Plutôt le matin ou l'après-midi ?
-[ Proposez deux créneaux précis ]
+Nickel, je passe chez {company} le [jour] à [heure]. Je vous envoie un SMS pour confirmer.
 
-Super ! Je vous confirme ça par SMS. Et n'hésitez pas à m'appeler directement si vous avez des questions : [votre numéro]. À très vite !"`,
-  artisan: `"Super {name} ! Je vous propose un audit gratuit de 20 minutes par téléphone ou en visio — on regarde ensemble votre visibilité Google et je vous explique ce qu'on ferait concrètement pour {company}. Sans aucun engagement.
+À très vite !"`,
+  artisan: `"Parfait ! Je peux passer à {city} — vous seriez plutôt dispo le matin ou l'après-midi ?
+[ Attendre la réponse ]
 
-Cette semaine vous êtes disponible ? Le matin ou l'après-midi ?
-[ Proposez deux créneaux précis ]
+C'est noté, le [jour] à [heure]. Je confirme par SMS.
 
-Parfait ! Je vous envoie la confirmation par SMS. Mon numéro direct c'est [votre numéro] si besoin. À bientôt {name} !"`,
+À bientôt {name} !"`,
 };
 
 export function generatePhoneScript(
@@ -238,47 +184,31 @@ export function generatePhoneScript(
       icon: '👋',
       color: 'border-blue-500/40 bg-blue-500/5',
       content: sub(INTRO[t]),
-      tip: 'Souriez en parlant — ça s\'entend au téléphone. Attendez confirmation avant de continuer.',
+      tip: 'Souriez en parlant, ça s\'entend. Attendez qu\'ils confirment leur identité avant de continuer.',
     },
     {
       id: 'accroche',
-      label: 'Accroche',
+      label: 'Objectif : RDV physique',
       icon: '🎯',
       color: 'border-purple-500/40 bg-purple-500/5',
       content: sub(ACCROCHE[t]),
-      tip: 'Si la personne est pressée : "Je peux vous rappeler quand vous voulez, quand est-ce le mieux ?"',
-    },
-    {
-      id: 'decouverte',
-      label: 'Découverte des besoins',
-      icon: '🔍',
-      color: 'border-yellow-500/40 bg-yellow-500/5',
-      content: sub(DECOUVERTE[t]),
-      tip: 'Écoutez plus que vous ne parlez. Chaque "non" est une opportunité.',
-    },
-    {
-      id: 'pitch',
-      label: 'Présentation de l\'offre',
-      icon: '💼',
-      color: 'border-green-500/40 bg-green-500/5',
-      content: sub(PITCH[t]),
-      tip: 'Adaptez le pack selon ce que vous avez découvert. Ne proposez pas tout d\'un coup.',
+      tip: 'Allez droit au but — vous voulez juste vous rencontrer. Pas de pitch au téléphone.',
     },
     {
       id: 'objections',
-      label: 'Gestion des objections',
+      label: 'Si ça résiste',
       icon: '🛡️',
       color: 'border-orange-500/40 bg-orange-500/5',
       content: sub(OBJECTIONS[t]),
-      tip: 'Ne défendez jamais, reformulez et retournez avec une question ou un bénéfice.',
+      tip: 'Ne défendez jamais. Ramenez toujours à la rencontre physique, courte et sans pression.',
     },
     {
       id: 'closing',
-      label: 'Prise de RDV',
+      label: 'Fixer le créneau',
       icon: '📅',
       color: 'border-brand-blue/40 bg-brand-blue/5',
       content: sub(CLOSING[t]),
-      tip: 'Proposez TOUJOURS deux créneaux précis — jamais "quand vous voulez".',
+      tip: 'Proposez deux créneaux précis. Une fois le oui obtenu, raccrochez vite — avant qu\'ils changent d\'avis !',
     },
   ];
 }
