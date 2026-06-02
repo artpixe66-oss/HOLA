@@ -70,9 +70,9 @@ Fondateur — HelpMe`,
 };
 
 const SMS_TEMPLATES: Record<ProspectType, string> = {
-  producteur: `Bonjour {name}, c'est Kyllian, fondateur de HelpMe. Je travaille avec des acteurs locaux toulousains et je cherche des projets comme le vôtre à mettre en avant sur Google et les réseaux. Dispo pour un appel rapide ? 📞`,
-  'commerçant': `Bonjour {name}, c'est Kyllian de HelpMe — je travaille déjà avec des brasseurs, bars à cocktails de Toulouse et je cherche de nouveaux secteurs. Audit digital gratuit pour {company} ? Répondez OUI 😊`,
-  artisan: `Bonjour {name}, c'est Kyllian, fondateur de HelpMe. Je mets en avant les artisans toulousains sur Google et les réseaux. Votre travail mérite d'être trouvé. Audit gratuit offert — dispo 10 min ? 📞`,
+  producteur: `Bonjour {name}, c'est Kyllian de HelpMe. Je fais des audits digitaux gratuits chez les producteurs locaux — je me déplace, 20 min, sans engagement. Ça vous intéresse ? 📞`,
+  'commerçant': `Bonjour {name}, c'est Kyllian de HelpMe. Je propose des audits gratuits pour les commerçants de la région — je viens chez vous, 20 min, pour voir ce qu'on peut améliorer sur votre visibilité. Dispo cette semaine ? 😊`,
+  artisan: `Bonjour {name}, c'est Kyllian de HelpMe. J'offre des audits digitaux gratuits aux artisans de la région — je me déplace chez vous, 20 min, sans engagement. Ça vous intéresse ? 📞`,
 };
 
 // ── Script téléphonique ────────────────────────────────────────────────────────
@@ -93,70 +93,70 @@ const INTRO: Record<ProspectType, string> = {
 };
 
 const ACCROCHE: Record<ProspectType, string> = {
-  producteur: `Super ! Je vous appelle juste pour voir si on pourrait se retrouver 20-30 minutes, en physique, sur votre site ou autour de Toulouse. Pas pour vous vendre quoi que ce soit — juste pour vous montrer ce que je fais concrètement et voir si ça peut vous servir. Vous seriez dispo cette semaine ou la semaine prochaine ?`,
-  'commerçant': `Parfait ! Je vous appelle simplement pour qu'on se retrouve en physique, 20-30 minutes, chez vous ou autour de Toulouse. L'idée c'est juste de se rencontrer, voir ce que vous faites de près et vous montrer comment je travaille. Vous auriez un créneau cette semaine ?`,
-  artisan: `Super ! Je vous contacte juste pour qu'on puisse se voir, 20-30 minutes, sur votre atelier ou quelque part autour de Toulouse. Je préfère toujours rencontrer les gens avant tout — voir votre travail en vrai, vous expliquer ce que je fais. Vous seriez dispo cette semaine ?`,
+  producteur: `Super ! Je vous appelle pour vous proposer un audit gratuit — je viens chez vous, on regarde ensemble votre présence en ligne en 20-30 minutes et je vous dis exactement ce qui manque. Pas d'engagement, pas de vente, juste un regard neuf sur votre visibilité. Vous seriez dispo cette semaine ou la semaine prochaine ?`,
+  'commerçant': `Parfait ! Je vous propose un audit gratuit — je passe chez vous, 20-30 minutes, on regarde ensemble votre présence sur Google, les réseaux, Maps... et je vous dis ce qu'on peut améliorer. C'est gratuit, sans engagement. Vous auriez un créneau cette semaine ?`,
+  artisan: `Super ! Je vous propose un audit gratuit — je me déplace chez vous ou sur votre chantier, 20-30 minutes, on regarde ensemble votre visibilité en ligne et je vous dis concrètement ce qui peut changer. Zéro engagement. Vous seriez dispo cette semaine ?`,
 };
 
 const OBJECTIONS: Record<ProspectType, string> = {
   producteur: `Objections courantes :
 
-💬 "C'est quoi exactement ce que vous faites ?"
-→ "Je préfère vous le montrer en vrai plutôt que l'expliquer au téléphone — c'est beaucoup plus parlant. C'est pour ça que je vous propose qu'on se voie."
+💬 "C'est quoi exactement cet audit ?"
+→ "Je viens chez vous, on regarde votre fiche Google, vos réseaux, comment on vous trouve — et je vous dis ce qui manque. Ça prend 20 minutes, c'est gratuit et sans aucune obligation."
 
 💬 "J'ai pas trop le temps"
-→ "Je vous prends 20 minutes max, pas plus. Et je me déplace chez vous si c'est plus simple."
+→ "Je me déplace chez vous, 20 minutes max. Vous choisissez le créneau."
 
 💬 "J'ai déjà quelqu'un pour ça"
-→ "Pas de souci, je viens juste en curieux. Ça peut toujours être intéressant de voir ce qui se fait."
+→ "Pas de souci ! L'audit est gratuit de toute façon — même pour avoir un deuxième avis, ça peut être utile."
 
 💬 "Envoyez-moi un email d'abord"
-→ "Je peux le faire, mais honnêtement une rencontre de 20 minutes vaut mieux que 10 emails. Je me déplace, c'est moi qui me bouge."`,
+→ "Je préfère d'abord vous rencontrer — l'audit en vrai est beaucoup plus utile qu'un email générique. Et c'est moi qui me déplace."`,
   'commerçant': `Objections courantes :
 
-💬 "C'est quoi exactement ?"
-→ "Je préfère vous montrer en vrai plutôt qu'expliquer au téléphone. Juste 20 minutes chez vous, c'est tout."
+💬 "C'est quoi cet audit ?"
+→ "Je viens chez vous, 20 minutes, on regarde ensemble comment vous apparaissez sur Google et les réseaux. Je vous dis ce qui manque. C'est gratuit, sans aucun engagement."
 
 💬 "J'ai pas le temps"
-→ "20 minutes, je me déplace, et on voit ensemble ce que ça peut donner pour {company}. Vous choisissez le créneau."
+→ "20 minutes, je me déplace, vous choisissez le créneau. Même un samedi matin si c'est plus simple."
 
 💬 "J'ai déjà quelqu'un"
-→ "C'est bien ! Je viens juste en curieux, même pour voir ce que vous avez mis en place. Ça m'intéresse aussi."
+→ "C'est bien ! L'audit est gratuit de toute façon, même pour avoir un autre regard sur ce qui est déjà en place."
 
 💬 "Envoyez un devis d'abord"
-→ "Je travaille pas comme ça — je préfère qu'on se voie, comprendre votre situation, et après je vous fais quelque chose de personnalisé."`,
+→ "L'audit c'est justement pour ça — sans le voir en vrai, je ne peux pas vous faire quelque chose de sérieux. Et c'est gratuit."`,
   artisan: `Objections courantes :
 
-💬 "Vous faites quoi exactement ?"
-→ "Je préfère vous montrer en vrai — 20 minutes chez vous et c'est beaucoup plus clair qu'une explication au téléphone."
+💬 "C'est quoi un audit ?"
+→ "Je viens vous voir, 20 minutes, on regarde comment vous apparaissez sur Google quand quelqu'un cherche votre métier dans la région. Je vous dis ce qu'on peut améliorer. Gratuit, sans engagement."
 
 💬 "J'ai pas le temps"
-→ "Je me déplace, 20 minutes max. Vous dites quand, je m'adapte."
+→ "Je me déplace chez vous, 20 minutes. Vous dites quand, je m'adapte."
 
 💬 "J'ai pas besoin de ça"
-→ "C'est possible ! Mais je viens juste voir votre travail de toute façon, ça m'intéresse vraiment. Et après on voit ensemble si ça a du sens."
+→ "C'est possible ! Mais l'audit est gratuit — au pire vous saurez exactement où vous en êtes, et c'est déjà utile."
 
-💬 "Envoyez-moi quelque chose par écrit"
-→ "Je préfère d'abord vous voir pour comprendre ce que vous faites. Comme ça ce que je vous envoie sera vraiment adapté à vous."`,
+💬 "Envoyez quelque chose par écrit"
+→ "Je préfère d'abord voir votre situation en vrai pour que ce que je vous envoie soit vraiment pertinent. Et ça ne vous coûte rien."`,
 };
 
 const CLOSING: Record<ProspectType, string> = {
   producteur: `"Parfait {name} ! Vous seriez plutôt dispo en début de semaine ou en fin de semaine ?
 [ Attendre la réponse — proposer deux créneaux précis ]
 
-Parfait, on se retrouve le [jour] à [heure] chez vous à {city}. Je confirme ça par SMS.
+Nickel, je viens faire l'audit le [jour] à [heure] chez vous à {city}. Je confirme par SMS.
 
 À très vite !"`,
   'commerçant': `"Super {name} ! Vous préférez en semaine ou le week-end ?
 [ Attendre la réponse ]
 
-Nickel, je passe chez {company} le [jour] à [heure]. Je vous envoie un SMS pour confirmer.
+C'est noté, je passe faire l'audit chez {company} le [jour] à [heure]. SMS de confirmation dans la foulée.
 
 À très vite !"`,
-  artisan: `"Parfait ! Je peux passer à {city} — vous seriez plutôt dispo le matin ou l'après-midi ?
+  artisan: `"Parfait ! Je peux venir à {city} — vous seriez plutôt dispo le matin ou l'après-midi ?
 [ Attendre la réponse ]
 
-C'est noté, le [jour] à [heure]. Je confirme par SMS.
+C'est noté, audit le [jour] à [heure]. Je confirme par SMS.
 
 À bientôt {name} !"`,
 };
@@ -226,7 +226,9 @@ Je suis tombé sur {company} et franchement ça m'a parlé tout de suite. C'est 
 
 Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
 
-Vous seriez dispo 5 min cette semaine pour un appel ou même se rencontrer ? Juste pour voir ce qu'on peut faire ensemble 🙌
+Je vous propose un audit gratuit, je me déplace chez vous, 20-30 min, pour regarder ensemble votre visibilité en ligne et vous dire exactement ce qui manque. Zéro engagement.
+
+Vous seriez dispo cette semaine ? 🙌
 
 Kyllian
 HelpMe`,
@@ -239,9 +241,9 @@ Je travaille déjà avec des acteurs de la scène toulousaine, brasseurs artisan
 
 Je suis tombé sur {company} et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
 
-Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
+Je vous propose un audit gratuit, je me déplace chez vous, 20-30 min, pour regarder ensemble votre visibilité en ligne et vous dire exactement ce qui manque. Zéro engagement.
 
-Vous seriez dispo 5 min cette semaine pour un appel ou même se rencontrer ? Juste pour voir ce qu'on peut faire ensemble 🙌
+Vous seriez dispo cette semaine ? 🙌
 
 Kyllian
 HelpMe`,
@@ -254,9 +256,9 @@ Je travaille déjà avec des acteurs de la scène toulousaine, brasseurs artisan
 
 Je suis tombé sur {company} et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
 
-Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
+Je vous propose un audit gratuit, je me déplace chez vous, 20-30 min, pour regarder ensemble votre visibilité en ligne et vous dire exactement ce qui manque. Zéro engagement.
 
-Vous seriez dispo 5 min cette semaine pour un appel ou même se rencontrer ? Juste pour voir ce qu'on peut faire ensemble 🙌
+Vous seriez dispo cette semaine ? 🙌
 
 Kyllian
 HelpMe`,
