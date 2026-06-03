@@ -12,8 +12,65 @@ export interface BodaccAnnonce {
   formeJuridique: string;
   dirigeant: string;
   siren: string;
-  bodaccUrl: string;
   papersUrl: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extract(record: Record<string, any>): BodaccAnnonce {
+  // BODACC nested structure varies — dig into known paths
+  const depot = record.commercant || record.exploitant || record.personne_physique || record.personne_morale || {};
+  const adresse = depot.adresse || record.adresse || {};
+
+  const company =
+    record.nomcommercial ||
+    depot.denomination ||
+    depot.nom_commercial ||
+    `${depot.nom || ''} ${depot.prenom || ''}`.trim() ||
+    'Entreprise';
+
+  const activite =
+    record.activite ||
+    depot.activite ||
+    record.categorieactivite ||
+    '';
+
+  const ville =
+    adresse.ville ||
+    adresse.localite ||
+    record.ville ||
+    '';
+
+  const cp =
+    adresse.codepostal ||
+    adresse.code_postal ||
+    record.codepostal ||
+    '';
+
+  const forme =
+    depot.forme_juridique ||
+    record.formejuridique ||
+    depot.formejuridique ||
+    '';
+
+  const dirigeant =
+    `${depot.prenom || ''} ${depot.nom || ''}`.trim() ||
+    depot.representant ||
+    '';
+
+  const siren = record.siren || depot.siren || '';
+
+  return {
+    id: record.id || record.numeroannonce || Math.random().toString(36).slice(2),
+    company,
+    activite,
+    ville,
+    codePostal: cp,
+    dateParution: record.dateparution ? record.dateparution.split('T')[0] : '',
+    formeJuridique: forme,
+    dirigeant,
+    siren,
+    papersUrl: siren ? `https://www.pappers.fr/entreprise/${siren}` : '',
+  };
 }
 
 export async function GET(req: NextRequest) {
@@ -22,65 +79,41 @@ export async function GET(req: NextRequest) {
   const keyword = searchParams.get('keyword') || '';
   const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
 
-  // Build BODACC filter
-  const filters: string[] = ['typeavis="I"']; // I = Immatriculation (new business)
-  if (dept) filters.push(`codedepartement="${dept.padStart(2, '0')}"`);
-  if (keyword) filters.push(`activite LIKE "%${keyword}%"`);
+  // BODACC ODSQL filter
+  const filters: string[] = ['familleavis = "Immatriculation"'];
+  if (dept) {
+    const d = dept.padStart(2, '0');
+    filters.push(`departement_de_publication = "${d}"`);
+  }
+  if (keyword) {
+    filters.push(`activite LIKE "%${keyword}%"`);
+  }
 
   const params = new URLSearchParams({
     limit: String(limit),
     order_by: 'dateparution DESC',
     where: filters.join(' AND '),
-    select: 'id,dateparution,publicationavis,numeroannonce,registre,nomcommercial,ville,codepostal,activite,formejuridique,dirigeant,siren',
   });
 
-  try {
-    const resp = await fetch(
-      `https://bodacc-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/annonces-commerciales/records?${params}`,
-      {
-        headers: { Accept: 'application/json' },
-        signal: AbortSignal.timeout(15000),
-      }
-    );
+  const url = `https://bodacc-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/annonces-commerciales/records?${params}`;
 
-    if (!resp.ok) throw new Error(`BODACC ${resp.status}`);
+  try {
+    const resp = await fetch(url, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!resp.ok) {
+      const body = await resp.text();
+      throw new Error(`BODACC ${resp.status}: ${body.slice(0, 300)}`);
+    }
 
     const data = await resp.json() as {
-      results?: {
-        id?: string;
-        dateparution?: string;
-        nomcommercial?: string;
-        ville?: string;
-        codepostal?: string;
-        activite?: string;
-        formejuridique?: string;
-        dirigeant?: string;
-        siren?: string;
-        registre?: string;
-      }[];
+      results?: Record<string, unknown>[];
       total_count?: number;
     };
 
-    const results: BodaccAnnonce[] = (data.results || []).map(r => {
-      const siren = r.siren || '';
-      return {
-        id: r.id || siren || Math.random().toString(36).slice(2),
-        company: r.nomcommercial || 'Entreprise',
-        activite: r.activite || '',
-        ville: r.ville || '',
-        codePostal: r.codepostal || '',
-        dateParution: r.dateparution ? r.dateparution.split('T')[0] : '',
-        formeJuridique: r.formejuridique || '',
-        dirigeant: r.dirigeant || '',
-        siren,
-        bodaccUrl: siren
-          ? `https://www.bodacc.fr/pages/annonces-commerciales/?q.id=registre:${encodeURIComponent(r.registre || '')}`
-          : 'https://www.bodacc.fr/pages/annonces-commerciales/',
-        papersUrl: siren
-          ? `https://www.pappers.fr/entreprise/${siren}`
-          : '',
-      };
-    });
+    const results = (data.results || []).map(r => extract(r as Record<string, unknown>));
 
     return NextResponse.json({ results, total: data.total_count || results.length });
   } catch (e) {
