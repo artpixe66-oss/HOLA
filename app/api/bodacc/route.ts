@@ -85,15 +85,14 @@ export async function GET(req: NextRequest) {
     const d = dept.padStart(2, '0');
     filters.push(`numerodepartement = "${d}"`);
   }
-  if (keyword) {
-    filters.push(`activite LIKE "%${keyword}%"`);
-  }
 
   const params = new URLSearchParams({
     limit: String(limit),
     order_by: 'dateparution DESC',
     where: filters.join(' AND '),
   });
+  // keyword via full-text search (q param), not WHERE clause
+  if (keyword) params.set('q', keyword);
 
   const url = `https://bodacc-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/annonces-commerciales/records?${params}`;
 
