@@ -110,14 +110,31 @@ export default function ProspectsPage() {
     deleteProspect(id);
   }
 
+  function handleExport() {
+    const data = JSON.stringify(prospects, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `helpme-prospects-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setImportStatus('Import en cours...');
     try {
       const text = await file.text();
-      const rows = parseCSV(text);
-      if (rows.length === 0) { setImportStatus('Aucune ligne valide trouvée dans le CSV.'); return; }
+      let rows: EditState[];
+      if (file.name.endsWith('.json')) {
+        const parsed = JSON.parse(text) as EditState[];
+        rows = Array.isArray(parsed) ? parsed : [];
+      } else {
+        rows = parseCSV(text);
+      }
+      if (rows.length === 0) { setImportStatus('Aucune ligne valide trouvée.'); return; }
       const count = importProspects(rows);
       setImportStatus(`${count} prospects importés avec succès.`);
     } catch (err) {
@@ -134,9 +151,13 @@ export default function ProspectsPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">Prospects</h1>
         <div className="flex gap-3">
+          <button onClick={handleExport} disabled={prospects.length === 0}
+            className="px-4 py-2 rounded-lg border border-brand-border text-sm font-medium text-white hover:bg-brand-surface disabled:opacity-40 transition-colors">
+            ⬇ Exporter ({prospects.length})
+          </button>
           <label className="cursor-pointer px-4 py-2 rounded-lg border border-brand-border text-sm font-medium text-white hover:bg-brand-surface transition-colors">
             Importer CSV
-            <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleImport} />
+            <input ref={fileRef} type="file" accept=".csv,.json" className="hidden" onChange={handleImport} />
           </label>
           <button
             onClick={() => { setEditing({ ...EMPTY }); setShowForm(true); }}
