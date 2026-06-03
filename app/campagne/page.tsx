@@ -10,6 +10,7 @@ const STATUSES: ProspectStatus[] = ['À contacter', 'Contacté', 'Intéressé', 
 export default function CampagnePage() {
   const { prospects } = useProspects();
   const [filterStatus, setFilterStatus] = useState<ProspectStatus | ''>('À contacter');
+  const [filterType, setFilterType] = useState<ProspectType | ''>('');
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [queue, setQueue] = useState<{ id: string; name: string; company: string; phone: string; message: string }[] | null>(null);
   const [queueIndex, setQueueIndex] = useState(0);
@@ -19,8 +20,9 @@ export default function CampagnePage() {
 
   const filtered = useMemo(() => prospects.filter(p => {
     if (filterStatus && p.status !== filterStatus) return false;
+    if (filterType && p.type !== filterType) return false;
     return !!p.phone;
-  }), [prospects, filterStatus]);
+  }), [prospects, filterStatus, filterType]);
 
   function toggleAll() {
     setSelected(prev => prev.size === filtered.length ? new Set() : new Set(filtered.map(p => p.id)));
@@ -188,15 +190,21 @@ export default function CampagnePage() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3 mb-4 flex-wrap">
+      <div className="flex gap-3 mb-4 flex-wrap items-center">
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as ProspectStatus | '')}
           className="bg-brand-surface border border-brand-border text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue">
           <option value="">Tous les statuts</option>
           {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
-        <span className="text-xs text-brand-muted self-center">
+        <select value={filterType} onChange={e => setFilterType(e.target.value as ProspectType | '')}
+          className="bg-brand-surface border border-brand-border text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue">
+          <option value="">Tous les types</option>
+          <option value="commerçant">Commerçant</option>
+          <option value="producteur">Producteur</option>
+          <option value="artisan">Artisan</option>
+        </select>
+        <span className="text-xs text-brand-muted">
           {filtered.length} prospect{filtered.length !== 1 ? 's' : ''} avec numéro
-          {filterStatus ? ` — statut "${filterStatus}"` : ''}
         </span>
       </div>
 
