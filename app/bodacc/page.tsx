@@ -40,6 +40,8 @@ export default function BodaccPage() {
   const [error, setError] = useState('');
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [debugRaw, setDebugRaw] = useState<any>(null);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -59,9 +61,11 @@ export default function BodaccPage() {
       if (keyword) params.set('keyword', keyword);
 
       const res = await fetch(`/api/bodacc?${params}`);
-      const json = await res.json() as { results: BodaccAnnonce[]; total: number; error?: string };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const json = await res.json() as { results: BodaccAnnonce[]; total: number; error?: string; _debug?: any };
 
       if (json.error) throw new Error(json.error);
+      setDebugRaw(json._debug || null);
       setResults(json.results);
       setTotal(json.total);
     } catch (err) {
@@ -175,6 +179,16 @@ export default function BodaccPage() {
       {/* Error */}
       {error && (
         <div className="bg-red-900/20 border border-red-800 rounded-xl p-4 mb-4 text-red-400 text-sm">{error}</div>
+      )}
+
+      {/* Debug panel — temporary, shows raw API structure */}
+      {debugRaw && (
+        <details className="mb-4 bg-zinc-900 border border-zinc-700 rounded-xl p-4 text-xs text-zinc-300">
+          <summary className="cursor-pointer font-medium text-zinc-400 mb-2">🔧 Debug — champs bruts API (1er résultat)</summary>
+          <pre className="overflow-auto max-h-64 text-[11px] leading-relaxed whitespace-pre-wrap">
+            {JSON.stringify(debugRaw, null, 2)}
+          </pre>
+        </details>
       )}
 
       {/* Results */}
