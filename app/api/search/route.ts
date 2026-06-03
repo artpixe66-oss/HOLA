@@ -21,6 +21,7 @@ export interface SearchResult {
   qualificationScore: number;
   qualificationLabel: 'Très qualifié' | 'Qualifié' | 'Peu qualifié';
   type: 'producteur' | 'commercant' | 'artisan';
+  distanceKm: number | null;
 }
 
 const SMALL_BIZ_KEYWORDS = [
@@ -61,6 +62,15 @@ interface GooglePlace {
   userRatingCount?: number;
   addressComponents?: { longText: string; types: string[] }[];
   googleMapsUri?: string;
+  location?: { latitude: number; longitude: number };
+}
+
+function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 async function searchGooglePlaces(
@@ -79,7 +89,7 @@ async function searchGooglePlaces(
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
       'Referer': 'https://hola-murex.vercel.app',
-      'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents,places.googleMapsUri,nextPageToken',
+      'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents,places.googleMapsUri,places.location,nextPageToken',
     },
     body: JSON.stringify({
       textQuery: query,
@@ -114,7 +124,7 @@ async function searchGooglePlaces(
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
         'Referer': 'https://hola-murex.vercel.app',
-        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents,places.googleMapsUri,nextPageToken',
+        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents,places.googleMapsUri,places.location,nextPageToken',
       },
       body: JSON.stringify({
         textQuery: query,
@@ -154,6 +164,9 @@ async function searchGooglePlaces(
     const googleMapsUri = place.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + (place.formattedAddress || city))}`;
     const fbQuery = encodeURIComponent(`${name} ${detectedCity}`);
     const igQuery = encodeURIComponent(name.toLowerCase().replace(/\s+/g, ''));
+    const distanceKm = place.location
+      ? Math.round(haversineKm(lat, lon, place.location.latitude, place.location.longitude) * 10) / 10
+      : null;
 
     return {
       id: `google-${place.id}`,
@@ -174,6 +187,7 @@ async function searchGooglePlaces(
       qualificationScore: score,
       qualificationLabel: scoreToLabel(score),
       type,
+      distanceKm,
     } satisfies SearchResult;
   });
 }
@@ -291,7 +305,10 @@ const KEYWORD_TO_OSM: Record<string, { key: string; value: string }[]> = {
 interface OsmElement {
   type: string;
   id: number;
+  lat?: number;
+  lon?: number;
   tags?: Record<string, string>;
+  center?: { lat: number; lon: number };
 }
 
 async function geocodeCity(city: string): Promise<{ lat: number; lon: number }> {
@@ -387,6 +404,9 @@ async function searchOSM(
         qualificationScore: score,
         qualificationLabel: scoreToLabel(score),
         type,
+        distanceKm: (el.lat && el.lon)
+          ? Math.round(haversineKm(lat, lon, el.lat, el.lon) * 10) / 10
+          : (el.center ? Math.round(haversineKm(lat, lon, el.center.lat, el.center.lon) * 10) / 10 : null),
       } satisfies SearchResult;
     });
 }

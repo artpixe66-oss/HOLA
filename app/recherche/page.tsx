@@ -97,6 +97,7 @@ export default function RecherchePage() {
   const [showApolloKey, setShowApolloKey] = useState(false);
   const [apolloPage, setApolloPage] = useState(1);
   const [lastApolloParams, setLastApolloParams] = useState<{ keyword: string; city: string; type: string } | null>(null);
+  const [sortBy, setSortBy] = useState<'qualification' | 'distance'>('qualification');
 
   useEffect(() => {
     const saved = localStorage.getItem(GOOGLE_API_KEY_STORAGE) || '';
@@ -657,6 +658,21 @@ export default function RecherchePage() {
           {source === 'apollo' && results.length > 0 && (
             <span className="text-xs text-brand-muted">— Page {apolloPage}</span>
           )}
+          {results.length > 0 && (
+            <div className="flex items-center gap-1 ml-auto">
+              <span className="text-xs text-brand-muted">Trier :</span>
+              <button
+                onClick={() => setSortBy('qualification')}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${sortBy === 'qualification' ? 'bg-brand-blue border-brand-blue text-white' : 'border-brand-border text-brand-muted hover:text-white'}`}>
+                ⭐ Qualification
+              </button>
+              <button
+                onClick={() => setSortBy('distance')}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${sortBy === 'distance' ? 'bg-brand-blue border-brand-blue text-white' : 'border-brand-border text-brand-muted hover:text-white'}`}>
+                📍 Distance
+              </button>
+            </div>
+          )}
           {results.length > 0 && selected.size > 0 && (
             <button
               onClick={handleImport}
@@ -692,7 +708,14 @@ export default function RecherchePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-brand-border">
-              {results.map(r => (
+              {[...results].sort((a, b) => {
+                if (sortBy === 'distance') {
+                  if (a.distanceKm === null) return 1;
+                  if (b.distanceKm === null) return -1;
+                  return a.distanceKm - b.distanceKm;
+                }
+                return b.qualificationScore - a.qualificationScore;
+              }).map(r => (
                 <tr
                   key={r.id}
                   className={`cursor-pointer transition-colors ${selected.has(r.id) ? 'bg-brand-blue/10' : 'hover:bg-brand-bg/60'}`}
@@ -713,7 +736,12 @@ export default function RecherchePage() {
                       <div className="text-xs text-brand-muted mt-0.5">{r.address}</div>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-brand-muted">{r.city}</td>
+                  <td className="px-4 py-3 text-brand-muted">
+                    <div>{r.city}</div>
+                    {r.distanceKm !== null && (
+                      <div className="text-xs text-brand-muted/60">{r.distanceKm} km</div>
+                    )}
+                  </td>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                     {/* Email — shown if available (Apollo) */}
                     {r.email && (

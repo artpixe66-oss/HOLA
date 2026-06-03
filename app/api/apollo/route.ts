@@ -126,6 +126,7 @@ export async function GET(request: NextRequest) {
         qualificationScore: score,
         qualificationLabel: scoreToLabel(score),
         type,
+        distanceKm: null,
       } satisfies SearchResult;
     });
 
