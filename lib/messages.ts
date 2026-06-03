@@ -114,9 +114,27 @@ Merci. Aujourd'hui, vous avez déjà quelqu'un qui vous accompagne sur votre vis
 };
 
 const ACCROCHE: Record<ProspectType, string> = {
-  producteur: `Super ! Je vous appelle pour vous proposer un audit gratuit — je viens chez vous, on regarde ensemble votre présence en ligne en 20-30 minutes et je vous dis exactement ce qui manque. Pas d'engagement, pas de vente, juste un regard neuf sur votre visibilité. Vous seriez dispo cette semaine ou la semaine prochaine ?`,
-  'commerçant': `Parfait ! Je vous propose un audit gratuit — je passe chez vous, 20-30 minutes, on regarde ensemble votre présence sur Google, les réseaux, Maps... et je vous dis ce qu'on peut améliorer. C'est gratuit, sans engagement. Vous auriez un créneau cette semaine ?`,
-  artisan: `Super ! Je vous propose un audit gratuit — je me déplace chez vous ou sur votre chantier, 20-30 minutes, on regarde ensemble votre visibilité en ligne et je vous dis concrètement ce qui peut changer. Zéro engagement. Vous seriez dispo cette semaine ?`,
+  producteur: `Super, merci. En fait, je voulais simplement vous proposer de faire gratuitement un petit point sur votre visibilité en ligne : votre fiche Google, vos réseaux sociaux et votre site internet, si vous en avez un.
+
+Je peux passer vous voir une dizaine de minutes, regarder avec vous ce qui est déjà en place et voir comment on pourrait développer votre visibilité dans le secteur.
+
+C'est sans engagement : vous gardez les conseils, et si ensuite vous souhaitez qu'on vous aide à mettre certaines choses en place, on pourra en reparler tranquillement.
+
+Vous seriez disponible cette semaine ou la semaine prochaine ?`,
+  'commerçant': `Super, merci. En fait, je voulais simplement vous proposer de faire gratuitement un petit point sur votre visibilité en ligne : votre fiche Google, vos réseaux sociaux et votre site internet, si vous en avez un.
+
+Je peux passer vous voir une dizaine de minutes, regarder avec vous ce qui est déjà en place et voir comment on pourrait développer votre visibilité dans le secteur.
+
+C'est sans engagement : vous gardez les conseils, et si ensuite vous souhaitez qu'on vous aide à mettre certaines choses en place, on pourra en reparler tranquillement.
+
+Vous auriez un créneau cette semaine ?`,
+  artisan: `Super, merci. En fait, je voulais simplement vous proposer de faire gratuitement un petit point sur votre visibilité en ligne : votre fiche Google, vos réseaux sociaux et votre site internet, si vous en avez un.
+
+Je peux passer vous voir une dizaine de minutes, regarder avec vous ce qui est déjà en place et voir comment on pourrait développer votre visibilité dans le secteur.
+
+C'est sans engagement : vous gardez les conseils, et si ensuite vous souhaitez qu'on vous aide à mettre certaines choses en place, on pourra en reparler tranquillement.
+
+Vous seriez disponible cette semaine ?`,
 };
 
 const OBJECTIONS: Record<ProspectType, string> = {
