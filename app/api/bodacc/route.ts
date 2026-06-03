@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
   const filters: string[] = ['familleavis = "Immatriculation"'];
   if (dept) {
     const d = dept.padStart(2, '0');
-    filters.push(`departement_de_publication = "${d}"`);
+    filters.push(`numerodepartement = "${d}"`);
   }
   if (keyword) {
     filters.push(`activite LIKE "%${keyword}%"`);
