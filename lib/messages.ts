@@ -87,15 +87,27 @@ export interface PhoneScriptStep {
 }
 
 const INTRO: Record<ProspectType, string> = {
-  producteur: `Bonjour, c'est Kyllian, je suis du nord de Toulouse, je travaille avec des producteurs et petites structures locales sur la partie digitale. Je vous appelle car je suis tombé sur {company} et ça m'a vraiment parlé. Vous avez 2 petites minutes à m'accorder ?
+  producteur: `Bonjour, je me présente Kyllian. J'habite dans le nord Toulousain et j'accompagne des producteurs et petites entreprises locales à mieux se faire connaître sur internet.
+
+Je suis tombé sur {company} en regardant ce qui se faisait dans le coin, et j'ai trouvé votre activité vraiment sympa. Je me suis dit que ce serait plus simple de vous appeler directement.
+
+Est-ce que vous auriez deux petites minutes pour échanger ?
 
 S'ils répondent "Oui, dites-moi" :
 Merci. Aujourd'hui, vous avez déjà quelqu'un qui vous accompagne sur votre visibilité en ligne, ou c'est quelque chose que vous gérez vous-même quand vous avez le temps ?`,
-  'commerçant': `Bonjour, c'est Kyllian, je suis du nord de Toulouse. Je travaille avec des commerçants et TPE locaux sur tout ce qui touche au digital. Je vous appelle car j'ai vu {company} et j'ai trouvé ça vraiment bien. Vous avez 2 petites minutes à m'accorder ?
+  'commerçant': `Bonjour, je me présente Kyllian. J'habite dans le nord Toulousain et j'accompagne des commerçants et petites entreprises locales à mieux se faire connaître sur internet.
+
+Je suis tombé sur {company} en regardant ce qui se faisait dans le coin, et j'ai trouvé votre activité vraiment sympa. Je me suis dit que ce serait plus simple de vous appeler directement.
+
+Est-ce que vous auriez deux petites minutes pour échanger ?
 
 S'ils répondent "Oui, dites-moi" :
 Merci. Aujourd'hui, vous avez déjà quelqu'un qui vous accompagne sur votre visibilité en ligne, ou c'est quelque chose que vous gérez vous-même quand vous avez le temps ?`,
-  artisan: `Bonjour, c'est Kyllian, je suis du nord de Toulouse. J'accompagne des artisans et TPE de la région sur la partie digitale. Je vous appelle car j'ai vu le travail de {company} et ça m'a vraiment impressionné. Vous avez 2 petites minutes à m'accorder ?
+  artisan: `Bonjour, je me présente Kyllian. J'habite dans le nord Toulousain et j'accompagne des artisans et petites entreprises locales à mieux se faire connaître sur internet.
+
+Je suis tombé sur {company} en regardant ce qui se faisait dans le coin, et j'ai trouvé votre travail vraiment sympa. Je me suis dit que ce serait plus simple de vous appeler directement.
+
+Est-ce que vous auriez deux petites minutes pour échanger ?
 
 S'ils répondent "Oui, dites-moi" :
 Merci. Aujourd'hui, vous avez déjà quelqu'un qui vous accompagne sur votre visibilité en ligne, ou c'est quelque chose que vous gérez vous-même quand vous avez le temps ?`,
