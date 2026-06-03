@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { ProspectType } from '@/lib/types';
 import { generateMessage, generatePhoneScript, type PhoneScriptStep } from '@/lib/messages';
+import type { AuditResult } from '@/app/api/audit/route';
 
 function GeneratorContent() {
   const params = useSearchParams();
@@ -25,6 +26,8 @@ function GeneratorContent() {
   const [copied, setCopied] = useState('');
   const [callNotes, setCallNotes] = useState('');
   const [notesSaved, setNotesSaved] = useState(false);
+  const [audit, setAudit] = useState<AuditResult | null>(null);
+  const [auditLoading, setAuditLoading] = useState(false);
 
   const notesKey = `helpme_notes_${company || 'default'}`;
 
@@ -49,13 +52,28 @@ function GeneratorContent() {
     if (name || company) {
       setResult(generateMessage(type, msgType, name, company, city));
       setScript(generatePhoneScript(type, name, company, city, category));
+      runAudit(company, city, website, instagram, facebook);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const runAudit = useCallback(async (comp: string, cit: string, web: string, ig: string, fb: string) => {
+    if (!comp) return;
+    setAuditLoading(true);
+    try {
+      const p = new URLSearchParams({ company: comp, city: cit, website: web, instagram: ig, facebook: fb });
+      const res = await fetch(`/api/audit?${p}`);
+      const data = await res.json() as AuditResult;
+      setAudit(data);
+    } catch { /* ignore */ } finally {
+      setAuditLoading(false);
+    }
   }, []);
 
   function generate() {
     setResult(generateMessage(type, msgType, name, company, city));
     setScript(generatePhoneScript(type, name, company, city, category));
+    runAudit(company, city, website, instagram, facebook);
   }
 
   function copy(text: string, key: string) {
@@ -72,9 +90,18 @@ function GeneratorContent() {
 
   const currentStep = script?.find(s => s.id === activeStep);
 
+  const STATUS_ICON: Record<string, string> = { good: '✅', warn: '⚠️', bad: '❌', info: 'ℹ️' };
+  const STATUS_COLOR: Record<string, string> = {
+    good: 'text-emerald-400', warn: 'text-amber-400', bad: 'text-red-400', info: 'text-brand-muted',
+  };
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-7xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-white mb-6">Générateur</h1>
+      <div className="flex gap-6 items-start">
+
+      {/* Left column */}
+      <div className="flex-1 min-w-0">
 
       {/* Form */}
       <div className="bg-brand-surface rounded-xl border border-brand-border p-6 mb-6">
@@ -465,6 +492,92 @@ function GeneratorContent() {
           <li><strong className="text-white">Pack Premium</strong> — Pro + site vitrine, Google Ads, bilan mensuel</li>
         </ul>
       </div>
+      </div>{/* end left column */}
+
+      {/* ── Audit panel ── */}
+      <div className="w-80 flex-shrink-0">
+        <div className="sticky top-4 bg-brand-surface rounded-xl border border-brand-border p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-white">🔍 Audit présence en ligne</h2>
+            {audit && (
+              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                audit.score >= 7 ? 'bg-emerald-900/50 text-emerald-400' :
+                audit.score >= 4 ? 'bg-amber-900/50 text-amber-400' :
+                'bg-zinc-800 text-zinc-400'
+              }`}>
+                Opportunité {audit.score}/10
+              </span>
+            )}
+          </div>
+
+          {!audit && !auditLoading && (
+            <p className="text-xs text-brand-muted text-center py-6">
+              Remplis le formulaire et clique sur <strong className="text-white">Générer</strong> pour lancer l&apos;audit.
+            </p>
+          )}
+
+          {auditLoading && (
+            <div className="flex flex-col items-center py-8 gap-3">
+              <div className="w-6 h-6 border-2 border-brand-blue border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs text-brand-muted">Analyse en cours...</p>
+            </div>
+          )}
+
+          {audit && !auditLoading && (
+            <>
+              {/* Score bar */}
+              <div className="mb-4">
+                <div className="flex justify-between text-xs text-brand-muted mb-1">
+                  <span>Score d&apos;opportunité</span>
+                  <span className="font-medium text-white">{audit.score}/10</span>
+                </div>
+                <div className="h-2 bg-brand-bg rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      audit.score >= 7 ? 'bg-emerald-500' : audit.score >= 4 ? 'bg-amber-500' : 'bg-zinc-500'
+                    }`}
+                    style={{ width: `${audit.score * 10}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Signals */}
+              <div className="space-y-2 mb-4">
+                {audit.signals.map((s, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <span className="text-sm leading-tight mt-0.5">{STATUS_ICON[s.status]}</span>
+                    <div>
+                      <span className="text-xs font-medium text-white">{s.label}</span>
+                      {s.detail && <span className={`text-xs ml-1 ${STATUS_COLOR[s.status]}`}>— {s.detail}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Talking points */}
+              <div className="border-t border-brand-border pt-3">
+                <p className="text-xs font-semibold text-white mb-2">💬 Arguments pour l&apos;appel</p>
+                <ul className="space-y-1.5 text-xs text-brand-muted">
+                  {!audit.hasWebsite && <li className="flex gap-1.5"><span className="text-red-400">→</span> Aucun site web : vos clients ne peuvent pas vous trouver facilement</li>}
+                  {(audit.googleReviews ?? 0) < 10 && <li className="flex gap-1.5"><span className="text-amber-400">→</span> Peu d&apos;avis Google : votre crédibilité en ligne est limitée</li>}
+                  {!audit.found && <li className="flex gap-1.5"><span className="text-red-400">→</span> Fiche Google non revendiquée : invisible sur Maps</li>}
+                  {audit.hasWebsite && audit.found && (audit.googleReviews ?? 0) >= 10 && (
+                    <li className="flex gap-1.5"><span className="text-emerald-400">→</span> Bonne base — proposer optimisation et développement réseaux</li>
+                  )}
+                </ul>
+              </div>
+
+              {audit.googleMapsUrl && (
+                <a href={audit.googleMapsUrl} target="_blank" rel="noopener noreferrer"
+                  className="mt-3 flex items-center gap-1.5 text-xs text-brand-blue hover:underline">
+                  📍 Voir la fiche Google Maps
+                </a>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>{/* end flex row */}
     </div>
   );
 }
