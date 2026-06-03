@@ -41,6 +41,7 @@ export default function BodaccPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState('');
   const [page, setPage] = useState(0);
+  const [hideNoActivite, setHideNoActivite] = useState(false);
   const PAGE_SIZE = 50;
 
   const showToast = useCallback((msg: string) => {
@@ -194,11 +195,16 @@ export default function BodaccPage() {
       {results.length > 0 && (
         <>
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="text-sm text-brand-muted">
                 {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} sur {total.toLocaleString('fr-FR')}
               </span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-violet-900/40 text-violet-300">BODACC officiel</span>
+              <button
+                onClick={() => setHideNoActivite(v => !v)}
+                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${hideNoActivite ? 'bg-amber-600 border-amber-500 text-white' : 'border-brand-border text-brand-muted hover:text-white hover:border-amber-500/40'}`}>
+                {hideNoActivite ? '✓ Activité connue uniquement' : 'Masquer sans activité'}
+              </button>
             </div>
             {selected.size > 0 && (
               <button onClick={importSelected}
@@ -222,7 +228,7 @@ export default function BodaccPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-border">
-                {results.map(r => {
+                {results.filter(r => !hideNoActivite || r.activite).map(r => {
                   const days = daysSince(r.dateParution);
                   return (
                     <tr key={r.id} className={`hover:bg-brand-bg/50 transition-colors ${selected.has(r.id) ? 'bg-brand-blue/5' : ''}`}>
