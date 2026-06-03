@@ -289,7 +289,7 @@ HelpMe`,
 
 Je suis basé au nord de Toulouse et j'accompagne des artisans et petites structures locales à développer leur visibilité en ligne.
 
-Je suis tombé sur {company} et j'ai beaucoup aimé votre travail, donc je me suis permis de vous écrire directement.
+Je suis tombé sur {company} et je pense qu'on pourrait vraiment vous aider à gagner en visibilité, donc je me suis permis de vous écrire directement.
 
 Je propose un petit point gratuit d'une dizaine de minutes sur votre fiche Google, vos réseaux sociaux et votre site, afin de voir comment vous pourriez être davantage visible dans le secteur.
 
