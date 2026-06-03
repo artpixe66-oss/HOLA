@@ -17,55 +17,49 @@ export interface BodaccAnnonce {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function extract(record: Record<string, any>): BodaccAnnonce {
-  // Real BODACC structure (annonces-commerciales):
-  // - record.commercant = company name string
-  // - record.registre = [siren_clean, siren_formatted, ...]
-  // - record.listepersonnes = array of person/entity objects
-  // - record.cp, record.ville = address at top level
+  // listepersonnes is a JSON *string* containing { personne: { typePersonne, denomination, activite, formeJuridique, nom, prenom, ... } }
+  // registre = [siren_clean, siren_formatted]
+  // commercant = company name string (top-level shortcut)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let personne: Record<string, any> = {};
+  try {
+    if (typeof record.listepersonnes === 'string') {
+      const parsed = JSON.parse(record.listepersonnes);
+      personne = parsed.personne || parsed.personnes?.[0]?.personne || {};
+    } else if (record.listepersonnes?.personne) {
+      personne = record.listepersonnes.personne;
+    }
+  } catch { /* ignore parse errors */ }
 
   const siren = (Array.isArray(record.registre) ? record.registre[0] : record.registre || '')
     .toString().replace(/\s/g, '');
 
-  // listepersonnes holds entities (person morale or physique)
-  const personnes: Record<string, unknown>[] = Array.isArray(record.listepersonnes)
-    ? record.listepersonnes
-    : [];
-  const p0 = personnes[0] || {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pm = (p0 as any).personnemorale || (p0 as any).personne_morale || {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const pp = (p0 as any).personnephysique || (p0 as any).personne_physique || {};
+  const isPhysique = personne.typePersonne === 'pp';
 
   const company =
     typeof record.commercant === 'string' && record.commercant
       ? record.commercant
-      : pm.denomination || pm.denominationsociale ||
-        `${pp.prenom || ''} ${pp.nom || ''}`.trim() ||
-        record.nomcommercial ||
+      : personne.denomination ||
+        `${personne.prenom || ''} ${personne.nom || ''}`.trim() ||
         'Entreprise';
 
-  const activite =
-    pm.activite || pp.activite ||
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (p0 as any).activite ||
-    record.activite || '';
+  const activite = personne.activite || record.activite || '';
 
-  const forme =
-    pm.forme_juridique || pm.formejuridique ||
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (p0 as any).forme_juridique ||
-    record.formejuridique || '';
+  const forme = personne.formeJuridique || record.formejuridique || '';
 
-  const dirigeant =
-    `${pp.prenom || ''} ${pp.nom || ''}`.trim() ||
-    pm.denomination || '';
+  const dirigeant = isPhysique
+    ? `${personne.prenom || ''} ${personne.nom || ''}`.trim()
+    : personne.denomination || '';
+
+  const adresse = personne.adresseSiegeSocial || {};
 
   return {
     id: record.id || record.numeroannonce || Math.random().toString(36).slice(2),
     company,
     activite,
-    ville: record.ville || '',
-    codePostal: record.cp || '',
+    ville: record.ville || adresse.ville || '',
+    codePostal: record.cp || adresse.codePostal || '',
     dateParution: record.dateparution ? record.dateparution.split('T')[0] : '',
     formeJuridique: forme,
     dirigeant,
