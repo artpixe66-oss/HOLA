@@ -567,12 +567,59 @@ function GeneratorContent() {
                 </ul>
               </div>
 
-              {audit.googleMapsUrl && (
-                <a href={audit.googleMapsUrl} target="_blank" rel="noopener noreferrer"
-                  className="mt-3 flex items-center gap-1.5 text-xs text-brand-blue hover:underline">
-                  📍 Voir la fiche Google Maps
-                </a>
-              )}
+              {/* Quick check links */}
+              <div className="border-t border-brand-border pt-3 mt-3">
+                <p className="text-xs font-semibold text-white mb-2">🔗 Vérifier</p>
+                <div className="flex flex-col gap-1.5">
+                  {audit.googleMapsUrl ? (
+                    <a href={audit.googleMapsUrl} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-brand-bg border border-brand-border text-xs text-white hover:border-brand-blue/50 hover:bg-brand-blue/5 transition-colors">
+                      📍 Fiche Google Maps
+                    </a>
+                  ) : (
+                    <a href={`https://www.google.com/search?q=${encodeURIComponent(company + ' ' + city)}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-brand-bg border border-brand-border text-xs text-brand-muted hover:text-white hover:border-brand-blue/50 transition-colors">
+                      🔍 Chercher sur Google
+                    </a>
+                  )}
+                  <a href={`https://www.google.com/maps/search/${encodeURIComponent(company + ' ' + city)}`} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-brand-bg border border-brand-border text-xs text-brand-muted hover:text-white hover:border-brand-blue/50 transition-colors">
+                    🗺️ Google Maps
+                  </a>
+                  {website ? (
+                    <a href={website.startsWith('http') ? website : `https://${website}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-brand-bg border border-brand-border text-xs text-white hover:border-brand-blue/50 hover:bg-brand-blue/5 transition-colors">
+                      🌐 Site web
+                    </a>
+                  ) : (
+                    <span className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-brand-bg border border-dashed border-brand-border text-xs text-brand-muted/50">
+                      🌐 Pas de site
+                    </span>
+                  )}
+                  {instagram ? (
+                    <a href={instagram.startsWith('http') ? instagram : `https://www.instagram.com/${instagram.replace('@','')}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-brand-bg border border-brand-border text-xs text-white hover:border-pink-500/50 hover:bg-pink-500/5 transition-colors">
+                      📸 Instagram
+                    </a>
+                  ) : (
+                    <a href={`https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(company)}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-brand-bg border border-brand-border text-xs text-brand-muted hover:text-white hover:border-pink-500/50 transition-colors">
+                      📸 Chercher Instagram
+                    </a>
+                  )}
+                  {facebook ? (
+                    <a href={facebook.startsWith('http') ? facebook : `https://www.facebook.com/${facebook}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-brand-bg border border-brand-border text-xs text-white hover:border-blue-500/50 hover:bg-blue-500/5 transition-colors">
+                      👥 Facebook
+                    </a>
+                  ) : (
+                    <a href={`https://www.facebook.com/search/top?q=${encodeURIComponent(company + ' ' + city)}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-brand-bg border border-brand-border text-xs text-brand-muted hover:text-white hover:border-blue-500/50 transition-colors">
+                      👥 Chercher Facebook
+                    </a>
+                  )}
+                </div>
+              </div>
             </>
           )}
         </div>
