@@ -5,13 +5,14 @@ import type { Prospect, ProspectStatus, ProspectType } from '@/lib/types';
 import { useProspects } from '@/lib/useProspects';
 import Link from 'next/link';
 
-const STATUSES: ProspectStatus[] = ['À contacter', 'Contacté', 'Intéressé', 'Client', 'Perdu'];
+const STATUSES: ProspectStatus[] = ['À contacter', 'Contacté', 'Intéressé', 'Client', 'Perdu', 'Pas intéressé'];
 const STATUS_COLORS: Record<ProspectStatus, string> = {
-  'À contacter': 'bg-[#1e2d4a] text-brand-muted',
-  'Contacté':    'bg-[#1a2d5a] text-brand-blue',
-  'Intéressé':   'bg-[#2d2500] text-amber-400',
-  'Client':      'bg-[#012a1a] text-emerald-400',
-  'Perdu':       'bg-[#2d0a0a] text-red-400',
+  'À contacter':   'bg-[#1e2d4a] text-brand-muted',
+  'Contacté':      'bg-[#1a2d5a] text-brand-blue',
+  'Intéressé':     'bg-[#2d2500] text-amber-400',
+  'Client':        'bg-[#012a1a] text-emerald-400',
+  'Perdu':         'bg-[#2d0a0a] text-red-400',
+  'Pas intéressé': 'bg-[#1a1a1a] text-zinc-500',
 };
 
 type EditState = Omit<Prospect, 'id' | 'created_at' | 'updated_at'> & { id?: string };
@@ -84,14 +85,29 @@ export default function ProspectsPage() {
   const [editing, setEditing] = useState<EditState | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [importStatus, setImportStatus] = useState('');
+  const [hideNotInterested, setHideNotInterested] = useState(false);
+  const [callNoteId, setCallNoteId] = useState<string | null>(null);
+  const [callNoteText, setCallNoteText] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
   const filtered = prospects.filter(p => {
     const matchSearch = !search || [p.name, p.company, p.city, p.email, p.phone, p.website].some(v => (v || '').toLowerCase().includes(search.toLowerCase()));
     const matchStatus = !filterStatus || p.status === filterStatus;
     const matchType = !filterType || p.type === filterType;
-    return matchSearch && matchStatus && matchType;
+    const matchInterest = !hideNotInterested || p.status !== 'Pas intéressé';
+    return matchSearch && matchStatus && matchType && matchInterest;
   });
+
+  function saveCallNote(id: string) {
+    if (!callNoteText.trim()) { setCallNoteId(null); return; }
+    const p = prospects.find(x => x.id === id);
+    if (!p) return;
+    const stamp = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const newNote = `[${stamp}] ${callNoteText.trim()}`;
+    updateProspect(id, { notes: p.notes ? `${newNote}\n${p.notes}` : newNote });
+    setCallNoteId(null);
+    setCallNoteText('');
+  }
 
   function saveProspect() {
     if (!editing) return;
@@ -190,6 +206,11 @@ export default function ProspectsPage() {
           <option value="commerçant">Commerçant</option>
           <option value="artisan">Artisan</option>
         </select>
+        <button
+          onClick={() => setHideNotInterested(v => !v)}
+          className={`px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${hideNotInterested ? 'bg-zinc-700 border-zinc-600 text-white' : 'border-brand-border text-brand-muted hover:text-white hover:border-zinc-500'}`}>
+          {hideNotInterested ? '✓ Sans "Pas intéressé"' : 'Masquer "Pas intéressé"'}
+        </button>
         <span className="text-sm text-brand-muted self-center">{filtered.length} résultat{filtered.length !== 1 ? 's' : ''}</span>
       </div>
 
@@ -203,11 +224,12 @@ export default function ProspectsPage() {
                 {['Entreprise', 'Type', 'Ville', 'Présence digitale', 'Statut', 'Relance', 'Actions'].map(h => (
                   <th key={h} className="text-left px-4 py-3 font-medium text-brand-muted whitespace-nowrap">{h}</th>
                 ))}
+                <th className="text-left px-4 py-3 font-medium text-brand-muted whitespace-nowrap">Notes appel</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-brand-border">
               {filtered.length === 0 && (
-                <tr><td colSpan={7} className="text-center py-10 text-brand-muted">Aucun prospect trouvé</td></tr>
+                <tr><td colSpan={8} className="text-center py-10 text-brand-muted">Aucun prospect trouvé</td></tr>
               )}
               {filtered.map(p => (
                 <tr key={p.id} className="hover:bg-brand-bg/50 transition-colors">
@@ -247,6 +269,35 @@ export default function ProspectsPage() {
                       <button onClick={() => { setEditing({ ...p }); setShowForm(true); }} className="text-brand-muted hover:text-white text-xs">Éditer</button>
                       <button onClick={() => handleDelete(p.id)} className="text-red-400 hover:text-red-300 text-xs">✕</button>
                     </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    {callNoteId === p.id ? (
+                      <div className="flex flex-col gap-1.5 min-w-[220px]">
+                        <textarea
+                          autoFocus
+                          value={callNoteText}
+                          onChange={e => setCallNoteText(e.target.value)}
+                          placeholder="Note suite à l'appel..."
+                          rows={3}
+                          className="w-full bg-brand-bg border border-brand-blue/50 text-white placeholder-brand-muted rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand-blue resize-none"
+                        />
+                        <div className="flex gap-1.5">
+                          <button onClick={() => saveCallNote(p.id)} className="px-2 py-1 rounded bg-brand-blue text-white text-xs hover:bg-brand-blue-hover transition-colors">Sauver</button>
+                          <button onClick={() => { setCallNoteId(null); setCallNoteText(''); }} className="px-2 py-1 rounded border border-brand-border text-brand-muted text-xs hover:text-white transition-colors">Annuler</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-1">
+                        {p.notes && (
+                          <p className="text-[11px] text-brand-muted line-clamp-2 max-w-[200px]">{p.notes}</p>
+                        )}
+                        <button
+                          onClick={() => { setCallNoteId(p.id); setCallNoteText(''); }}
+                          className="text-[11px] text-brand-blue hover:underline text-left whitespace-nowrap">
+                          + Note d&apos;appel
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

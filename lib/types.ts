@@ -1,4 +1,4 @@
-export type ProspectStatus = 'À contacter' | 'Contacté' | 'Intéressé' | 'Client' | 'Perdu';
+export type ProspectStatus = 'À contacter' | 'Contacté' | 'Intéressé' | 'Client' | 'Perdu' | 'Pas intéressé';
 export type ProspectType = 'producteur' | 'commerçant' | 'artisan';
 
 export interface Prospect {

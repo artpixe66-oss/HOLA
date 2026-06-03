@@ -6,6 +6,7 @@ const STATUS_STYLES: Record<ProspectStatus, string> = {
   "Intéressé": "bg-yellow-100 text-yellow-700",
   "Client": "bg-green-100 text-green-700",
   "Perdu": "bg-red-100 text-red-700",
+  "Pas intéressé": "bg-zinc-200 text-zinc-600",
 };
 
 export default function StatusBadge({ status }: { status: ProspectStatus }) {

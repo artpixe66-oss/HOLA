@@ -8,7 +8,8 @@ const STATUS_COLORS: Record<ProspectStatus, string> = {
   'Contacté':    'bg-brand-blue',
   'Intéressé':   'bg-amber-400',
   'Client':      'bg-emerald-500',
-  'Perdu':       'bg-red-500',
+  'Perdu':         'bg-red-500',
+  'Pas intéressé': 'bg-zinc-600',
 };
 
 export default function DashboardPage() {
