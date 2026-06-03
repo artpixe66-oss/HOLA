@@ -79,7 +79,7 @@ async function searchGooglePlaces(
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
       'Referer': 'https://hola-murex.vercel.app',
-      'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents,places.googleMapsUri',
+      'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents,places.googleMapsUri,nextPageToken',
     },
     body: JSON.stringify({
       textQuery: query,
@@ -101,8 +101,41 @@ async function searchGooglePlaces(
     throw new Error(`Google Places API ${response.status}: ${body.slice(0, 200)}`);
   }
 
-  const data = await response.json() as { places?: GooglePlace[] };
-  const places = data.places || [];
+  const data = await response.json() as { places?: GooglePlace[]; nextPageToken?: string };
+  let places = data.places || [];
+
+  // Fetch up to 2 more pages (max 60 total)
+  let pageToken = data.nextPageToken;
+  for (let page = 0; page < 2 && pageToken; page++) {
+    await new Promise(r => setTimeout(r, 300)); // brief pause required by Google
+    const pageResp = await fetch('https://places.googleapis.com/v1/places:searchText', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': apiKey,
+        'Referer': 'https://hola-murex.vercel.app',
+        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.internationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.addressComponents,places.googleMapsUri,nextPageToken',
+      },
+      body: JSON.stringify({
+        textQuery: query,
+        languageCode: 'fr',
+        regionCode: 'FR',
+        maxResultCount: 20,
+        pageToken,
+        locationBias: {
+          circle: {
+            center: { latitude: lat, longitude: lon },
+            radius: radiusKm * 1000,
+          },
+        },
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!pageResp.ok) break;
+    const pageData = await pageResp.json() as { places?: GooglePlace[]; nextPageToken?: string };
+    places = places.concat(pageData.places || []);
+    pageToken = pageData.nextPageToken;
+  }
 
   return places.map(place => {
     const name = place.displayName?.text || '';
