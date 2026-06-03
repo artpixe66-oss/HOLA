@@ -17,20 +17,30 @@ export interface BodaccAnnonce {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function extract(record: Record<string, any>): BodaccAnnonce {
-  // BODACC nested structure varies — dig into known paths
-  const depot = record.commercant || record.exploitant || record.personne_physique || record.personne_morale || {};
-  const adresse = depot.adresse || record.adresse || {};
+  // BODACC annonces-commerciales: entity data is in `commercant` (morale) or
+  // `personnes[0]` / `registre` depending on record type. Ville/cp may be top-level.
+  const commercant = record.commercant || {};
+  const personne = Array.isArray(record.personnes) ? (record.personnes[0] || {}) : {};
+  const designation = personne.designation || personne.personne_morale || personne.personne_physique || {};
+  const registreItem = Array.isArray(record.registre) ? (record.registre[0] || {}) : (record.registre || {});
+
+  // Entity block: prefer commercant, then personnes[0] designation
+  const entity = Object.keys(commercant).length ? commercant : designation;
+  const adresse = entity.adresse || commercant.adresse || record.adresse || {};
 
   const company =
     record.nomcommercial ||
-    depot.denomination ||
-    depot.nom_commercial ||
-    `${depot.nom || ''} ${depot.prenom || ''}`.trim() ||
+    entity.denomination ||
+    entity.nom_commercial ||
+    registreItem.denomination ||
+    `${entity.prenom || ''} ${entity.nom || ''}`.trim() ||
+    `${personne.prenom || ''} ${personne.nom || ''}`.trim() ||
     'Entreprise';
 
   const activite =
+    entity.activite ||
     record.activite ||
-    depot.activite ||
+    entity.categorieactivite ||
     record.categorieactivite ||
     '';
 
@@ -44,20 +54,28 @@ function extract(record: Record<string, any>): BodaccAnnonce {
     adresse.codepostal ||
     adresse.code_postal ||
     record.codepostal ||
+    record.cp ||
     '';
 
   const forme =
-    depot.forme_juridique ||
+    entity.forme_juridique ||
+    entity.formejuridique ||
     record.formejuridique ||
-    depot.formejuridique ||
+    personne.forme_juridique ||
     '';
 
   const dirigeant =
-    `${depot.prenom || ''} ${depot.nom || ''}`.trim() ||
-    depot.representant ||
+    `${entity.prenom || ''} ${entity.nom || ''}`.trim() ||
+    `${personne.prenom || ''} ${personne.nom || ''}`.trim() ||
+    entity.representant ||
     '';
 
-  const siren = record.siren || depot.siren || '';
+  const siren =
+    record.siren ||
+    entity.siren ||
+    registreItem.siren ||
+    personne.siren ||
+    '';
 
   return {
     id: record.id || record.numeroannonce || Math.random().toString(36).slice(2),
@@ -114,7 +132,6 @@ export async function GET(req: NextRequest) {
 
     const raw = data.results || [];
 
-    // Debug: expose raw field names on first record
     const debugFields = raw.length > 0 ? Object.keys(raw[0]) : [];
     const debugSample = raw.length > 0 ? raw[0] : null;
 
