@@ -80,7 +80,8 @@ export async function GET(req: NextRequest) {
   const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
 
   // BODACC ODSQL filter
-  const filters: string[] = ['familleavis = "Immatriculation"'];
+  // Start with no type filter — discover what's available
+  const filters: string[] = [];
   if (dept) {
     const d = dept.padStart(2, '0');
     filters.push(`numerodepartement = "${d}"`);
@@ -89,9 +90,8 @@ export async function GET(req: NextRequest) {
   const params = new URLSearchParams({
     limit: String(limit),
     order_by: 'dateparution DESC',
-    where: filters.join(' AND '),
   });
-  // keyword via full-text search (q param), not WHERE clause
+  if (filters.length) params.set('where', filters.join(' AND '));
   if (keyword) params.set('q', keyword);
 
   const url = `https://bodacc-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/annonces-commerciales/records?${params}`;
@@ -112,9 +112,19 @@ export async function GET(req: NextRequest) {
       total_count?: number;
     };
 
-    const results = (data.results || []).map(r => extract(r as Record<string, unknown>));
+    const raw = data.results || [];
 
-    return NextResponse.json({ results, total: data.total_count || results.length });
+    // Debug: expose raw field names on first record
+    const debugFields = raw.length > 0 ? Object.keys(raw[0]) : [];
+    const debugSample = raw.length > 0 ? raw[0] : null;
+
+    const results = raw.map(r => extract(r as Record<string, unknown>));
+
+    return NextResponse.json({
+      results,
+      total: data.total_count || results.length,
+      _debug: { fields: debugFields, sample: debugSample },
+    });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json({ error: msg, results: [] }, { status: 500 });
