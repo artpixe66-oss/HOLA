@@ -87,9 +87,9 @@ export interface PhoneScriptStep {
 }
 
 const INTRO: Record<ProspectType, string> = {
-  producteur: `Bonjour, c'est Kyllian, je suis du nord de Toulouse, je travaille avec des producteurs et petites structures locales sur la partie digitale. Je vous appelle car je suis tombé sur {company} et ça m'a vraiment parlé. C'est bien {name} que j'ai en ligne ?`,
-  'commerçant': `Bonjour, c'est Kyllian, je suis du nord de Toulouse. Je travaille avec des commerçants et TPE locaux sur tout ce qui touche au digital. Je vous appelle car j'ai vu {company} et j'ai trouvé ça vraiment bien. C'est vous qui gérez ?`,
-  artisan: `Bonjour, c'est Kyllian, je suis du nord de Toulouse. J'accompagne des artisans et TPE de la région sur la partie digitale. Je vous appelle car j'ai vu le travail de {company} et ça m'a vraiment impressionné. C'est bien {name} ?`,
+  producteur: `Bonjour, c'est Kyllian, je suis du nord de Toulouse, je travaille avec des producteurs et petites structures locales sur la partie digitale. Je vous appelle car je suis tombé sur {company} et ça m'a vraiment parlé. Vous avez 2 petites minutes à m'accorder ?`,
+  'commerçant': `Bonjour, c'est Kyllian, je suis du nord de Toulouse. Je travaille avec des commerçants et TPE locaux sur tout ce qui touche au digital. Je vous appelle car j'ai vu {company} et j'ai trouvé ça vraiment bien. Vous avez 2 petites minutes à m'accorder ?`,
+  artisan: `Bonjour, c'est Kyllian, je suis du nord de Toulouse. J'accompagne des artisans et TPE de la région sur la partie digitale. Je vous appelle car j'ai vu le travail de {company} et ça m'a vraiment impressionné. Vous avez 2 petites minutes à m'accorder ?`,
 };
 
 const ACCROCHE: Record<ProspectType, string> = {
