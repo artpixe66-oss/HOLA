@@ -255,49 +255,47 @@ export function generatePhoneScript(
 // ── WhatsApp templates ─────────────────────────────────────────────────────────
 
 const WHATSAPP_TEMPLATES: Record<ProspectType, string> = {
-  producteur: `Salut 👋
+  producteur: `Bonjour, c'est Kyllian 🙂
 
-C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte HelpMe pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
+Je suis basé au nord de Toulouse et j'accompagne des producteurs et petites structures locales à développer leur visibilité en ligne.
 
-Je travaille déjà avec des acteurs de la scène toulousaine, brasseurs artisanaux, bars... et je cherche activement de nouveaux secteurs comme le vôtre 🌱
+Je suis tombé sur {company} et j'ai beaucoup aimé le côté authentique de votre activité, donc je me suis permis de vous écrire directement.
 
-Je suis tombé sur {company} et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
+Je propose un petit point gratuit d'une dizaine de minutes sur votre fiche Google, vos réseaux sociaux et votre site, afin de voir comment vous pourriez être davantage visible dans le secteur.
 
-Google, Instagram, Maps... je m'occupe de tout pour que vos vrais clients vous trouvent enfin.
+C'est sans engagement, et si vous souhaitez ensuite qu'on vous accompagne, on pourra simplement en discuter.
 
-Je vous propose un audit gratuit, je me déplace chez vous, 20-30 min, pour regarder ensemble votre visibilité en ligne et vous dire exactement ce qui manque. Zéro engagement.
-
-Vous seriez dispo cette semaine ? 🙌
+Est-ce que ça pourrait vous intéresser ?
 
 Kyllian
 HelpMe`,
 
-  'commerçant': `Salut 👋
+  'commerçant': `Bonjour, c'est Kyllian 🙂
 
-C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte HelpMe pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
+Je suis basé au nord de Toulouse et j'accompagne des commerçants et petites entreprises locales à développer leur visibilité en ligne.
 
-Je travaille déjà avec des acteurs de la scène toulousaine, brasseurs artisanaux, bars... et je cherche activement de nouveaux secteurs comme le vôtre ✨
+Je suis tombé sur {company} et j'ai beaucoup aimé ce que vous faites, donc je me suis permis de vous écrire directement.
 
-Je suis tombé sur {company} et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
+Je propose un petit point gratuit d'une dizaine de minutes sur votre fiche Google, vos réseaux sociaux et votre site, afin de voir comment vous pourriez être davantage visible dans le secteur.
 
-Je vous propose un audit gratuit, je me déplace chez vous, 20-30 min, pour regarder ensemble votre visibilité en ligne et vous dire exactement ce qui manque. Zéro engagement.
+C'est sans engagement, et si vous souhaitez ensuite qu'on vous accompagne, on pourra simplement en discuter.
 
-Vous seriez dispo cette semaine ? 🙌
+Est-ce que ça pourrait vous intéresser ?
 
 Kyllian
 HelpMe`,
 
-  artisan: `Salut 👋
+  artisan: `Bonjour, c'est Kyllian 🙂
 
-C'est Kyllian, je suis du nord toulousain (Bruguières). J'ai monté ma boîte HelpMe pour aider les TPE et beaux projets locaux à exister vraiment sur le digital.
+Je suis basé au nord de Toulouse et j'accompagne des artisans et petites structures locales à développer leur visibilité en ligne.
 
-Je travaille déjà avec des acteurs de la scène toulousaine, brasseurs artisanaux, bars... et je cherche des artisans avec du vrai savoir-faire à mettre en avant 🔨
+Je suis tombé sur {company} et j'ai beaucoup aimé votre travail, donc je me suis permis de vous écrire directement.
 
-Je suis tombé sur {company} et franchement ça m'a parlé tout de suite. C'est exactement le genre de projet que j'aime porter !
+Je propose un petit point gratuit d'une dizaine de minutes sur votre fiche Google, vos réseaux sociaux et votre site, afin de voir comment vous pourriez être davantage visible dans le secteur.
 
-Je vous propose un audit gratuit, je me déplace chez vous, 20-30 min, pour regarder ensemble votre visibilité en ligne et vous dire exactement ce qui manque. Zéro engagement.
+C'est sans engagement, et si vous souhaitez ensuite qu'on vous accompagne, on pourra simplement en discuter.
 
-Vous seriez dispo cette semaine ? 🙌
+Est-ce que ça pourrait vous intéresser ?
 
 Kyllian
 HelpMe`,
