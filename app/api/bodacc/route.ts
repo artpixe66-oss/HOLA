@@ -17,72 +17,55 @@ export interface BodaccAnnonce {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function extract(record: Record<string, any>): BodaccAnnonce {
-  // BODACC annonces-commerciales: entity data is in `commercant` (morale) or
-  // `personnes[0]` / `registre` depending on record type. Ville/cp may be top-level.
-  const commercant = record.commercant || {};
-  const personne = Array.isArray(record.personnes) ? (record.personnes[0] || {}) : {};
-  const designation = personne.designation || personne.personne_morale || personne.personne_physique || {};
-  const registreItem = Array.isArray(record.registre) ? (record.registre[0] || {}) : (record.registre || {});
+  // Real BODACC structure (annonces-commerciales):
+  // - record.commercant = company name string
+  // - record.registre = [siren_clean, siren_formatted, ...]
+  // - record.listepersonnes = array of person/entity objects
+  // - record.cp, record.ville = address at top level
 
-  // Entity block: prefer commercant, then personnes[0] designation
-  const entity = Object.keys(commercant).length ? commercant : designation;
-  const adresse = entity.adresse || commercant.adresse || record.adresse || {};
+  const siren = (Array.isArray(record.registre) ? record.registre[0] : record.registre || '')
+    .toString().replace(/\s/g, '');
+
+  // listepersonnes holds entities (person morale or physique)
+  const personnes: Record<string, unknown>[] = Array.isArray(record.listepersonnes)
+    ? record.listepersonnes
+    : [];
+  const p0 = personnes[0] || {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pm = (p0 as any).personnemorale || (p0 as any).personne_morale || {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pp = (p0 as any).personnephysique || (p0 as any).personne_physique || {};
 
   const company =
-    record.nomcommercial ||
-    entity.denomination ||
-    entity.nom_commercial ||
-    registreItem.denomination ||
-    `${entity.prenom || ''} ${entity.nom || ''}`.trim() ||
-    `${personne.prenom || ''} ${personne.nom || ''}`.trim() ||
-    'Entreprise';
+    typeof record.commercant === 'string' && record.commercant
+      ? record.commercant
+      : pm.denomination || pm.denominationsociale ||
+        `${pp.prenom || ''} ${pp.nom || ''}`.trim() ||
+        record.nomcommercial ||
+        'Entreprise';
 
   const activite =
-    entity.activite ||
-    record.activite ||
-    entity.categorieactivite ||
-    record.categorieactivite ||
-    '';
-
-  const ville =
-    adresse.ville ||
-    adresse.localite ||
-    record.ville ||
-    '';
-
-  const cp =
-    adresse.codepostal ||
-    adresse.code_postal ||
-    record.codepostal ||
-    record.cp ||
-    '';
+    pm.activite || pp.activite ||
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (p0 as any).activite ||
+    record.activite || '';
 
   const forme =
-    entity.forme_juridique ||
-    entity.formejuridique ||
-    record.formejuridique ||
-    personne.forme_juridique ||
-    '';
+    pm.forme_juridique || pm.formejuridique ||
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (p0 as any).forme_juridique ||
+    record.formejuridique || '';
 
   const dirigeant =
-    `${entity.prenom || ''} ${entity.nom || ''}`.trim() ||
-    `${personne.prenom || ''} ${personne.nom || ''}`.trim() ||
-    entity.representant ||
-    '';
-
-  const siren =
-    record.siren ||
-    entity.siren ||
-    registreItem.siren ||
-    personne.siren ||
-    '';
+    `${pp.prenom || ''} ${pp.nom || ''}`.trim() ||
+    pm.denomination || '';
 
   return {
     id: record.id || record.numeroannonce || Math.random().toString(36).slice(2),
     company,
     activite,
-    ville,
-    codePostal: cp,
+    ville: record.ville || '',
+    codePostal: record.cp || '',
     dateParution: record.dateparution ? record.dateparution.split('T')[0] : '',
     formeJuridique: forme,
     dirigeant,
@@ -140,14 +123,11 @@ export async function GET(req: NextRequest) {
     const debugInfo = s ? {
       keys: Object.keys(s),
       commercant: s.commercant,
-      personnes: s.personnes,
       registre: s.registre,
-      denomination: s.denomination,
-      nom: s.nom,
-      prenom: s.prenom,
-      activite: s.activite,
-      siren: s.siren,
-      publicationavis: typeof s.publicationavis === 'string' ? s.publicationavis.slice(0, 400) : s.publicationavis,
+      listepersonnes: s.listepersonnes,
+      listeetablissements: s.listeetablissements,
+      depot: s.depot,
+      acte: s.acte,
     } : null;
 
     return NextResponse.json({
