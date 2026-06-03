@@ -54,31 +54,46 @@ export default function RecherchePage() {
   const [showFreeSearch, setShowFreeSearch] = useState(false);
   const [freeQuery, setFreeQuery] = useState('');
   const [freeCity, setFreeCity] = useState('');
-  const [freePlatforms, setFreePlatforms] = useState({
-    google: true,
-    instagram: true,
-    facebook: true,
-    website: true,
-    maps: true,
-    linkedin: false,
-  });
+  const [freeLoading, setFreeLoading] = useState(false);
+  const [freeResults, setFreeResults] = useState<SearchResult[] | null>(null);
+  const [freeSelected, setFreeSelected] = useState<Set<string>>(new Set());
 
-  function togglePlatform(p: keyof typeof freePlatforms) {
-    setFreePlatforms(prev => ({ ...prev, [p]: !prev[p] }));
+  async function runFreeSearch() {
+    if (!freeQuery.trim()) return;
+    setFreeLoading(true);
+    setFreeResults(null);
+    setFreeSelected(new Set());
+    try {
+      const p = new URLSearchParams({ keyword: freeQuery.trim(), city: freeCity.trim() || 'Toulouse', type: 'commercant', radius: '20' });
+      const storedKey = localStorage.getItem('helpme_google_api_key') || '';
+      if (storedKey) p.set('apiKey', storedKey);
+      const res = await fetch(`/api/search?${p}`);
+      const data = await res.json() as { results: SearchResult[]; source: string };
+      setFreeResults(data.results || []);
+    } catch (e) {
+      setFreeResults([]);
+    } finally {
+      setFreeLoading(false);
+    }
   }
 
-  function openFreeSearch() {
-    if (!freeQuery.trim()) return;
-    const q = encodeURIComponent(freeQuery.trim());
-    const loc = freeCity.trim() ? encodeURIComponent(` ${freeCity.trim()}`) : '';
-    const urls: string[] = [];
-    if (freePlatforms.google)    urls.push(`https://www.google.com/search?q=${q}${loc}`);
-    if (freePlatforms.maps)      urls.push(`https://www.google.com/maps/search/${q}${encodeURIComponent(freeCity ? ` ${freeCity}` : '')}`);
-    if (freePlatforms.instagram) urls.push(`https://www.instagram.com/explore/search/keyword/?q=${q}`);
-    if (freePlatforms.facebook)  urls.push(`https://www.facebook.com/search/top?q=${encodeURIComponent(freeQuery.trim() + (freeCity ? ' ' + freeCity : ''))}`);
-    if (freePlatforms.website)   urls.push(`https://www.google.com/search?q=site%3A+${q}${loc}`);
-    if (freePlatforms.linkedin)  urls.push(`https://www.linkedin.com/search/results/companies/?keywords=${q}`);
-    urls.forEach(url => window.open(url, '_blank'));
+  function toggleFree(id: string) {
+    setFreeSelected(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  }
+
+  function importFreeSelected() {
+    if (!freeResults) return;
+    const toImport = freeResults.filter(r => freeSelected.has(r.id));
+    if (!toImport.length) return;
+    const count = importProspects(toImport.map(r => ({
+      name: r.name, company: r.company, type: r.type === 'commercant' ? 'commerçant' as const : r.type,
+      email: r.email || '', phone: r.phone || '', website: r.website || '',
+      facebook: '', instagram: '', city: r.city, status: 'À contacter' as const,
+      notes: [r.address && `Adresse : ${r.address}`, r.rating && `Note Google : ${r.rating}/5 (${r.reviewCount} avis)`].filter(Boolean).join('\n'),
+      follow_up_date: null,
+    })));
+    setFreeSelected(new Set());
+    showToast(`${count} prospect${count > 1 ? 's' : ''} importé${count > 1 ? 's' : ''} ✓`);
   }
   const [city, setCity] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -293,57 +308,97 @@ export default function RecherchePage() {
       {/* Recherche libre */}
       {showFreeSearch && (
         <div className="bg-brand-surface border border-violet-500/30 rounded-xl p-5 mb-5">
-          <h3 className="text-sm font-semibold text-white mb-3">🔓 Recherche libre — ouvre plusieurs onglets d&apos;un coup</h3>
+          <h3 className="text-sm font-semibold text-white mb-3">🔓 Recherche libre — résultats dans l&apos;appli</h3>
           <div className="flex gap-3 mb-4">
             <input
               type="text"
               placeholder="ex: brasserie artisanale, studio tatouage..."
               value={freeQuery}
               onChange={e => setFreeQuery(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && openFreeSearch()}
+              onKeyDown={e => e.key === 'Enter' && runFreeSearch()}
               className="flex-1 bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
             />
             <input
               type="text"
-              placeholder="Ville (optionnel)"
+              placeholder="Ville (ex: Toulouse)"
               value={freeCity}
               onChange={e => setFreeCity(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && openFreeSearch()}
-              className="w-36 bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+              onKeyDown={e => e.key === 'Enter' && runFreeSearch()}
+              className="w-44 bg-brand-bg border border-brand-border text-white placeholder-brand-muted rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
             />
+            <button
+              onClick={runFreeSearch}
+              disabled={!freeQuery.trim() || freeLoading}
+              className="px-5 py-2 rounded-lg bg-violet-600 text-white text-sm font-medium hover:bg-violet-700 disabled:opacity-40 transition-colors whitespace-nowrap"
+            >
+              {freeLoading ? '⏳ Recherche...' : '🔍 Chercher'}
+            </button>
           </div>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {([
-              { key: 'google',    label: '🔍 Google',    color: 'border-orange-700 text-orange-300 bg-orange-900/20' },
-              { key: 'maps',      label: '📍 Google Maps', color: 'border-emerald-700 text-emerald-300 bg-emerald-900/20' },
-              { key: 'instagram', label: '📸 Instagram',  color: 'border-pink-700 text-pink-300 bg-pink-900/20' },
-              { key: 'facebook',  label: '👥 Facebook',   color: 'border-blue-700 text-blue-300 bg-blue-900/20' },
-              { key: 'website',   label: '🌐 Site web',   color: 'border-sky-700 text-sky-300 bg-sky-900/20' },
-              { key: 'linkedin',  label: '💼 LinkedIn',   color: 'border-indigo-700 text-indigo-300 bg-indigo-900/20' },
-            ] as { key: keyof typeof freePlatforms; label: string; color: string }[]).map(({ key, label, color }) => (
-              <button
-                key={key}
-                onClick={() => togglePlatform(key)}
-                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
-                  freePlatforms[key]
-                    ? `${color} opacity-100`
-                    : 'border-brand-border text-brand-muted bg-brand-bg opacity-40'
-                }`}
-              >
-                <span className={`w-3 h-3 rounded-sm border flex items-center justify-center ${freePlatforms[key] ? 'bg-violet-500 border-violet-500' : 'border-brand-muted'}`}>
-                  {freePlatforms[key] && <span className="text-white text-[8px]">✓</span>}
-                </span>
-                {label}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={openFreeSearch}
-            disabled={!freeQuery.trim()}
-            className="px-5 py-2 rounded-lg bg-violet-600 text-white text-sm font-medium hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          >
-            Ouvrir {Object.values(freePlatforms).filter(Boolean).length} onglet{Object.values(freePlatforms).filter(Boolean).length > 1 ? 's' : ''}
-          </button>
+
+          {freeResults !== null && (
+            <>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-brand-muted">{freeResults.length} résultat{freeResults.length !== 1 ? 's' : ''}</span>
+                {freeSelected.size > 0 && (
+                  <button onClick={importFreeSelected}
+                    className="px-3 py-1.5 rounded-lg bg-brand-blue text-white text-xs font-medium hover:bg-brand-blue-hover transition-colors">
+                    ➕ Importer {freeSelected.size} prospect{freeSelected.size > 1 ? 's' : ''}
+                  </button>
+                )}
+              </div>
+              {freeResults.length === 0 ? (
+                <p className="text-xs text-brand-muted py-4 text-center">Aucun résultat — essaie un autre mot-clé ou ville.</p>
+              ) : (
+                <div className="bg-brand-bg rounded-xl border border-brand-border overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead className="border-b border-brand-border">
+                      <tr>
+                        <th className="px-3 py-2"><input type="checkbox"
+                          checked={freeSelected.size === freeResults.length}
+                          onChange={() => setFreeSelected(freeSelected.size === freeResults.length ? new Set() : new Set(freeResults.map(r => r.id)))}
+                          className="accent-brand-blue" /></th>
+                        {['Nom', 'Ville', 'Téléphone', 'Site / Réseaux', 'Score'].map(h => (
+                          <th key={h} className="px-3 py-2 text-left text-xs font-medium text-brand-muted">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-brand-border">
+                      {freeResults.map(r => (
+                        <tr key={r.id} className={`hover:bg-brand-surface/50 transition-colors ${freeSelected.has(r.id) ? 'bg-brand-blue/5' : ''}`}>
+                          <td className="px-3 py-2.5">
+                            <input type="checkbox" checked={freeSelected.has(r.id)} onChange={() => toggleFree(r.id)} className="accent-brand-blue" />
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <div className="font-medium text-white text-xs">{r.name}</div>
+                            {r.address && <div className="text-[11px] text-brand-muted">{r.address}</div>}
+                          </td>
+                          <td className="px-3 py-2.5 text-xs text-brand-muted whitespace-nowrap">{r.city}</td>
+                          <td className="px-3 py-2.5 text-xs text-brand-muted whitespace-nowrap">
+                            {r.phone ? <a href={`tel:${r.phone}`} className="text-white hover:underline">{r.phone}</a> : '—'}
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <div className="flex gap-1.5">
+                              {r.googleMapsUri && <a href={r.googleMapsUri} target="_blank" rel="noopener noreferrer" className="text-xs text-brand-muted hover:text-white" title="Google Maps">📍</a>}
+                              {r.website && <a href={r.website} target="_blank" rel="noopener noreferrer" className="text-xs text-white hover:underline" title="Site web">🌐</a>}
+                              {r.facebookSearchUrl && <a href={r.facebookSearchUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-brand-muted hover:text-white" title="Facebook">👥</a>}
+                              {r.instagramSearchUrl && <a href={r.instagramSearchUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-brand-muted hover:text-white" title="Instagram">📸</a>}
+                            </div>
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                              r.qualificationLabel === 'Très qualifié' ? 'bg-emerald-900/50 text-emerald-400' :
+                              r.qualificationLabel === 'Qualifié' ? 'bg-amber-900/50 text-amber-400' :
+                              'bg-zinc-800 text-zinc-400'
+                            }`}>{r.qualificationScore}/10</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
 
