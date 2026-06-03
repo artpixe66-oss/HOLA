@@ -132,15 +132,28 @@ export async function GET(req: NextRequest) {
 
     const raw = data.results || [];
 
-    const debugFields = raw.length > 0 ? Object.keys(raw[0]) : [];
-    const debugSample = raw.length > 0 ? raw[0] : null;
-
     const results = raw.map(r => extract(r as Record<string, unknown>));
+
+    // Expose raw first record in a dedicated debug field so we can identify real field names
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const s = raw[0] as any;
+    const debugInfo = s ? {
+      keys: Object.keys(s),
+      commercant: s.commercant,
+      personnes: s.personnes,
+      registre: s.registre,
+      denomination: s.denomination,
+      nom: s.nom,
+      prenom: s.prenom,
+      activite: s.activite,
+      siren: s.siren,
+      publicationavis: typeof s.publicationavis === 'string' ? s.publicationavis.slice(0, 400) : s.publicationavis,
+    } : null;
 
     return NextResponse.json({
       results,
       total: data.total_count || results.length,
-      _debug: { fields: debugFields, sample: debugSample },
+      _debug: debugInfo,
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
