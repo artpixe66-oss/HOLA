@@ -79,6 +79,7 @@ export async function GET(req: NextRequest) {
   const dept = searchParams.get('dept') || '';
   const keyword = searchParams.get('keyword') || '';
   const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
+  const offset = Math.max(parseInt(searchParams.get('offset') || '0'), 0);
 
   // BODACC ODSQL filter
   // Start with no type filter — discover what's available
@@ -90,6 +91,7 @@ export async function GET(req: NextRequest) {
 
   const params = new URLSearchParams({
     limit: String(limit),
+    offset: String(offset),
     order_by: 'dateparution DESC',
   });
   if (filters.length) params.set('where', filters.join(' AND '));

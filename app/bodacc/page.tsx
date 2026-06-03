@@ -40,32 +40,29 @@ export default function BodaccPage() {
   const [error, setError] = useState('');
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [debugRaw, setDebugRaw] = useState<any>(null);
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 50;
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(''), 3000);
   }, []);
 
-  async function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
+  const fetchPage = useCallback(async (pageIndex: number, deptVal: string, kwVal: string) => {
     setLoading(true);
     setResults([]);
     setError('');
     setSelected(new Set());
 
     try {
-      const params = new URLSearchParams({ limit: '50' });
-      if (dept) params.set('dept', dept);
-      if (keyword) params.set('keyword', keyword);
+      const params = new URLSearchParams({ limit: String(PAGE_SIZE), offset: String(pageIndex * PAGE_SIZE) });
+      if (deptVal) params.set('dept', deptVal);
+      if (kwVal) params.set('keyword', kwVal);
 
       const res = await fetch(`/api/bodacc?${params}`);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const json = await res.json() as { results: BodaccAnnonce[]; total: number; error?: string; _debug?: any };
+      const json = await res.json() as { results: BodaccAnnonce[]; total: number; error?: string };
 
       if (json.error) throw new Error(json.error);
-      setDebugRaw(json._debug || null);
       setResults(json.results);
       setTotal(json.total);
     } catch (err) {
@@ -73,6 +70,18 @@ export default function BodaccPage() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setPage(0);
+    fetchPage(0, dept, keyword);
+  }
+
+  function goToPage(p: number) {
+    setPage(p);
+    fetchPage(p, dept, keyword);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function toggleSelect(id: string) {
@@ -181,22 +190,14 @@ export default function BodaccPage() {
         <div className="bg-red-900/20 border border-red-800 rounded-xl p-4 mb-4 text-red-400 text-sm">{error}</div>
       )}
 
-      {/* Debug panel — temporary, shows raw API structure */}
-      {debugRaw && (
-        <details className="mb-4 bg-zinc-900 border border-zinc-700 rounded-xl p-4 text-xs text-zinc-300">
-          <summary className="cursor-pointer font-medium text-zinc-400 mb-2">🔧 Debug — champs bruts API (1er résultat)</summary>
-          <pre className="overflow-auto max-h-64 text-[11px] leading-relaxed whitespace-pre-wrap">
-            {JSON.stringify(debugRaw, null, 2)}
-          </pre>
-        </details>
-      )}
-
       {/* Results */}
       {results.length > 0 && (
         <>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <span className="text-sm text-brand-muted">{results.length} résultats{total > results.length ? ` sur ${total}` : ''}</span>
+              <span className="text-sm text-brand-muted">
+                {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} sur {total.toLocaleString('fr-FR')}
+              </span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-violet-900/40 text-violet-300">BODACC officiel</span>
             </div>
             {selected.size > 0 && (
@@ -272,6 +273,31 @@ export default function BodaccPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {total > PAGE_SIZE && (
+            <div className="flex items-center justify-center gap-2 mt-5">
+              <button onClick={() => goToPage(0)} disabled={page === 0 || loading}
+                className="px-3 py-1.5 rounded-lg border border-brand-border text-xs text-brand-muted hover:text-white hover:bg-brand-surface disabled:opacity-30 transition-colors">
+                «
+              </button>
+              <button onClick={() => goToPage(page - 1)} disabled={page === 0 || loading}
+                className="px-3 py-1.5 rounded-lg border border-brand-border text-xs text-brand-muted hover:text-white hover:bg-brand-surface disabled:opacity-30 transition-colors">
+                ‹ Précédent
+              </button>
+              <span className="px-4 py-1.5 rounded-lg bg-brand-blue/10 border border-brand-blue/30 text-xs text-brand-blue font-medium">
+                Page {page + 1} / {Math.ceil(total / PAGE_SIZE).toLocaleString('fr-FR')}
+              </span>
+              <button onClick={() => goToPage(page + 1)} disabled={(page + 1) * PAGE_SIZE >= total || loading}
+                className="px-3 py-1.5 rounded-lg border border-brand-border text-xs text-brand-muted hover:text-white hover:bg-brand-surface disabled:opacity-30 transition-colors">
+                Suivant ›
+              </button>
+              <button onClick={() => goToPage(Math.ceil(total / PAGE_SIZE) - 1)} disabled={(page + 1) * PAGE_SIZE >= total || loading}
+                className="px-3 py-1.5 rounded-lg border border-brand-border text-xs text-brand-muted hover:text-white hover:bg-brand-surface disabled:opacity-30 transition-colors">
+                »
+              </button>
+            </div>
+          )}
         </>
       )}
 
