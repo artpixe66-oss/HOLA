@@ -114,12 +114,12 @@ export default function ProspectsPage() {
       if (!p.notes) return;
       const cleaned = p.notes
         .split('\n')
-        .filter(line => !line.startsWith('Adresse :'))
+        .filter(line => !/^adresse\s*:/i.test(line.trim()) && !/^site web\s*:/i.test(line.trim()))
         .join('\n')
         .trim();
       if (cleaned !== p.notes) updateProspect(p.id, { notes: cleaned });
     });
-    setImportStatus(`Notes nettoyées sur ${prospects.length} prospects.`);
+    setImportStatus(`Notes nettoyées.`);
   }
 
   function saveProspect() {
