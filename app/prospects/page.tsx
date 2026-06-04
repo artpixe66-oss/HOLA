@@ -109,13 +109,25 @@ export default function ProspectsPage() {
     setCallNoteText('');
   }
 
+  function cleanAddressFromNotes() {
+    prospects.forEach(p => {
+      if (!p.notes) return;
+      const cleaned = p.notes
+        .split('\n')
+        .filter(line => !line.startsWith('Adresse :'))
+        .join('\n')
+        .trim();
+      if (cleaned !== p.notes) updateProspect(p.id, { notes: cleaned });
+    });
+    setImportStatus(`Notes nettoyées sur ${prospects.length} prospects.`);
+  }
+
   function saveProspect() {
     if (!editing) return;
     if (editing.id) {
       const { id, ...updates } = editing;
       updateProspect(id, updates);
-    } else {
-      addProspect(editing);
+    } else {      addProspect(editing);
     }
     setShowForm(false);
     setEditing(null);
@@ -167,6 +179,10 @@ export default function ProspectsPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">Prospects</h1>
         <div className="flex gap-3">
+          <button onClick={cleanAddressFromNotes} disabled={prospects.length === 0}
+            className="px-4 py-2 rounded-lg border border-brand-border text-xs font-medium text-brand-muted hover:text-white hover:bg-brand-surface disabled:opacity-40 transition-colors">
+            🧹 Nettoyer notes
+          </button>
           <button onClick={handleExport} disabled={prospects.length === 0}
             className="px-4 py-2 rounded-lg border border-brand-border text-sm font-medium text-white hover:bg-brand-surface disabled:opacity-40 transition-colors">
             ⬇ Exporter ({prospects.length})
