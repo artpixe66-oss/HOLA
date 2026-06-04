@@ -89,7 +89,7 @@ export default function RecherchePage() {
       name: r.name, company: r.company, type: r.type === 'commercant' ? 'commerçant' as const : r.type,
       email: r.email || '', phone: r.phone || '', website: r.website || '',
       facebook: '', instagram: '', city: r.city, status: 'À contacter' as const,
-      notes: [r.address && `Adresse : ${r.address}`, r.rating && `Note Google : ${r.rating}/5 (${r.reviewCount} avis)`].filter(Boolean).join('\n'),
+      notes: [r.rating && `Note Google : ${r.rating}/5 (${r.reviewCount} avis)`].filter(Boolean).join('\n'),
       follow_up_date: null,
     })));
     setFreeSelected(new Set());
@@ -235,7 +235,6 @@ export default function RecherchePage() {
       city: r.city,
       status: 'À contacter' as const,
       notes: [
-        r.address ? `Adresse : ${r.address}` : '',
         r.rating != null ? `Note Google : ${r.rating}/5` : '',
         r.reviewCount != null ? `Avis : ${r.reviewCount}` : '',
         r.linkedinUrl ? `LinkedIn : ${r.linkedinUrl}` : '',
