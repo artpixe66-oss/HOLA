@@ -1,28 +1,47 @@
-export type ProspectStatus = 'À contacter' | 'Contacté' | 'Intéressé' | 'Client' | 'Perdu' | 'Pas intéressé';
-export type ProspectType = 'producteur' | 'commerçant' | 'artisan';
-
-export interface Prospect {
+export type Programme = {
   id: string;
-  name: string;
-  company: string;
-  type: ProspectType;
-  email: string;
-  phone: string;
-  website: string;
-  facebook: string;
-  instagram: string;
-  city: string;
-  status: ProspectStatus;
-  notes: string;
-  follow_up_date: string | null;
+  commercant_id: string;
+  nom: string;
+  description: string;
+  emoji: string;
+  couleur: string;
+  points_par_visite: number;
+  points_objectif: number;
+  recompense: string;
   created_at: string;
-  updated_at: string;
-}
+};
 
-export interface DashboardStats {
-  total: number;
-  byStatus: Record<ProspectStatus, number>;
-  byType: Record<ProspectType, number>;
-  conversionRate: number;
-  topCities: { city: string; count: number }[];
-}
+export type Carte = {
+  id: string;
+  programme_id: string;
+  client_nom: string;
+  client_email: string;
+  points: number;
+  numero: string;
+  created_at: string;
+  programme?: Programme;
+};
+
+export type Transaction = {
+  id: string;
+  carte_id: string;
+  points: number;
+  description: string;
+  created_at: string;
+};
+
+export const CATEGORIES = [
+  { label: 'Restauration', emoji: '🍽️' },
+  { label: 'Mode', emoji: '👗' },
+  { label: 'Beauté', emoji: '💄' },
+  { label: 'Sport', emoji: '🏋️' },
+  { label: 'Épicerie', emoji: '🛒' },
+  { label: 'Café', emoji: '☕' },
+  { label: 'Librairie', emoji: '📚' },
+  { label: 'Autre', emoji: '🏪' },
+];
+
+export const COULEURS = [
+  '#3b7bff', '#8b5cf6', '#ec4899', '#f97316',
+  '#10b981', '#ef4444', '#f59e0b', '#06b6d4',
+];
