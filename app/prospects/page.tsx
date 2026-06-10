@@ -20,7 +20,7 @@ type EditState = Omit<Prospect, 'id' | 'created_at' | 'updated_at'> & { id?: str
 const EMPTY: EditState = {
   name: '', company: '', type: 'commerçant', email: '', phone: '',
   website: '', facebook: '', instagram: '',
-  city: '', status: 'À contacter', notes: '', follow_up_date: null,
+  city: '', status: 'À contacter', notes: '', follow_up_date: null, favorite: false,
 };
 
 function parseCSV(text: string): EditState[] {
@@ -44,6 +44,7 @@ function parseCSV(text: string): EditState[] {
       status: (STATUSES.includes(row['status'] as ProspectStatus) ? row['status'] : 'À contacter') as ProspectStatus,
       notes: row['notes'] || '',
       follow_up_date: row['follow_up_date'] || row['relance'] || null,
+      favorite: false,
     };
   });
 }
@@ -86,6 +87,7 @@ export default function ProspectsPage() {
   const [showForm, setShowForm] = useState(false);
   const [importStatus, setImportStatus] = useState('');
   const [hideNotInterested, setHideNotInterested] = useState(false);
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [callNoteId, setCallNoteId] = useState<string | null>(null);
   const [callNoteText, setCallNoteText] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -95,7 +97,8 @@ export default function ProspectsPage() {
     const matchStatus = !filterStatus || p.status === filterStatus;
     const matchType = !filterType || p.type === filterType;
     const matchInterest = !hideNotInterested || p.status !== 'Pas intéressé';
-    return matchSearch && matchStatus && matchType && matchInterest;
+    const matchFavorite = !onlyFavorites || !!p.favorite;
+    return matchSearch && matchStatus && matchType && matchInterest && matchFavorite;
   });
 
   function saveCallNote(id: string) {
@@ -227,6 +230,11 @@ export default function ProspectsPage() {
           className={`px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${hideNotInterested ? 'bg-zinc-700 border-zinc-600 text-white' : 'border-brand-border text-brand-muted hover:text-white hover:border-zinc-500'}`}>
           {hideNotInterested ? '✓ Sans "Pas intéressé"' : 'Masquer "Pas intéressé"'}
         </button>
+        <button
+          onClick={() => setOnlyFavorites(v => !v)}
+          className={`px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${onlyFavorites ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'border-brand-border text-brand-muted hover:text-white hover:border-zinc-500'}`}>
+          {onlyFavorites ? '★ Favoris uniquement' : '☆ Favoris'}
+        </button>
         <span className="text-sm text-brand-muted self-center">{filtered.length} résultat{filtered.length !== 1 ? 's' : ''}</span>
       </div>
 
@@ -237,6 +245,7 @@ export default function ProspectsPage() {
           <table className="w-full text-sm">
             <thead className="bg-brand-bg border-b border-brand-border">
               <tr>
+                <th className="text-left px-4 py-3 font-medium text-brand-muted whitespace-nowrap">★</th>
                 {['Entreprise', 'Type', 'Ville', 'Présence digitale', 'Statut', 'Relance', 'Actions'].map(h => (
                   <th key={h} className="text-left px-4 py-3 font-medium text-brand-muted whitespace-nowrap">{h}</th>
                 ))}
@@ -245,10 +254,17 @@ export default function ProspectsPage() {
             </thead>
             <tbody className="divide-y divide-brand-border">
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="text-center py-10 text-brand-muted">Aucun prospect trouvé</td></tr>
+                <tr><td colSpan={9} className="text-center py-10 text-brand-muted">Aucun prospect trouvé</td></tr>
               )}
               {filtered.map(p => (
                 <tr key={p.id} className="hover:bg-brand-bg/50 transition-colors">
+                  <td className="px-4 py-3">
+                    <button onClick={() => updateProspect(p.id, { favorite: !p.favorite })}
+                      className={`text-lg transition-colors ${p.favorite ? 'text-amber-400 hover:text-amber-300' : 'text-brand-muted/40 hover:text-amber-400'}`}
+                      title={p.favorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}>
+                      {p.favorite ? '★' : '☆'}
+                    </button>
+                  </td>
                   <td className="px-4 py-3">
                     <div className="font-medium text-white">{p.company || '—'}</div>
                     <div className="text-xs text-brand-muted">{p.name}</div>

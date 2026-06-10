@@ -15,6 +15,7 @@ export interface Prospect {
   status: ProspectStatus;
   notes: string;
   follow_up_date: string | null;
+  favorite?: boolean;
   created_at: string;
   updated_at: string;
 }
