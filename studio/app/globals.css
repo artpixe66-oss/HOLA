@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #000000;
+  --color-panel: #0a0a0a;
+  --color-surface: #1c1c1c;
+  --color-surface-2: #2a2a2a;
+  --color-line: #232323;
+  --color-lime: #c8f31d;
+  --color-lime-soft: #e3fb85;
+  --color-violet: #8b3dff;
+  --color-muted: #9b9b9b;
+  --color-danger: #ff5c5c;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  background: #000;
+  color: #fff;
+}
+
+::selection {
+  background: var(--color-lime);
+  color: #000;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}
+
+@layer components {
+.input {
+  width: 100%;
+  border-radius: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-2);
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+}
+.input:focus {
+  border-color: var(--color-lime);
+}
+.input::placeholder {
+  color: #666;
+}
+textarea.input {
+  line-height: 1.55;
+  resize: vertical;
+}
+select.input {
+  appearance: none;
+}
+}
+
+.prose-agent pre {
+  background: #0d0d0d;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 14px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.prose-agent table {
+  font-size: 12.5px;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+.prose-agent td,
+.prose-agent th {
+  border: 1px solid #2f2f2f;
+  padding: 4px 8px;
+  text-align: left;
+}
