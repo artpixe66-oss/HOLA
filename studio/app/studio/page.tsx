@@ -216,6 +216,14 @@ function AgentChat({ content, store }: { content: Content; store: Store }) {
     }));
   };
 
+  const [copied, setCopied] = useState<string | null>(null);
+  const copyForClaude = async (label: string, request: string) => {
+    const text = `${buildContext(store, content)}\n\n# Demande\n\n${request}\n\nRéponds en suivant ta méthode habituelle (skill reverse-video-prompt).`;
+    await navigator.clipboard.writeText(text);
+    setCopied(label);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
   const saveScript = (text: string) => saveContent({ ...content, script: text, status: content.status === "idee" ? "script" : content.status });
 
   return (
@@ -256,6 +264,14 @@ function AgentChat({ content, store }: { content: Content; store: Store }) {
 
       <div className="mt-4 flex flex-wrap gap-2">
         {QUICK.map((q) => <Button key={q.label} small tone="ghost" disabled={streaming != null} onClick={() => send(q.prompt)}>{q.label}</Button>)}
+      </div>
+      <div className="mt-3 rounded-2xl bg-surface-2 p-3">
+        <p className="text-xs text-muted">Avec ton abonnement Claude, sans clé API : copie la demande avec tout le contexte, colle-la dans Claude.ai, puis colle le prompt obtenu dans « Versions du prompt ».</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {QUICK.map((q) => (
+            <Button key={q.label} small tone="white" icon={copied === q.label ? "check" : "copy"} onClick={() => copyForClaude(q.label, q.prompt)}>{q.label}</Button>
+          ))}
+        </div>
       </div>
       <form className="mt-3 flex gap-2" onSubmit={(e) => { e.preventDefault(); send(input); }}>
         <textarea className="input flex-1" rows={2} placeholder="Ex. la sortie a perdu les taches de rousseur, corrige le prompt" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }} />
