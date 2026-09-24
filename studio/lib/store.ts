@@ -107,6 +107,58 @@ function read(): Store {
   return cache;
 }
 
+// Synchronisation avec le stockage en ligne (Vercel Blob) quand il est configuré.
+export type SyncStatus = "local" | "chargement" | "synchronisé" | "envoi" | "erreur";
+let syncStatus: SyncStatus = "local";
+let syncStarted = false;
+let pushTimer: ReturnType<typeof setTimeout> | null = null;
+
+function setSync(s: SyncStatus) {
+  syncStatus = s;
+  listeners.forEach((l) => l());
+}
+
+function startSync() {
+  if (syncStarted || typeof window === "undefined") return;
+  syncStarted = true;
+  setTimeout(async () => {
+    try {
+      setSync("chargement");
+      const res = await fetch("/api/state", { cache: "no-store" });
+      const data = (await res.json()) as { enabled: boolean; state: Store | null };
+      if (!data.enabled) return setSync("local");
+      const local = read();
+      if (data.state && (data.state.savedAt ?? "") >= (local.savedAt ?? "")) {
+        cache = { ...initialStore(), ...data.state, settings: { ...initialStore().settings, ...data.state.settings } };
+        persist(cache);
+        setSync("synchronisé");
+      } else {
+        schedulePush(0);
+      }
+    } catch {
+      setSync("erreur");
+    }
+  }, 0);
+}
+
+function schedulePush(delay = 1200) {
+  if ((syncStatus === "local" || syncStatus === "chargement") && delay) return; // hors ligne ou chargement en cours
+  if (pushTimer) clearTimeout(pushTimer);
+  pushTimer = setTimeout(async () => {
+    try {
+      setSync("envoi");
+      const res = await fetch("/api/state", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(read()) });
+      setSync(res.ok ? "synchronisé" : res.status === 501 ? "local" : "erreur");
+    } catch {
+      setSync("erreur");
+    }
+  }, delay);
+}
+
+export function useSyncStatus(): SyncStatus {
+  return useSyncExternalStore(subscribe, () => syncStatus, () => "local" as SyncStatus);
+}
+
 function persist(s: Store) {
   try {
     window.localStorage.setItem(KEY, JSON.stringify(s));
@@ -116,9 +168,10 @@ function persist(s: Store) {
 }
 
 export function update(fn: (s: Store) => Store) {
-  cache = fn(read());
+  cache = { ...fn(read()), savedAt: new Date().toISOString() };
   persist(cache);
   listeners.forEach((l) => l());
+  schedulePush();
 }
 
 export function replaceStore(s: Store) {
@@ -131,6 +184,7 @@ export function resetStore() {
 
 function subscribe(l: () => void) {
   listeners.add(l);
+  startSync();
   const onStorage = (e: StorageEvent) => {
     if (e.key === KEY) {
       cache = null;

@@ -149,6 +149,7 @@ export interface Settings {
 
 export interface Store {
   version: 1;
+  savedAt?: string;
   influencers: Influencer[];
   inspirations: Inspiration[];
   contents: Content[];
