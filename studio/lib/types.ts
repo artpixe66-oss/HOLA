@@ -20,6 +20,7 @@ export interface Influencer {
   attitude: string; // bloc ATTITUDE
   formats: string; // formats et options de DA validés
   checkpoints: string; // points de contrôle propres au personnage
+  povDetails?: string; // détails physiques visibles en POV (mains, jambes…), pour les carrousels
   notes: string;
   createdAt: string;
   demo?: boolean;
@@ -90,8 +91,39 @@ export interface Generation {
   createdAt: string;
 }
 
+export type SlideCategory = "ELLE" | "POV" | "DECOR";
+
+export interface Slide {
+  id: ID;
+  category: SlideCategory;
+  framing: string;
+  light: string;
+  description: string;
+  prompt: string;
+  imageUrl: string;
+  genStatus?: string;
+}
+
+export const CAROUSEL_TYPES = ["Photo dump", "Fit check", "Mood board", "Storytime", "Avant / après", "Autre"] as const;
+
+export interface CarouselData {
+  type: string;
+  slideCount: number;
+  source: "brief" | "inspiration";
+  brief: string;
+  inspirationUrl: string;
+  inspirationNotes: string;
+  refImages: string[];
+  concept: string;
+  styleNotes: string;
+  caption: string;
+  slides: Slide[];
+}
+
 export interface Content {
   id: ID;
+  kind?: "video" | "carousel";
+  carousel?: CarouselData;
   title: string;
   influencerId: ID | null;
   inspirationId: ID | null;
@@ -145,6 +177,8 @@ export interface Settings {
   pricePerSecond: number | null;
   budgetCap: number | null;
   spent: number;
+  imageModel?: string;
+  pricePerImage?: number | null;
 }
 
 export interface Store {
@@ -157,4 +191,5 @@ export interface Store {
   activeAgentVersionId: ID | null;
   metrics: PostMetrics[];
   settings: Settings;
+  carouselInstructions?: string;
 }

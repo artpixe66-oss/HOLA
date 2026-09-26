@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button, Loading, PageHeader } from "@/components/ui";
 import { buildRows, fmtNum } from "@/lib/analytics";
-import { saveContent, useStore } from "@/lib/store";
+import { saveContent, useStore, editHref } from "@/lib/store";
 import { STATUSES, type Content } from "@/lib/types";
 
 const WEEK = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
@@ -47,7 +47,7 @@ export default function CalendarPage() {
     const dark = st.id === "script" || st.id === "prompt";
     return (
       <Link
-        href={`/studio?id=${c.id}`}
+        href={editHref(c)}
         draggable={c.status !== "publie"}
         onDragStart={() => setDragId(c.id)}
         className={`block truncate rounded-full px-2.5 py-1 text-[11px] font-semibold ${dark ? "text-white" : "text-black"}`}

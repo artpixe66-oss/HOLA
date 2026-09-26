@@ -44,7 +44,7 @@ function Studio() {
       <div className="flex flex-wrap items-center gap-3">
         <select className="input max-w-md" value={content?.id ?? ""} onChange={(e) => router.push(e.target.value ? `/studio?id=${e.target.value}` : "/studio")}>
           <option value="">Choisir une création…</option>
-          {store.contents.map((c) => (
+          {store.contents.filter((c) => c.kind !== "carousel").map((c) => (
             <option key={c.id} value={c.id}>
               {c.title} — {STATUSES.find((s) => s.id === c.status)?.label}
             </option>

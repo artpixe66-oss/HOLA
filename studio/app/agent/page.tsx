@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, Card, Field, Loading, PageHeader } from "@/components/ui";
 import { now, replaceStore, resetStore, uid, update, useStore } from "@/lib/store";
+import { CAROUSEL_GUIDE } from "@/lib/seed/carousel-guide";
 import type { Settings, Store } from "@/lib/types";
 
 export default function AgentPage() {
@@ -72,6 +73,7 @@ function AgentEditor({ store }: { store: Store }) {
         </Card>
 
         <div className="space-y-6">
+          <CarouselGuideCard store={store} />
           <Card>
             <h3 className="mb-3 font-semibold">Historique</h3>
             <div className="space-y-2">
@@ -95,6 +97,8 @@ function AgentEditor({ store }: { store: Store }) {
             </Field>
             <Field label="Modèle Higgsfield par défaut"><input className="input font-mono text-xs" value={store.settings.higgsfieldModel} onChange={(e) => setSetting("higgsfieldModel", e.target.value)} /></Field>
             <Field label="Tarif par seconde générée" hint="À prendre sur ta page de facturation Higgsfield ; l'application ne le devine pas."><input className="input" inputMode="decimal" value={store.settings.pricePerSecond ?? ""} onChange={(e) => setSetting("pricePerSecond", e.target.value ? Number(e.target.value.replace(",", ".")) : null)} /></Field>
+            <Field label="Modèle image (carrousels)"><input className="input font-mono text-xs" value={store.settings.imageModel ?? "higgsfield-ai/soul/v2/standard"} onChange={(e) => setSetting("imageModel", e.target.value)} /></Field>
+            <Field label="Tarif par image générée"><input className="input" inputMode="decimal" value={store.settings.pricePerImage ?? ""} onChange={(e) => setSetting("pricePerImage", e.target.value ? Number(e.target.value.replace(",", ".")) : null)} /></Field>
             <Field label="Plafond de dépense"><input className="input" inputMode="decimal" value={store.settings.budgetCap ?? ""} onChange={(e) => setSetting("budgetCap", e.target.value ? Number(e.target.value.replace(",", ".")) : null)} /></Field>
             <p className="text-xs text-muted">Dépensé (estimé) : {store.settings.spent.toFixed(2)} <button className="text-lime" onClick={() => setSetting("spent", 0)}>remettre à zéro</button></p>
           </Card>
@@ -114,5 +118,27 @@ function AgentEditor({ store }: { store: Store }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function CarouselGuideCard({ store }: { store: Store }) {
+  const current = store.carouselInstructions || CAROUSEL_GUIDE;
+  const [text, setText] = useState(current);
+  const [open, setOpen] = useState(false);
+  return (
+    <Card className="space-y-3">
+      <h3 className="font-semibold">Méthode carrousel</h3>
+      <p className="text-xs text-muted">Instructions de l&apos;agent pour les carrousels, reprises de ton skill carousel-naia et rendues valables pour toutes tes influenceuses.</p>
+      <Button small tone="ghost" onClick={() => setOpen(!open)}>{open ? "Masquer" : "Modifier"}</Button>
+      {open && (
+        <>
+          <textarea className="input font-mono text-[11px]" rows={16} value={text} onChange={(e) => setText(e.target.value)} />
+          <div className="flex flex-wrap gap-2">
+            <Button small tone="lime" icon="check" disabled={text === current} onClick={() => update((s) => ({ ...s, carouselInstructions: text }))}>Enregistrer</Button>
+            <Button small tone="ghost" onClick={() => { setText(CAROUSEL_GUIDE); update((s) => ({ ...s, carouselInstructions: undefined })); }}>Revenir à l&apos;original</Button>
+          </div>
+        </>
+      )}
+    </Card>
   );
 }

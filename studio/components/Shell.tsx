@@ -11,6 +11,7 @@ export const NAV = [
   { href: "/influenceuses", icon: "user", label: "Influenceuses", title: "Influenceuses" },
   { href: "/inspirations", icon: "spark", label: "Inspirations", title: "Inspirations" },
   { href: "/studio", icon: "wand", label: "Studio de création", title: "Studio de création" },
+  { href: "/carrousels", icon: "layers", label: "Carrousels", title: "Carrousels" },
   { href: "/bibliotheque", icon: "film", label: "Bibliothèque", title: "Bibliothèque" },
   { href: "/calendrier", icon: "calendar", label: "Calendrier", title: "Calendrier" },
   { href: "/performances", icon: "chart", label: "Performances", title: "Performances" },

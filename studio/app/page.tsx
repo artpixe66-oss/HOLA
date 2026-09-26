@@ -6,7 +6,7 @@ import Icon from "@/components/Icon";
 import { Avatar, Button, Card, Loading, StatCard, StatusPill } from "@/components/ui";
 import { buildRows, fmtNum, fmtPct, groupStats, median, recommendations } from "@/lib/analytics";
 import { withDemo } from "@/lib/demo";
-import { update, useStore } from "@/lib/store";
+import { update, useStore, editHref } from "@/lib/store";
 import { STATUSES, type Content, type Influencer } from "@/lib/types";
 
 const DAY = 86_400_000;
@@ -166,7 +166,7 @@ function FocusCard({ content, influencer, influencerName, rows }: { content: Con
   const row = rows.find((r) => r.content?.id === content.id);
   return (
     <Card tone="white" className="flex flex-col gap-6">
-      <Link href={`/studio?id=${content.id}`} className="flex items-center gap-4">
+      <Link href={editHref(content)} className="flex items-center gap-4">
         <Avatar influencer={influencer} size={60} />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-lg font-semibold">{influencerName ?? "Sans influenceuse"}</span>
@@ -224,7 +224,7 @@ function SidePanel({ content, store }: { content: Content | null; store: NonNull
               <p className="mt-1 text-sm text-muted">{row ? "Engagement" : "Durée"}</p>
             </div>
           </div>
-          <Link href={`/studio?id=${content.id}`} className="mt-5 inline-block">
+          <Link href={editHref(content)} className="mt-5 inline-block">
             <Button tone="lime" icon="wand">Ouvrir dans le studio</Button>
           </Link>
         </div>

@@ -221,3 +221,8 @@ export function saveContent(c: Content) {
 export function saveInfluencer(i: Influencer) {
   update((s) => ({ ...s, influencers: upsert(s.influencers, i) }));
 }
+
+/** Page d'édition d'une création : studio vidéo ou carrousel. */
+export function editHref(c: { id: string; kind?: string }): string {
+  return c.kind === "carousel" ? `/carrousels?id=${c.id}` : `/studio?id=${c.id}`;
+}

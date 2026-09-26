@@ -9,6 +9,7 @@ import type { Influencer } from "@/lib/types";
 
 const BLOCKS: { key: keyof Influencer; label: string; hint: string; rows: number }[] = [
   { key: "anchors", label: "Ancrages physiques", hint: "En tête du bloc SUJET, injecté mot pour mot dans chaque prompt.", rows: 5 },
+  { key: "povDetails", label: "Détails du corps en POV", hint: "Pour les carrousels : mains, jambes, bijoux avec leur côté (gauche/droite), marques. Seul ce qui est dans le champ est repris.", rows: 6 },
   { key: "voice", label: "Bloc VOIX", hint: "Timbre, accent, diction, rythme.", rows: 8 },
   { key: "attitude", label: "Bloc ATTITUDE", hint: "Regard, bouche, posture, gestes.", rows: 8 },
   { key: "formats", label: "Formats et options de DA validés", hint: "À proposer, jamais imposés par défaut.", rows: 8 },
