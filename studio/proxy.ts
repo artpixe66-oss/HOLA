@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { AUTH_COOKIE, authToken } from "@/lib/auth";
+import { AUTH_COOKIE, authToken, normalizePassword } from "@/lib/auth";
 
 // Sans APP_PASSWORD (en local), l'application reste ouverte.
 export async function proxy(request: NextRequest) {
-  const password = process.env.APP_PASSWORD?.trim();
+  const password = normalizePassword(process.env.APP_PASSWORD);
   if (!password) return NextResponse.next();
   const cookie = request.cookies.get(AUTH_COOKIE)?.value;
   if (cookie && cookie === (await authToken(password))) return NextResponse.next();

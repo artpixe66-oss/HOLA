@@ -6,3 +6,8 @@ export async function authToken(password: string): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", data);
   return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
 }
+
+/** Tolère espaces, guillemets ou accents graves copiés avec le mot de passe, et les majuscules. */
+export function normalizePassword(value: string | undefined | null): string {
+  return (value ?? "").trim().replace(/^["'`*]+|["'`*]+$/g, "").trim().toLowerCase();
+}
