@@ -2,9 +2,9 @@ import { AUTH_COOKIE, authToken } from "@/lib/auth";
 
 export async function POST(request: Request) {
   const form = await request.formData();
-  const password = String(form.get("password") ?? "");
+  const password = String(form.get("password") ?? "").trim();
   const next = String(form.get("next") ?? "/");
-  const expected = process.env.APP_PASSWORD;
+  const expected = process.env.APP_PASSWORD?.trim();
   const target = next.startsWith("/") && !next.startsWith("//") ? next : "/";
   if (!expected || password !== expected) {
     return Response.redirect(new URL(`/login?error=1&next=${encodeURIComponent(target)}`, request.url), 303);
