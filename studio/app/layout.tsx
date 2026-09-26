@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import Shell from "@/components/Shell";
 import "./globals.css";
@@ -12,6 +12,12 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Studio — influenceuses IA",
   description: "Inspiration, création, publication et performances des influenceuses IA",
+  appleWebApp: { capable: true, title: "Studio", statusBarStyle: "black" },
+  icons: { apple: "/apple-touch-icon.png" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -1,19 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useMemo, useState } from "react";
 import { Button, Card, Empty, Field, Loading, PageHeader, StatCard, Tabs } from "@/components/ui";
 import { buildRows, DIMENSIONS, fmtNum, fmtPct, fmtRel, groupStats, median, recommendations, VERDICT_LABEL, type GroupStat, type PostRow, type Verdict } from "@/lib/analytics";
 import { detectColumns, FIELD_LABELS, parseCsv, rowsToMetrics, type MetricField } from "@/lib/csv";
 import { withDemo, withoutDemo } from "@/lib/demo";
-import { uid, update, useStore } from "@/lib/store";
+import { allTests, hookTypeTally } from "@/lib/hookTests";
+import { editHref, uid, update, useStore } from "@/lib/store";
 import type { PostMetrics, Store } from "@/lib/types";
 
-type Tab = "synthese" | "comparer" | "publications" | "importer";
+type Tab = "synthese" | "comparer" | "tests" | "publications" | "importer";
+const TABS: Tab[] = ["synthese", "comparer", "tests", "publications", "importer"];
 
 export default function PerformancesPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <Performances />
+    </Suspense>
+  );
+}
+
+function Performances() {
   const store = useStore();
-  const [tab, setTab] = useState<Tab>("synthese");
+  const initial = useSearchParams().get("tab") as Tab | null;
+  const [tab, setTab] = useState<Tab>(initial && TABS.includes(initial) ? initial : "synthese");
   const [influencerId, setInfluencerId] = useState("");
   const rows = useMemo(() => (store ? buildRows(store, influencerId || null) : []), [store, influencerId]);
   const stats = useMemo(() => groupStats(rows), [rows]);
@@ -34,9 +46,11 @@ export default function PerformancesPage() {
         </>}
       />
       <div className="mb-6">
-        <Tabs value={tab} onChange={setTab} options={[{ id: "synthese", label: "Synthèse" }, { id: "comparer", label: "Comparer" }, { id: "publications", label: "Publications" }, { id: "importer", label: "Importer" }]} />
+        <Tabs value={tab} onChange={setTab} options={[{ id: "synthese", label: "Synthèse" }, { id: "comparer", label: "Comparer" }, { id: "tests", label: "Tests A/B" }, { id: "publications", label: "Publications" }, { id: "importer", label: "Importer" }]} />
       </div>
-      {tab !== "importer" && !rows.length ? (
+      {tab === "tests" ? (
+        <Tests store={store} />
+      ) : tab !== "importer" && !rows.length ? (
         <Empty
           title="Aucune statistique pour l'instant"
           action={<div className="flex gap-2"><Button tone="lime" icon="upload" onClick={() => setTab("importer")}>Importer un export</Button><Button tone="ghost" onClick={() => update(withDemo)}>Charger un exemple</Button></div>}
@@ -62,10 +76,11 @@ function Synthesis({ rows, stats }: { rows: PostRow[]; stats: GroupStat[] }) {
   const med = median(rows.map((r) => r.views));
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard tone="lime" title="Vues médianes" value={fmtNum(med)} caption={`${rows.length} publications`} />
         <StatCard tone="white" title="Engagement médian" value={fmtPct(median(rows.map((r) => r.engagementRate ?? NaN)))} caption="interactions / portée" />
         <StatCard tone="dark" title="Enregistrements" value={fmtPct(median(rows.map((r) => r.saveRate ?? NaN)))} caption="médiane, le signal le plus fiable de valeur" />
+        <StatCard tone="dark" title="Rétention" value={fmtPct(median(rows.map((r) => r.retention ?? NaN)), 0)} caption="durée moyenne vue / durée de la vidéo (médiane)" />
         <StatCard tone="dark" title="Abonnements" value={fmtNum(rows.reduce((a, r) => a + (r.metrics.follows ?? 0), 0))} caption={`${median(rows.map((r) => r.followsPer1k ?? NaN))?.toFixed(1).replace(".", ",") ?? "—"} pour 1 000 comptes touchés`} />
       </div>
 
@@ -155,7 +170,7 @@ function Compare({ stats }: { stats: GroupStat[] }) {
             <div key={s.value} className="grid items-center gap-3 md:grid-cols-[200px_1fr_200px]">
               <div className="min-w-0">
                 <p className="truncate font-medium">{s.value}</p>
-                <p className="text-xs text-muted">{s.n} post(s) · {s.aboveMedian}/{s.n} au-dessus · engagement {fmtPct(s.medianEngagement)}</p>
+                <p className="text-xs text-muted">{s.n} post(s) · {s.aboveMedian}/{s.n} au-dessus · engagement {fmtPct(s.medianEngagement)}{s.medianRetention != null ? ` · rétention ${fmtPct(s.medianRetention, 0)}` : ""}</p>
               </div>
               <div className="relative h-8 rounded-full bg-surface-2">
                 <div className="absolute inset-y-0 w-0.5 bg-white/50" style={{ left: `${(1 / max) * 100}%` }} title="médiane du compte" />
@@ -184,7 +199,7 @@ function Posts({ rows, store }: { rows: PostRow[]; store: Store }) {
     <div className="overflow-x-auto rounded-[28px] bg-surface">
       <table className="w-full min-w-[900px] text-sm">
         <thead className="text-left text-xs uppercase text-muted">
-          <tr>{["Publication", "Création liée", "Vues", "vs médiane", "Engagement", "Enreg.", "Partages", "Abonnés", ""].map((h) => <th key={h} className="px-4 py-3 font-medium">{h}</th>)}</tr>
+          <tr>{["Publication", "Création liée", "Vues", "vs médiane", "Rétention", "Engagement", "Enreg.", "Partages", "Abonnés", ""].map((h) => <th key={h} className="px-4 py-3 font-medium">{h}</th>)}</tr>
         </thead>
         <tbody>
           {sorted.map((r) => (
@@ -201,6 +216,7 @@ function Posts({ rows, store }: { rows: PostRow[]; store: Store }) {
               </td>
               <td className="px-4 py-3 font-semibold">{fmtNum(r.views)}</td>
               <td className={`px-4 py-3 ${r.relViews != null && r.relViews >= 1.2 ? "text-lime" : ""}`}>{fmtRel(r.relViews)}</td>
+              <td className="px-4 py-3" title={r.watchSec != null ? `${r.watchSec.toFixed(1)} s vues en moyenne` : "Durée moyenne de visionnage ou durée de la vidéo manquante"}>{fmtPct(r.retention, 0)}</td>
               <td className="px-4 py-3">{fmtPct(r.engagementRate)}</td>
               <td className="px-4 py-3">{fmtPct(r.saveRate)}</td>
               <td className="px-4 py-3">{fmtPct(r.shareRate)}</td>
@@ -217,7 +233,7 @@ function Posts({ rows, store }: { rows: PostRow[]; store: Store }) {
 function Import({ store, onDone }: { store: Store; onDone: () => void }) {
   const [table, setTable] = useState<string[][] | null>(null);
   const [columns, setColumns] = useState<Partial<Record<MetricField, number>>>({});
-  const [manual, setManual] = useState({ permalink: "", caption: "", publishedAt: "", views: "", reach: "", likes: "", comments: "", shares: "", saves: "", follows: "", contentId: "" });
+  const [manual, setManual] = useState({ permalink: "", caption: "", publishedAt: "", views: "", reach: "", likes: "", comments: "", shares: "", saves: "", follows: "", avgWatchSec: "", contentId: "" });
 
   const onFile = async (file: File) => {
     const rows = parseCsv(await file.text());
@@ -247,12 +263,12 @@ function Import({ store, onDone }: { store: Store; onDone: () => void }) {
       caption: manual.caption.trim(),
       publishedAt: manual.publishedAt ? new Date(manual.publishedAt).toISOString() : null,
       views: num(manual.views), reach: num(manual.reach), likes: num(manual.likes), comments: num(manual.comments), shares: num(manual.shares), saves: num(manual.saves), follows: num(manual.follows),
-      avgWatchSec: null,
+      avgWatchSec: num(manual.avgWatchSec),
       contentId: manual.contentId || null,
       importedAt: new Date().toISOString(),
     };
     update((s) => ({ ...s, metrics: [m, ...s.metrics] }));
-    setManual({ ...manual, permalink: "", caption: "", views: "", reach: "", likes: "", comments: "", shares: "", saves: "", follows: "", contentId: "" });
+    setManual({ ...manual, permalink: "", caption: "", views: "", reach: "", likes: "", comments: "", shares: "", saves: "", follows: "", avgWatchSec: "", contentId: "" });
   };
 
   return (
@@ -292,12 +308,73 @@ function Import({ store, onDone }: { store: Store; onDone: () => void }) {
           <Field label="Lien" className="sm:col-span-2"><input className="input" value={manual.permalink} onChange={(e) => setManual({ ...manual, permalink: e.target.value })} /></Field>
           <Field label="Légende"><input className="input" value={manual.caption} onChange={(e) => setManual({ ...manual, caption: e.target.value })} /></Field>
           <Field label="Publiée le"><input className="input" type="datetime-local" value={manual.publishedAt} onChange={(e) => setManual({ ...manual, publishedAt: e.target.value })} /></Field>
-          {(["views", "reach", "likes", "comments", "shares", "saves", "follows"] as const).map((k) => (
+          {(["views", "reach", "likes", "comments", "shares", "saves", "follows", "avgWatchSec"] as const).map((k) => (
             <Field key={k} label={FIELD_LABELS[k]}><input className="input" inputMode="numeric" value={manual[k]} onChange={(e) => setManual({ ...manual, [k]: e.target.value })} /></Field>
           ))}
         </div>
         <Button tone="white" icon="plus" disabled={!manual.views && !manual.reach} onClick={addManual}>Ajouter</Button>
       </Card>
+    </div>
+  );
+}
+
+const TEST_STATE: Record<string, string> = {
+  preparation: "En préparation",
+  en_cours: "En cours",
+  attente_stats: "En attente des stats",
+  gagnant: "Verdict",
+  egalite: "Égalité",
+};
+
+function Tests({ store }: { store: Store }) {
+  const results = allTests(store).reverse();
+  const tally = hookTypeTally(results);
+  if (!results.length)
+    return (
+      <Empty title="Aucun test A/B pour l'instant">
+        Dans le studio, le labo d&apos;accroches propose 5 accroches pour une création : choisis-en deux et l&apos;application crée les deux versions, programmées à 2 jours d&apos;écart à la même heure.
+      </Empty>
+    );
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2">
+        {results.map((r) => (
+          <Card key={r.test.id} className="space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-semibold">{r.a?.title ?? "Test"}</p>
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${r.state === "gagnant" ? "bg-lime text-black" : r.state === "egalite" ? "bg-white text-black" : "bg-surface-2"}`}>{TEST_STATE[r.state]}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              {([["A", r.a, r.rowA], ["B", r.b, r.rowB]] as const).map(([letter, c, row]) => (
+                <div key={letter} className={`rounded-2xl p-3 ${r.winner === letter ? "bg-lime text-black" : "bg-surface-2"}`}>
+                  <p className="text-xs font-semibold opacity-70">Version {letter}</p>
+                  <p className="mt-1">« {c?.attributes.hook || "accroche à définir"} »</p>
+                  <p className="mt-2 text-xs opacity-70">{row ? `${fmtNum(row.views)} vues · rétention ${fmtPct(row.retention, 0)}` : c?.status === "publie" ? "Stats à importer" : c?.scheduledAt ? `Prévue le ${new Date(c.scheduledAt).toLocaleDateString("fr-FR")}` : "Pas programmée"}</p>
+                  {c && <Link href={editHref(c)} className={`mt-2 inline-block text-xs ${r.winner === letter ? "text-black underline" : "text-lime"}`}>Ouvrir</Link>}
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-muted">{r.summary}</p>
+          </Card>
+        ))}
+      </div>
+      {tally.length > 0 && (
+        <Card>
+          <h3 className="font-semibold">Cumul par type d&apos;accroche</h3>
+          <p className="mb-4 text-xs text-muted">Un seul test ne prouve rien : une tendance s&apos;affiche à partir de 3 tests conclus pour un même type.</p>
+          <div className="space-y-2 text-sm">
+            {tally.map((t) => (
+              <div key={t.type} className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-surface-2 px-4 py-3">
+                <span className="font-medium">{t.type}</span>
+                <span className="text-muted">{t.wins} victoire(s) · {t.losses} défaite(s) · {t.ties} égalité(s)</span>
+                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${t.trend ? (t.wins > t.losses ? "bg-lime text-black" : t.losses > t.wins ? "bg-violet" : "bg-white text-black") : "border border-surface-2 text-muted"}`}>
+                  {t.trend ? (t.wins > t.losses ? "Tendance positive" : t.losses > t.wins ? "Tendance négative" : "Sans tendance") : "Pas assez de tests"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

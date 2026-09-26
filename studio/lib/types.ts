@@ -120,9 +120,36 @@ export interface CarouselData {
   slides: Slide[];
 }
 
+/** Une accroche proposée par l'agent, sur les trois canaux des 2 premières secondes. */
+export interface HookIdea {
+  id: ID;
+  image: string;
+  onScreen: string;
+  firstLine: string;
+  hookType: string;
+  why: string;
+}
+
+/** Test A/B : deux créations identiques sauf l'accroche. */
+export interface HookTest {
+  id: ID;
+  contentIds: [ID, ID];
+  createdAt: string;
+}
+
+export interface Checklist {
+  hook?: boolean;
+  checkpoints?: boolean;
+  caption?: boolean;
+}
+
 export interface Content {
   id: ID;
   kind?: "video" | "carousel";
+  caption?: string;
+  hookIdeas?: HookIdea[];
+  hookTestId?: ID;
+  checklist?: Checklist;
   carousel?: CarouselData;
   title: string;
   influencerId: ID | null;
@@ -179,6 +206,8 @@ export interface Settings {
   spent: number;
   imageModel?: string;
   pricePerImage?: number | null;
+  weeklyGoalPosts?: number;
+  weeklyGoalTests?: number;
 }
 
 export interface Store {
@@ -192,4 +221,5 @@ export interface Store {
   metrics: PostMetrics[];
   settings: Settings;
   carouselInstructions?: string;
+  hookTests?: HookTest[];
 }

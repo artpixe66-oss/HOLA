@@ -7,7 +7,7 @@ import { useSyncStatus } from "@/lib/store";
 import { RoundButton } from "./ui";
 
 export const NAV = [
-  { href: "/", icon: "home", label: "Tableau de bord", title: "Tableau de bord" },
+  { href: "/", icon: "home", label: "Aujourd'hui", title: "Aujourd'hui" },
   { href: "/influenceuses", icon: "user", label: "Influenceuses", title: "Influenceuses" },
   { href: "/inspirations", icon: "spark", label: "Inspirations", title: "Inspirations" },
   { href: "/studio", icon: "wand", label: "Studio de création", title: "Studio de création" },

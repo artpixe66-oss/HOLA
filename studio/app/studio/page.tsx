@@ -3,7 +3,9 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import Icon from "@/components/Icon";
+import HookLab from "@/components/HookLab";
 import Markdown from "@/components/Markdown";
+import VocabField from "@/components/VocabField";
 import { Avatar, Button, Card, Field, Loading, StatusPill } from "@/components/ui";
 import { buildContext, extractCodeBlock } from "@/lib/agentContext";
 import { newContent, now, saveContent, uid, update, useStore } from "@/lib/store";
@@ -110,12 +112,7 @@ function Editor({ content, store }: { content: Content; store: Store }) {
           <p className="text-xs text-muted">Ces champs servent à comparer les publications entre elles. Reste constant dans tes intitulés (« Vanne à chute », pas une formulation différente à chaque fois).</p>
           <div className="grid grid-cols-2 gap-3">
             {(["topic", "hookType", "outfit", "setting", "format", "editing"] as const).map((k) => (
-              <Field key={k} label={ATTRIBUTE_LABELS[k]}>
-                <input className="input" list={`list-${k}`} value={content.attributes[k]} onChange={(e) => setAttr(k, e.target.value)} />
-                <datalist id={`list-${k}`}>
-                  {[...new Set(store.contents.map((c) => c.attributes[k]).filter(Boolean))].map((v) => <option key={v} value={v} />)}
-                </datalist>
-              </Field>
+              <VocabField key={k} store={store} k={k} label={ATTRIBUTE_LABELS[k]} value={content.attributes[k]} onChange={(v) => setAttr(k, v)} />
             ))}
             <Field label="Accroche" className="col-span-2"><input className="input" placeholder="Première phrase ou texte à l'écran" value={content.attributes.hook} onChange={(e) => setAttr("hook", e.target.value)} /></Field>
             <Field label="Durée (s)"><input className="input" type="number" min={1} value={content.attributes.durationSec ?? ""} onChange={(e) => setAttr("durationSec", e.target.value ? Number(e.target.value) : null)} /></Field>
@@ -127,6 +124,7 @@ function Editor({ content, store }: { content: Content; store: Store }) {
           <Field label="Programmée le"><input className="input" type="datetime-local" value={toLocalInput(content.scheduledAt)} onChange={(e) => save({ scheduledAt: e.target.value ? new Date(e.target.value).toISOString() : null, status: e.target.value && content.status !== "publie" ? "programme" : content.status })} /></Field>
           <Field label="Vidéo finale (URL)"><input className="input" value={content.videoUrl} onChange={(e) => save({ videoUrl: e.target.value })} /></Field>
           <Field label="Lien de la publication Instagram" hint="Sert à relier automatiquement les statistiques importées."><input className="input" value={content.permalink} onChange={(e) => save({ permalink: e.target.value, status: e.target.value ? "publie" : content.status, publishedAt: e.target.value ? content.publishedAt ?? content.scheduledAt ?? now() : content.publishedAt })} /></Field>
+          <Field label="Légende Instagram" hint="Avec hashtags et appel à l'action : copiée dans le paquet de publication."><textarea className="input" rows={3} value={content.caption ?? ""} onChange={(e) => save({ caption: e.target.value })} /></Field>
           <Field label="Scénario"><textarea className="input" rows={6} value={content.script} onChange={(e) => save({ script: e.target.value })} /></Field>
           <div className="flex justify-between pt-2">
             <StatusPill status={content.status} />
@@ -136,6 +134,7 @@ function Editor({ content, store }: { content: Content; store: Store }) {
       </div>
 
       <div className="min-w-0 space-y-5">
+        <HookLab content={content} store={store} />
         <AgentChat content={content} store={store} />
         <PromptVersions content={content} store={store} />
         <GenerationPanel content={content} store={store} />

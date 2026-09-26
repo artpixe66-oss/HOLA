@@ -1,117 +1,191 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Icon from "@/components/Icon";
-import { Avatar, Button, Card, Loading, StatCard, StatusPill } from "@/components/ui";
-import { buildRows, fmtNum, fmtPct, groupStats, median, recommendations } from "@/lib/analytics";
+import { Avatar, Button, Card, Loading } from "@/components/ui";
 import { withDemo } from "@/lib/demo";
-import { update, useStore, editHref } from "@/lib/store";
-import { STATUSES, type Content, type Influencer } from "@/lib/types";
+import { allTests } from "@/lib/hookTests";
+import { editHref, now, update, useStore } from "@/lib/store";
+import { nextActions, nextPost, publishPacket, weekProgress } from "@/lib/today";
+import type { Content, Store } from "@/lib/types";
 
-const DAY = 86_400_000;
+const DAY = 86_400_000; // utilisé par DayStrip
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 const sameDay = (a: Date, b: Date) => startOfDay(a).getTime() === startOfDay(b).getTime();
 const contentDate = (c: Content) => c.scheduledAt ?? c.publishedAt;
 
-export default function Dashboard() {
+export default function Today() {
   const store = useStore();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  const data = useMemo(() => {
-    if (!store) return null;
-    const rows = buildRows(store);
-    const stats = groupStats(rows);
-    const inProgress = store.contents.filter((c) => c.status !== "publie");
-    const upcoming = store.contents
-      .filter((c) => c.scheduledAt && new Date(c.scheduledAt).getTime() >= startOfDay(new Date()).getTime())
-      .sort((a, b) => (a.scheduledAt! < b.scheduledAt! ? -1 : 1));
-    const recent = [...store.contents].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-    return { rows, stats, inProgress, upcoming, recent, recs: recommendations(rows, stats) };
-  }, [store]);
-
-  if (!store || !data) return <Loading />;
-
-  const { rows, inProgress, upcoming, recent, recs } = data;
-  const focusList = [...upcoming, ...recent.filter((c) => !upcoming.includes(c))];
-  const selected = store.contents.find((c) => c.id === selectedId) ?? focusList[0] ?? null;
-  const infl = (id: string | null) => store.influencers.find((i) => i.id === id) ?? null;
-  const signals = data.stats.filter((s) => s.verdict === "solide").length;
+  if (!store) return <Loading />;
+  const post = nextPost(store);
+  const actions = nextActions(store).slice(0, 3);
+  const week = weekProgress(store);
+  const tests = allTests(store).filter((t) => t.state !== "preparation" || t.a || t.b).slice(-3).reverse();
+  const isMonday = new Date().getDay() === 1;
+  const empty = !store.contents.length;
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
       <div className="min-w-0 space-y-8">
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
-          <StatCard tone="lime" title="Contenus en production" value={inProgress.length} caption={`${upcoming.length} programmé(s) à venir`} href="/bibliotheque" />
-          <StatCard tone="white" title="Publications analysées" value={rows.length} caption={rows.length ? `${fmtNum(median(rows.map((r) => r.views)))} vues médianes` : "Importe tes statistiques"} href="/performances" />
-          <StatCard tone="dark" title="Influenceuses" value={store.influencers.length} caption={`${signals} signal(aux) solide(s)`} href="/influenceuses" />
+        <div>
+          <p className="text-sm font-medium text-lime">{new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</p>
+          <h2 className="text-3xl font-semibold md:text-4xl">Aujourd&apos;hui</h2>
+        </div>
+
+        {post ? (
+          <PostCard key={post.content.id} content={post.content} isToday={post.isToday} store={store} />
+        ) : (
+          <Card tone="lime" className="flex flex-col gap-4">
+            <p className="text-2xl font-semibold">{empty ? "Bienvenue dans ton studio" : "Rien de programmé"}</p>
+            <p className="max-w-xl text-sm text-black/70">{empty ? "Crée ta première vidéo ou ton premier carrousel, ou charge un exemple pour voir l'application remplie." : "Programme ta prochaine publication depuis le calendrier ou lance la revue de la semaine pour planifier les 7 prochains jours."}</p>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/studio?new=1" className="rounded-full bg-black px-4 py-2.5 text-sm font-medium text-white">Nouvelle vidéo</Link>
+              <Link href="/carrousels?new=1" className="rounded-full border border-black/20 px-4 py-2.5 text-sm font-medium">Nouveau carrousel</Link>
+              {empty ? <button onClick={() => update(withDemo)} className="rounded-full border border-black/20 px-4 py-2.5 text-sm font-medium">Charger un exemple</button> : <Link href="/revue" className="rounded-full border border-black/20 px-4 py-2.5 text-sm font-medium">Planifier la semaine</Link>}
+            </div>
+          </Card>
+        )}
+
+        <section className="space-y-3">
+          <h3 className="text-xl font-semibold">Prochaines actions</h3>
+          {actions.length ? (
+            actions.map((a, i) => (
+              <Link key={i} href={a.href} className="flex items-center gap-4 rounded-[24px] bg-surface p-4 pr-6 transition hover:bg-surface-2">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-violet font-semibold">{i + 1}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold">{a.title}</span>
+                  <span className="block text-sm text-muted">{a.detail}</span>
+                </span>
+                <span className="shrink-0 text-sm text-lime">{a.minutes} min</span>
+              </Link>
+            ))
+          ) : (
+            <p className="rounded-[24px] bg-surface p-5 text-sm text-muted">Rien en attente. Tout est à jour.</p>
+          )}
         </section>
 
         <section className="border-t border-line pt-6">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-2xl font-semibold md:text-3xl">Programme de publication</h2>
-            <span className="text-sm font-medium">{new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}</span>
+            <h3 className="text-xl font-semibold">Programme</h3>
+            <Link href="/calendrier" className="text-sm text-lime">Calendrier</Link>
           </div>
           <DayStrip contents={store.contents} />
         </section>
+      </div>
 
-        <section className="grid gap-4 lg:grid-cols-[1fr_1.15fr]">
-          {selected ? (
-            <FocusCard content={selected} influencerName={infl(selected.influencerId)?.name} influencer={infl(selected.influencerId)} rows={rows} />
-          ) : (
-            <Card tone="white" className="flex flex-col justify-between gap-6">
-              <div>
-                <p className="text-xl font-semibold">Aucune création pour l&apos;instant</p>
-                <p className="mt-2 text-sm text-black/60">Pars d&apos;une inspiration ou crée directement un contenu dans le studio. Tu peux aussi charger un exemple pour voir le tableau de bord rempli.</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Link href="/studio?new=1" className="rounded-full bg-black px-4 py-2.5 text-sm font-medium text-white">Nouvelle création</Link>
-                <button onClick={() => update(withDemo)} className="rounded-full border border-black/20 px-4 py-2.5 text-sm font-medium">Charger un exemple</button>
-              </div>
-            </Card>
-          )}
-          <div className="space-y-3">
-            {focusList.slice(0, 5).map((c) => {
-              const i = infl(c.influencerId);
-              const st = STATUSES.find((s) => s.id === c.status)!;
-              return (
-                <button key={c.id} onClick={() => setSelectedId(c.id)} className={`relative flex w-full items-center gap-4 rounded-[28px] bg-surface p-4 pr-6 text-left transition hover:bg-surface-2 ${selected?.id === c.id ? "ring-2 ring-lime" : ""}`}>
-                  <span className="absolute left-1/2 top-0 h-1 w-1/2 -translate-x-1/2 rounded-b-full" style={{ background: st.color }} />
-                  <Avatar influencer={i} size={52} />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-lg font-semibold">{c.title}</span>
-                    <span className="block truncate text-sm text-muted">
-                      {i?.name ?? "Sans influenceuse"} · {contentDate(c) ? new Date(contentDate(c)!).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : st.label}
-                    </span>
-                  </span>
-                  <Icon name="arrow" className="shrink-0" />
-                </button>
-              );
-            })}
-            {!focusList.length && <p className="rounded-[28px] bg-surface p-6 text-sm text-muted">Tes créations apparaîtront ici.</p>}
+      <aside className="space-y-6 xl:border-l xl:border-line xl:pl-6">
+        <Card tone="white">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Tests d&apos;accroche</h3>
+            <Link href="/performances?tab=tests" className="text-sm text-black/60">Tout voir</Link>
           </div>
-        </section>
-
-        {recs.length > 0 && (
-          <section>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Ce que disent tes stats</h2>
-              <Link href="/performances" className="text-sm text-lime">Tout voir</Link>
-            </div>
-            <div className="grid gap-3 md:grid-cols-2">
-              {recs.slice(0, 4).map((r, i) => (
-                <div key={i} className="rounded-[24px] bg-surface p-5">
-                  <p className="font-semibold">{r.title}</p>
-                  <p className="mt-1 text-sm text-muted">{r.detail}</p>
+          {tests.length ? (
+            <div className="mt-3 space-y-3">
+              {tests.map((t) => (
+                <div key={t.test.id} className="rounded-2xl bg-black/5 p-3 text-sm">
+                  <p className="font-semibold">{t.a?.title ?? "Test"}</p>
+                  <p className="mt-1 text-black/60">{t.summary}</p>
                 </div>
               ))}
             </div>
-          </section>
-        )}
-      </div>
+          ) : (
+            <p className="mt-2 text-sm text-black/60">Aucun test. Dans le studio, le labo d&apos;accroches propose 5 accroches : choisis-en deux pour lancer un test A/B.</p>
+          )}
+        </Card>
 
-      <SidePanel content={selected} store={store} />
+        <Card className="space-y-4">
+          <h3 className="text-lg font-semibold">Objectif de la semaine</h3>
+          <Progress label="Publications" value={week.posts} goal={week.goalPosts} />
+          <Progress label="Tests d'accroche lancés" value={week.tests} goal={week.goalTests} />
+          <p className="text-xs text-muted">Objectifs réglables dans Agent &amp; réglages.</p>
+        </Card>
+
+        <Card className={isMonday ? "ring-2 ring-lime" : ""}>
+          <h3 className="text-lg font-semibold">Revue de la semaine</h3>
+          <p className="mt-1 text-sm text-muted">Ce qui a marché, ce qu&apos;il faut retester, ce qu&apos;il faut arrêter, puis le plan des 7 prochains jours.{isMonday ? " C'est lundi : bon moment pour la faire." : ""}</p>
+          <Link href="/revue" className="mt-4 inline-block"><Button tone="lime" icon="arrow">Ouvrir la revue</Button></Link>
+        </Card>
+
+        <MiniMonth contents={store.contents} />
+      </aside>
     </div>
+  );
+}
+
+function Progress({ label, value, goal }: { label: string; value: number; goal: number }) {
+  const pct = Math.min(100, goal ? (value / goal) * 100 : 0);
+  return (
+    <div>
+      <div className="mb-1.5 flex justify-between text-sm"><span className="text-muted">{label}</span><span className="font-semibold">{value} / {goal}</span></div>
+      <div className="h-3 rounded-full bg-surface-2"><div className="h-3 rounded-full bg-lime" style={{ width: `${pct}%` }} /></div>
+    </div>
+  );
+}
+
+function PostCard({ content, isToday, store }: { content: Content; isToday: boolean; store: Store }) {
+  const [copied, setCopied] = useState(false);
+  const influencer = store.influencers.find((i) => i.id === content.influencerId) ?? null;
+  const cl = content.checklist ?? {};
+  const setCheck = (k: "hook" | "checkpoints" | "caption", v: boolean) => update((s) => ({ ...s, contents: s.contents.map((c) => (c.id === content.id ? { ...c, checklist: { ...c.checklist, [k]: v } } : c)) }));
+  const when = new Date(content.scheduledAt!);
+  const cover = content.kind === "carousel" ? content.carousel?.slides.find((s) => s.imageUrl)?.imageUrl : undefined;
+  const packet = publishPacket(content);
+
+  const copyPacket = async () => {
+    await navigator.clipboard.writeText(packet);
+    setCheck("caption", true);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const markPublished = () => {
+    const link = prompt("Lien de la publication Instagram (pour relier les statistiques) :", content.permalink || "https://www.instagram.com/reel/");
+    if (link === null) return;
+    const clean = /instagram\.com\/(reel|p)\/[\w-]+/.test(link) ? link.trim() : "";
+    update((s) => ({ ...s, contents: s.contents.map((c) => (c.id === content.id ? { ...c, status: "publie", publishedAt: now(), permalink: clean || c.permalink } : c)) }));
+  };
+
+  const items: { k: "hook" | "checkpoints" | "caption" | "link"; label: string; done: boolean }[] = [
+    { k: "hook", label: "Accroche validée", done: !!cl.hook || !!content.attributes.hook },
+    { k: "checkpoints", label: influencer?.checkpoints ? "Points de contrôle vérifiés" : "Vidéo relue", done: !!cl.checkpoints },
+    { k: "caption", label: "Légende et hashtags copiés", done: !!cl.caption },
+    { k: "link", label: "Lien Instagram ajouté", done: !!content.permalink },
+  ];
+
+  return (
+    <Card tone="lime" className="flex flex-col gap-6 md:flex-row">
+      <Link href={editHref(content)} className="grid aspect-[4/5] w-full shrink-0 place-items-center overflow-hidden rounded-[20px] bg-black text-sm text-lime md:w-40">
+        {cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={cover} alt="" className="h-full w-full object-cover" />
+        ) : content.videoUrl ? (
+          <video src={content.videoUrl} muted className="h-full w-full object-cover" />
+        ) : (
+          <span className="flex flex-col items-center gap-2"><Icon name={content.kind === "carousel" ? "layers" : "film"} size={28} />Aperçu</span>
+        )}
+      </Link>
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-sm font-semibold">
+          <span>{isToday ? "À publier aujourd'hui" : `Prochaine publication · ${when.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "short" })}`} · {when.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</span>
+          <span className="flex items-center gap-2"><Avatar influencer={influencer} size={24} />{influencer?.name ?? "—"} · {content.kind === "carousel" ? "Carrousel" : "Reel"}</span>
+        </div>
+        <Link href={editHref(content)} className="text-2xl font-semibold leading-tight md:text-3xl">{content.title}</Link>
+        {content.attributes.hook && <p className="text-sm text-black/70">« {content.attributes.hook} »</p>}
+        <div className="grid gap-2 text-sm sm:grid-cols-2">
+          {items.map((it) => (
+            <label key={it.k} className="flex items-center gap-2">
+              <input type="checkbox" className="h-4 w-4 accent-black" checked={it.done} disabled={it.k === "link"} onChange={(e) => it.k !== "link" && setCheck(it.k, e.target.checked)} />
+              {it.label}
+            </label>
+          ))}
+        </div>
+        <div className="mt-1 flex flex-wrap gap-2">
+          <button onClick={copyPacket} disabled={!packet} className="rounded-full bg-black px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40">{copied ? "Copié" : packet ? "Copier le paquet de publication" : "Ajoute une légende dans la création"}</button>
+          <button onClick={markPublished} className="rounded-full border border-black/25 px-4 py-2.5 text-sm font-medium">C&apos;est publié</button>
+        </div>
+      </div>
+    </Card>
   );
 }
 
@@ -157,102 +231,6 @@ function DayStrip({ contents }: { contents: Content[] }) {
         );
       })}
     </div>
-  );
-}
-
-function FocusCard({ content, influencer, influencerName, rows }: { content: Content; influencer: Influencer | null; influencerName?: string; rows: ReturnType<typeof buildRows> }) {
-  const idx = STATUSES.findIndex((s) => s.id === content.status);
-  const progress = Math.round(((idx + 1) / STATUSES.length) * 100);
-  const row = rows.find((r) => r.content?.id === content.id);
-  return (
-    <Card tone="white" className="flex flex-col gap-6">
-      <Link href={editHref(content)} className="flex items-center gap-4">
-        <Avatar influencer={influencer} size={60} />
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-lg font-semibold">{influencerName ?? "Sans influenceuse"}</span>
-          <StatusPill status={content.status} />
-        </span>
-        <Icon name="arrow" size={24} />
-      </Link>
-      <div className="flex items-end justify-between gap-4">
-        <div className="min-w-0">
-          <p className="truncate text-2xl font-semibold">{content.title}</p>
-          <p className="mt-1 text-sm text-black/60">{content.attributes.format || content.attributes.topic || "Format à définir"}</p>
-        </div>
-        <p className="shrink-0 text-4xl font-semibold">{row ? fmtNum(row.views) : content.attributes.durationSec ? `${content.attributes.durationSec}s` : "—"}</p>
-      </div>
-      <div>
-        <div className="relative h-11 overflow-hidden rounded-full border-2 border-black/80">
-          <div className="absolute inset-y-0 left-0 rounded-full bg-black" style={{ width: `${progress}%` }} />
-          <span className="absolute inset-0 grid place-items-center text-sm font-semibold mix-blend-difference text-white">{progress}%</span>
-        </div>
-        <p className="mt-3 text-sm font-medium text-black/60">{row ? `Enregistrements ${fmtPct(row.saveRate)} · partages ${fmtPct(row.shareRate)}` : STATUSES[idx].label}</p>
-      </div>
-    </Card>
-  );
-}
-
-function SidePanel({ content, store }: { content: Content | null; store: NonNullable<ReturnType<typeof useStore>> }) {
-  const influencer = store.influencers.find((i) => i.id === content?.influencerId) ?? null;
-  const row = content ? buildRows(store).find((r) => r.content?.id === content.id) : undefined;
-  const counts = STATUSES.map((s) => ({ ...s, n: store.contents.filter((c) => c.status === s.id).length }));
-  const total = counts.reduce((a, b) => a + b.n, 0);
-
-  return (
-    <aside className="space-y-8 border-line xl:border-l xl:pl-6">
-      {content ? (
-        <div>
-          <div className="flex items-center gap-4">
-            <Avatar influencer={influencer} size={72} />
-            <div className="min-w-0">
-              <p className="truncate text-xl font-semibold">{influencer?.name ?? "Sans influenceuse"}</p>
-              <p className="flex gap-3 text-sm">
-                <span className="text-muted">{influencer?.handle ? `@${influencer.handle}` : "—"}</span>
-                <span className="text-lime">{STATUSES.find((s) => s.id === content.status)?.label}</span>
-              </p>
-            </div>
-          </div>
-          <h3 className="mt-6 text-3xl font-semibold leading-tight">{content.title}</h3>
-          <p className="mt-1 text-sm text-muted">{content.attributes.hook ? `« ${content.attributes.hook} »` : "Accroche à écrire"}</p>
-          <div className="mt-6 flex items-end justify-between gap-4">
-            <div>
-              <p className="text-5xl font-semibold">{row ? fmtNum(row.views) : content.prompts.length}</p>
-              <p className="mt-1 text-sm text-muted">{row ? "Vues" : "Versions de prompt"}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-5xl font-semibold">{row ? fmtPct(row.engagementRate, 0) : content.attributes.durationSec ? `${content.attributes.durationSec}s` : "—"}</p>
-              <p className="mt-1 text-sm text-muted">{row ? "Engagement" : "Durée"}</p>
-            </div>
-          </div>
-          <Link href={editHref(content)} className="mt-5 inline-block">
-            <Button tone="lime" icon="wand">Ouvrir dans le studio</Button>
-          </Link>
-        </div>
-      ) : (
-        <p className="text-sm text-muted">Sélectionne une création pour voir son détail.</p>
-      )}
-
-      <MiniMonth contents={store.contents} />
-
-      <div>
-        <div className="flex h-10 gap-1">
-          {total ? (
-            counts.filter((c) => c.n).map((c) => <span key={c.id} className="rounded-full" style={{ background: c.color, flexGrow: c.n }} title={`${c.label} : ${c.n}`} />)
-          ) : (
-            <span className="flex-1 rounded-full bg-surface-2" />
-          )}
-        </div>
-        <ul className="mt-5 space-y-3 text-sm">
-          {counts.map((c) => (
-            <li key={c.id} className="flex items-center gap-3">
-              <span className="h-2.5 w-2.5 rounded-full" style={{ background: c.color }} />
-              <span className="flex-1 font-medium">{c.label}</span>
-              <span className="text-muted">{total ? Math.round((c.n / total) * 100) : 0}%</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </aside>
   );
 }
 

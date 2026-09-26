@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Icon from "@/components/Icon";
@@ -39,7 +40,7 @@ export default function InspirationsPage() {
 
   return (
     <div>
-      <PageHeader title="Inspirations" subtitle="Les Reels à décortiquer. Colle le lien, tes observations et la transcription : l'agent s'en sert pour écrire le scénario et le prompt." />
+      <PageHeader title="Inspirations" subtitle="Les Reels à décortiquer. Colle le lien, tes observations et la transcription : l'agent s'en sert pour écrire le scénario et le prompt. Sur Android, installe l'application puis partage un Reel vers « Studio »." actions={<Link href="/inspirations/nouvelle"><Button tone="white" icon="plus">Capture rapide</Button></Link>} />
       <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
         <Card tone="white" className="h-fit space-y-4">
           <h3 className="text-lg font-semibold">Ajouter une inspiration</h3>

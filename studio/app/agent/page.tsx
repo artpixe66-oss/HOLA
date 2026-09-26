@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Button, Card, Field, Loading, PageHeader } from "@/components/ui";
 import { now, replaceStore, resetStore, uid, update, useStore } from "@/lib/store";
 import { CAROUSEL_GUIDE } from "@/lib/seed/carousel-guide";
-import type { Settings, Store } from "@/lib/types";
+import { ATTRIBUTE_LABELS, type Settings, type Store } from "@/lib/types";
+import { likelyDuplicates, mergeValues, VOCAB_KEYS, vocabValues, type VocabKey } from "@/lib/vocab";
 
 export default function AgentPage() {
   const store = useStore();
@@ -73,6 +74,7 @@ function AgentEditor({ store }: { store: Store }) {
         </Card>
 
         <div className="space-y-6">
+          <VocabCard store={store} />
           <CarouselGuideCard store={store} />
           <Card>
             <h3 className="mb-3 font-semibold">Historique</h3>
@@ -99,6 +101,10 @@ function AgentEditor({ store }: { store: Store }) {
             <Field label="Tarif par seconde générée" hint="À prendre sur ta page de facturation Higgsfield ; l'application ne le devine pas."><input className="input" inputMode="decimal" value={store.settings.pricePerSecond ?? ""} onChange={(e) => setSetting("pricePerSecond", e.target.value ? Number(e.target.value.replace(",", ".")) : null)} /></Field>
             <Field label="Modèle image (carrousels)"><input className="input font-mono text-xs" value={store.settings.imageModel ?? "higgsfield-ai/soul/v2/standard"} onChange={(e) => setSetting("imageModel", e.target.value)} /></Field>
             <Field label="Tarif par image générée"><input className="input" inputMode="decimal" value={store.settings.pricePerImage ?? ""} onChange={(e) => setSetting("pricePerImage", e.target.value ? Number(e.target.value.replace(",", ".")) : null)} /></Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Objectif publications / semaine"><input className="input" type="number" min={1} value={store.settings.weeklyGoalPosts ?? 5} onChange={(e) => setSetting("weeklyGoalPosts", Math.max(1, Number(e.target.value) || 1))} /></Field>
+              <Field label="Objectif tests / semaine"><input className="input" type="number" min={0} value={store.settings.weeklyGoalTests ?? 2} onChange={(e) => setSetting("weeklyGoalTests", Math.max(0, Number(e.target.value) || 0))} /></Field>
+            </div>
             <Field label="Plafond de dépense"><input className="input" inputMode="decimal" value={store.settings.budgetCap ?? ""} onChange={(e) => setSetting("budgetCap", e.target.value ? Number(e.target.value.replace(",", ".")) : null)} /></Field>
             <p className="text-xs text-muted">Dépensé (estimé) : {store.settings.spent.toFixed(2)} <button className="text-lime" onClick={() => setSetting("spent", 0)}>remettre à zéro</button></p>
           </Card>
@@ -138,6 +144,58 @@ function CarouselGuideCard({ store }: { store: Store }) {
             <Button small tone="ghost" onClick={() => { setText(CAROUSEL_GUIDE); update((s) => ({ ...s, carouselInstructions: undefined })); }}>Revenir à l&apos;original</Button>
           </div>
         </>
+      )}
+    </Card>
+  );
+}
+
+function VocabCard({ store }: { store: Store }) {
+  const [key, setKey] = useState<VocabKey>("hookType");
+  const [selected, setSelected] = useState<string[]>([]);
+  const [target, setTarget] = useState("");
+  const values = vocabValues(store, key);
+  const dups = likelyDuplicates(store, key);
+
+  const merge = (from: string[], to: string) => {
+    if (!to.trim() || !from.length) return;
+    update((s) => mergeValues(s, key, from, to));
+    setSelected([]);
+    setTarget("");
+  };
+
+  return (
+    <Card className="space-y-3">
+      <h3 className="font-semibold">Listes de valeurs</h3>
+      <p className="text-xs text-muted">Les intitulés de la fiche créative servent à comparer les publications : deux orthographes, deux groupes. Fusionne les doublons ici.</p>
+      <select className="input" value={key} onChange={(e) => { setKey(e.target.value as VocabKey); setSelected([]); }}>
+        {VOCAB_KEYS.map((k) => <option key={k} value={k}>{ATTRIBUTE_LABELS[k]}</option>)}
+      </select>
+      {dups.length > 0 && (
+        <div className="space-y-2">
+          {dups.map((g) => (
+            <div key={g.join("|")} className="rounded-2xl bg-violet/20 p-3 text-xs">
+              <p>Doublons probables : {g.map((v) => `« ${v} »`).join(", ")}</p>
+              <Button small tone="white" className="mt-2" onClick={() => merge(g, g[0])}>Tout fusionner en « {g[0]} »</Button>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="flex max-h-56 flex-col gap-1 overflow-y-auto">
+        {values.map((v) => (
+          <label key={v.value} className="flex items-center gap-2 rounded-xl px-2 py-1.5 text-sm hover:bg-surface-2">
+            <input type="checkbox" checked={selected.includes(v.value)} onChange={(e) => setSelected(e.target.checked ? [...selected, v.value] : selected.filter((x) => x !== v.value))} />
+            <span className="flex-1 truncate">{v.value}</span>
+            <span className="text-xs text-muted">{v.count}</span>
+          </label>
+        ))}
+        {!values.length && <p className="text-xs text-muted">Aucune valeur pour l&apos;instant.</p>}
+      </div>
+      {selected.length > 0 && (
+        <div className="flex gap-2">
+          <input className="input" placeholder="Nouvel intitulé commun" value={target} onChange={(e) => setTarget(e.target.value)} list="vocab-target" />
+          <datalist id="vocab-target">{values.map((v) => <option key={v.value} value={v.value} />)}</datalist>
+          <Button small tone="lime" disabled={!target.trim()} onClick={() => merge(selected, target)}>Fusionner</Button>
+        </div>
       )}
     </Card>
   );

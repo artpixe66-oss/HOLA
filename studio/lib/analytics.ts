@@ -11,6 +11,8 @@ export interface PostRow {
   shareRate: number | null;
   followsPer1k: number | null;
   relViews: number | null; // vues / médiane du compte
+  watchSec: number | null; // durée moyenne de visionnage, en secondes
+  retention: number | null; // durée moyenne vue / durée de la vidéo
 }
 
 export type Verdict = "solide" | "prometteur" | "neutre" | "a_eviter" | "faible_negatif" | "insuffisant";
@@ -22,6 +24,7 @@ export interface GroupStat {
   n: number;
   medianRelViews: number | null;
   medianEngagement: number | null;
+  medianRetention: number | null;
   aboveMedian: number;
   pValue: number | null;
   verdict: Verdict;
@@ -78,6 +81,9 @@ export function buildRows(store: Store, influencerId?: string | null): PostRow[]
     const engagement = n0(m.likes) + n0(m.comments) + n0(m.shares) + n0(m.saves);
     const denom = m.reach || m.views || 0;
     const views = n0(m.views);
+    // Certains exports donnent la durée en millisecondes
+    const watchSec = m.avgWatchSec == null ? null : m.avgWatchSec > 600 ? m.avgWatchSec / 1000 : m.avgWatchSec;
+    const duration = c?.attributes.durationSec ?? null;
     return {
       metrics: m,
       content: c,
@@ -88,6 +94,8 @@ export function buildRows(store: Store, influencerId?: string | null): PostRow[]
       shareRate: denom && m.shares != null ? m.shares / denom : null,
       followsPer1k: denom && m.follows != null ? (m.follows / denom) * 1000 : null,
       relViews: medViews && views ? views / medViews : null,
+      watchSec,
+      retention: watchSec != null && duration ? watchSec / duration : null,
     };
   });
 }
@@ -164,6 +172,7 @@ export function groupStats(rows: PostRow[]): GroupStat[] {
         n,
         medianRelViews: medRel,
         medianEngagement: median(g.map((r) => r.engagementRate ?? NaN)),
+        medianRetention: median(g.map((r) => r.retention ?? NaN)),
         aboveMedian: above,
         pValue: p,
         verdict,
@@ -257,10 +266,11 @@ export function insightsForAgent(store: Store, influencerId: string | null): str
   const stats = groupStats(rows).filter((s) => s.verdict !== "neutre");
   const top = [...rows].sort((a, b) => b.views - a.views).slice(0, 3);
   const lines: string[] = [];
-  lines.push(`Publications analysées : ${rows.length} (vues médianes ${fmtNum(median(rows.map((r) => r.views)))}).`);
+  const medRet = median(rows.map((r) => r.retention ?? NaN));
+  lines.push(`Publications analysées : ${rows.length} (vues médianes ${fmtNum(median(rows.map((r) => r.views)))}${medRet != null ? `, rétention médiane ${fmtPct(medRet, 0)} de la vidéo` : ""}).`);
   lines.push("Lecture des attributs (×1 = médiane du compte) :");
   for (const s of stats.sort((a, b) => (b.medianRelViews ?? 0) - (a.medianRelViews ?? 0)).slice(0, 14)) {
-    lines.push(`- ${s.attributeLabel} « ${s.value} » : ${fmtRel(s.medianRelViews)}, n=${s.n}, ${VERDICT_LABEL[s.verdict]}`);
+    lines.push(`- ${s.attributeLabel} « ${s.value} » : ${fmtRel(s.medianRelViews)}${s.medianRetention != null ? `, rétention ${fmtPct(s.medianRetention, 0)}` : ""}, n=${s.n}, ${VERDICT_LABEL[s.verdict]}`);
   }
   lines.push("Meilleures publications :");
   for (const r of top) {
@@ -271,4 +281,10 @@ export function insightsForAgent(store: Store, influencerId: string | null): str
   }
   lines.push("Règle : ne traite comme acquis que les signaux solides ; le reste est une piste à tester.");
   return lines.join("\n");
+}
+
+/** Dernier import de statistiques, ou null. */
+export function lastImportAt(store: Store): Date | null {
+  const t = store.metrics.map((m) => m.importedAt).filter(Boolean).sort().pop();
+  return t ? new Date(t) : null;
 }
