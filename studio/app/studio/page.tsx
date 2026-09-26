@@ -403,6 +403,7 @@ function GenerationPanel({ content, store }: { content: Content; store: Store })
           {!prompt ? "Enregistre d'abord une version du prompt." : cost != null ? `Coût estimé ${cost.toFixed(2)} · dépensé ${store.settings.spent.toFixed(2)}${cap != null ? ` / ${cap}` : ""}` : "Renseigne le tarif dans Agent & réglages pour estimer le coût."}
         </span>
       </div>
+      {image && !/^https?:\/\//.test(image) && <p className="mt-2 text-sm text-muted">Cette image n&apos;est pas accessible publiquement : Higgsfield ne pourra pas la lire. Colle un lien public (par exemple l&apos;URL de l&apos;image sur Higgsfield) ou utilise un stockage Blob public.</p>}
       {overCap && <p className="mt-2 text-sm text-danger">Ce lancement dépasserait ton plafond de budget.</p>}
       {error && <p className="mt-3 rounded-2xl bg-danger/10 p-3 text-sm text-danger">{error}</p>}
       {content.generations.length > 0 && (

@@ -20,7 +20,7 @@ export function buildContext(store: Store, content: Content): string {
       block("Formats et options de DA validés", infl.formats),
       block("Points de contrôle propres au personnage", infl.checkpoints),
       block("Consignes complémentaires", infl.notes),
-      block("Références visuelles disponibles", infl.references.map((r, i) => `- @Image${i + 1} : ${r.label || "référence"} — ${r.url}`).join("\n")),
+      block("Références visuelles disponibles", infl.references.map((r, i) => `- @Image${i + 1} : ${r.label || "référence"}${/^https?:/.test(r.url) ? ` — ${r.url}` : ""}`).join("\n")),
     );
   } else {
     parts.push("Aucune influenceuse n'est associée à ce contenu.\n");
