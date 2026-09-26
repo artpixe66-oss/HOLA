@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Application Studio, construite séparément (dossier racine Vercel : studio)
+    "studio/**",
   ]),
 ]);
 
