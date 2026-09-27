@@ -64,7 +64,9 @@ const V1_LABEL = "v1 — reverse-video-prompt";
 
 /** Ajoute la v2 (mode viral) aux données existantes ; l'active si la version active était la v1 d'origine. */
 function withSeeds(s: Store): Store {
-  if (s.agentVersions.some((a) => a.id === V2_ID)) return s;
+  const existing = s.agentVersions.find((a) => a.id === V2_ID);
+  // La v2 d'origine n'est jamais modifiée sur place (une modification crée une nouvelle version) : on la tient à jour.
+  if (existing) return existing.instructions === AGENT_V2 ? s : { ...s, agentVersions: s.agentVersions.map((a) => (a.id === V2_ID ? { ...a, instructions: AGENT_V2 } : a)) };
   const active = s.agentVersions.find((a) => a.id === s.activeAgentVersionId);
   const v2 = { id: V2_ID, label: "v2 — mode viral", instructions: AGENT_V2, createdAt: now() };
   return { ...s, agentVersions: [v2, ...s.agentVersions], activeAgentVersionId: !active || active.label === V1_LABEL ? V2_ID : s.activeAgentVersionId };
@@ -112,7 +114,7 @@ function read(): Store {
     if (raw) {
       const parsed = JSON.parse(raw) as Store;
       cache = withSeeds({ ...initialStore(), ...parsed, settings: { ...initialStore().settings, ...parsed.settings } });
-      if (cache.agentVersions.length !== (parsed.agentVersions?.length ?? 0)) persist(cache);
+      if (JSON.stringify(cache.agentVersions) !== JSON.stringify(parsed.agentVersions)) persist(cache);
       return cache;
     }
   } catch {

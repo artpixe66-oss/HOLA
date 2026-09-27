@@ -68,6 +68,7 @@ function Studio() {
 
 const QUICK = [
   { label: "10 thèmes + accroches", prompt: "Liste les 10 thèmes les plus recherchés et qui font le plus réagir dans la niche de cette influenceuse, en t'appuyant sur les performances quand elles existent. Pour chacun : une accroche forte des 2 premières secondes (image, texte à l'écran, première phrase) et une étiquette de titre. Termine par les 3 à produire en premier et pourquoi." },
+  { label: "Méthode des extrêmes", prompt: "Applique la méthode des extrêmes à la niche de cette influenceuse : propose 6 sujets clivants en balançoire (ce que font celles et ceux qui réussissent / ce que font ceux qui restent bloqués, les meilleures caractéristiques, les objections, une idée reçue prise à contre-pied). Pour chacun : l'accroche clivante, l'étiquette de titre, et la position que prend le personnage, dans son ton." },
   { label: "3 idées", prompt: "Propose-moi 3 idées de contenus pour cette influenceuse, en t'appuyant sur l'inspiration et sur les enseignements des performances. Pour chacune : sujet, accroche des 2 premières secondes, tenue, décor, durée, et pourquoi." },
   { label: "Scénario", prompt: "Écris le scénario de ce contenu : le tableau d'action en secondes réelles (corps, regard, mains, secondaire) et les répliques adaptées au personnage." },
   { label: "Prompt complet", prompt: "Écris le prompt vidéo complet, tous les blocs, avec les blocs fixes de la fiche mot pour mot, puis les réglages et les points de contrôle qualité." },
