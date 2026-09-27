@@ -74,6 +74,7 @@ function AgentEditor({ store }: { store: Store }) {
         </Card>
 
         <div className="space-y-6">
+          <HealthCard />
           <VocabCard store={store} />
           <CarouselGuideCard store={store} />
           <Card>
@@ -198,5 +199,49 @@ function VocabCard({ store }: { store: Store }) {
         </div>
       )}
     </Card>
+  );
+}
+
+interface Health {
+  password: boolean;
+  blob: boolean;
+  anthropic: boolean;
+  higgsfield: { ok: boolean | null; detail: string };
+}
+
+function HealthCard() {
+  const [health, setHealth] = useState<Health | null>(null);
+  const [busy, setBusy] = useState(false);
+  const check = async () => {
+    setBusy(true);
+    try {
+      setHealth(await (await fetch("/api/health", { cache: "no-store" })).json());
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Card className="space-y-3">
+      <h3 className="font-semibold">Branchements</h3>
+      <p className="text-xs text-muted">Vérifie ce qui est configuré sur Vercel. Aucune clé n&apos;est affichée.</p>
+      <Button small tone="white" disabled={busy} onClick={check}>{busy ? "Vérification…" : "Vérifier"}</Button>
+      {health && (
+        <div className="space-y-3 pt-1">
+          <Row ok={health.higgsfield.ok} label="Higgsfield" detail={health.higgsfield.detail} />
+          <Row ok={health.anthropic} label="Agent Claude (clé API)" detail={health.anthropic ? "Clé présente." : "Pas de clé : utilise « Copier pour Claude.ai »."} />
+          <Row ok={health.blob} label="Sauvegarde en ligne" detail={health.blob ? "Stockage Blob relié." : "Pas de stockage Blob : données sur cet appareil."} />
+          <Row ok={health.password} label="Mot de passe" detail={health.password ? "Application protégée." : "APP_PASSWORD absent : l'application est ouverte."} />
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function Row({ ok, label, detail }: { ok: boolean | null; label: string; detail: string }) {
+  return (
+    <div className="flex gap-3 text-sm">
+      <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${ok ? "bg-lime" : ok === null ? "bg-white" : "bg-danger"}`} />
+      <span><span className="font-medium">{label}</span><span className="block text-xs text-muted">{detail}</span></span>
+    </div>
   );
 }
