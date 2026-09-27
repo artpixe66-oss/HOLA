@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useSyncStatus } from "@/lib/store";
+import InstagramAutoSync from "./InstagramAutoSync";
 import { RoundButton } from "./ui";
 
 export const NAV = [
@@ -24,6 +25,7 @@ export default function Shell({ children }: { children: ReactNode }) {
   const current = NAV.find((n) => (n.href === "/" ? path === "/" : path.startsWith(n.href))) ?? NAV[0];
   return (
     <div className="min-h-screen bg-ink p-0 md:p-4">
+      <InstagramAutoSync />
       <div className="mx-auto flex min-h-screen max-w-[1600px] flex-col overflow-hidden bg-ink md:min-h-[calc(100vh-2rem)] md:rounded-[36px] md:border md:border-line">
         <header className="flex items-center justify-between gap-4 border-b border-line px-4 py-4 md:px-8 md:py-6">
           <Link href="/" className="text-2xl font-bold tracking-tight text-lime md:text-3xl">

@@ -7,6 +7,8 @@ import { Button, Card, Empty, Field, Loading, PageHeader, StatCard, Tabs } from 
 import { buildRows, DIMENSIONS, fmtNum, fmtPct, fmtRel, groupStats, median, recommendations, VERDICT_LABEL, type GroupStat, type PostRow, type Verdict } from "@/lib/analytics";
 import { detectColumns, FIELD_LABELS, parseCsv, rowsToMetrics, type MetricField } from "@/lib/csv";
 import { withDemo, withoutDemo } from "@/lib/demo";
+import { syncInstagram } from "@/lib/igSync";
+import { mergeMetrics } from "@/lib/mergeMetrics";
 import { allTests, hookTypeTally } from "@/lib/hookTests";
 import { editHref, uid, update, useStore } from "@/lib/store";
 import type { PostMetrics, Store } from "@/lib/types";
@@ -244,13 +246,7 @@ function Import({ store, onDone }: { store: Store; onDone: () => void }) {
   const doImport = () => {
     if (!table) return;
     const incoming = rowsToMetrics(table.slice(1), columns, uid);
-    update((s) => {
-      // une publication déjà importée (même lien) est mise à jour, pas dupliquée
-      const byLink = new Map(s.metrics.filter((m) => m.permalink).map((m) => [m.permalink, m]));
-      const kept = s.metrics.filter((m) => !m.permalink || !incoming.some((x) => x.permalink === m.permalink));
-      const merged = incoming.map((m) => ({ ...m, id: byLink.get(m.permalink)?.id ?? m.id, contentId: byLink.get(m.permalink)?.contentId ?? null }));
-      return { ...s, metrics: [...merged, ...kept] };
-    });
+    update((s) => mergeMetrics(s, incoming));
     setTable(null);
     onDone();
   };
@@ -273,6 +269,7 @@ function Import({ store, onDone }: { store: Store; onDone: () => void }) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
+      <InstagramCard store={store} onDone={onDone} />
       <Card className="space-y-4">
         <h3 className="text-lg font-semibold">Importer un export CSV</h3>
         <p className="text-sm text-muted">Meta Business Suite → Insights → Contenu → Exporter les données. Les colonnes (anglais ou français) sont reconnues automatiquement ; vérifie la correspondance avant d&apos;importer. Réimporter met à jour les publications existantes.</p>
@@ -376,5 +373,48 @@ function Tests({ store }: { store: Store }) {
         </Card>
       )}
     </div>
+  );
+}
+
+function InstagramCard({ store, onDone }: { store: Store; onDone: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const last = store.settings.lastIgSync;
+  const report = store.settings.igReport ?? [];
+  const run = async () => {
+    setBusy(true);
+    setMsg(null);
+    try {
+      const r = await syncInstagram();
+      if (!r.enabled) setMsg("Aucun compte relié : ajoute un jeton IG_TOKEN_<NOM> dans les variables Vercel, puis redéploie.");
+      else {
+        const n = r.accounts.reduce((a, x) => a + x.posts.length, 0);
+        setMsg(`${n} publication(s) mises à jour.`);
+        if (n) onDone();
+      }
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Card tone="white" className="space-y-3 lg:col-span-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="text-lg font-semibold">Instagram (automatique)</h3>
+          <p className="text-sm text-black/60">Les stats des comptes reliés se mettent à jour toutes seules à l&apos;ouverture de l&apos;app, au plus toutes les 12 h.{last ? ` Dernière mise à jour : ${new Date(last).toLocaleString("fr-FR")}.` : ""}</p>
+        </div>
+        <button onClick={run} disabled={busy} className="rounded-full bg-black px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40">{busy ? "Synchronisation…" : "Synchroniser maintenant"}</button>
+      </div>
+      {report.length > 0 && (
+        <div className="flex flex-wrap gap-2 text-xs">
+          {report.map((r, i) => (
+            <span key={i} className={`rounded-full px-3 py-1 ${r.error ? "bg-red-100 text-red-700" : "bg-black/5"}`}>{r.username ? `@${r.username}` : (r.key ?? "Compte").replace("IG_TOKEN_", "")} · {r.error ? r.error : `${r.posts} publication(s)`}</span>
+          ))}
+        </div>
+      )}
+      {msg && <p className="text-sm">{msg}</p>}
+    </Card>
   );
 }

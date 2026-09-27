@@ -1,4 +1,5 @@
 // État des branchements, sans jamais renvoyer la valeur d'une clé.
+import { checkAll } from "@/lib/instagram";
 
 const HF_BASE = process.env.HF_BASE || "https://platform.higgsfield.ai";
 
@@ -21,13 +22,14 @@ async function checkHiggsfield(): Promise<{ ok: boolean | null; detail: string }
 }
 
 export async function GET() {
-  const hf = await checkHiggsfield();
+  const [hf, instagram] = await Promise.all([checkHiggsfield(), checkAll()]);
   return Response.json(
     {
       password: Boolean(process.env.APP_PASSWORD),
       blob: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
       anthropic: Boolean(process.env.ANTHROPIC_API_KEY),
       higgsfield: hf,
+      instagram,
     },
     { headers: { "Cache-Control": "no-store" } },
   );

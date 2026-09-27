@@ -207,6 +207,7 @@ interface Health {
   blob: boolean;
   anthropic: boolean;
   higgsfield: { ok: boolean | null; detail: string };
+  instagram: { key: string; username: string | null; error: string | null }[];
 }
 
 function HealthCard() {
@@ -228,6 +229,11 @@ function HealthCard() {
       {health && (
         <div className="space-y-3 pt-1">
           <Row ok={health.higgsfield.ok} label="Higgsfield" detail={health.higgsfield.detail} />
+          {health.instagram.length ? (
+            health.instagram.map((a) => <Row key={a.key} ok={!a.error} label={`Instagram · ${a.key.replace("IG_TOKEN_", "")}`} detail={a.error ? `Jeton refusé : ${a.error}` : `Relié au compte @${a.username}.`} />)
+          ) : (
+            <Row ok={false} label="Instagram" detail="Aucun jeton IG_TOKEN_… : stats à importer en CSV." />
+          )}
           <Row ok={health.anthropic} label="Agent Claude (clé API)" detail={health.anthropic ? "Clé présente." : "Pas de clé : utilise « Copier pour Claude.ai »."} />
           <Row ok={health.blob} label="Sauvegarde en ligne" detail={health.blob ? "Stockage Blob relié." : "Pas de stockage Blob : données sur cet appareil."} />
           <Row ok={health.password} label="Mot de passe" detail={health.password ? "Application protégée." : "APP_PASSWORD absent : l'application est ouverte."} />

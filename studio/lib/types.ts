@@ -212,6 +212,8 @@ export interface Settings {
   pricePerImage?: number | null;
   weeklyGoalPosts?: number;
   weeklyGoalTests?: number;
+  lastIgSync?: string;
+  igReport?: { key?: string; username: string | null; posts: number; error: string | null }[];
 }
 
 export interface Store {
