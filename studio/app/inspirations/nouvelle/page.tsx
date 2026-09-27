@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Loading } from "@/components/ui";
 import { newContent, now, saveContent, uid, update, useStore } from "@/lib/store";
-import type { Inspiration, Store } from "@/lib/types";
+import { COLLECTIONS, type Inspiration, type Store } from "@/lib/types";
 
 const TAGS = ["Accroche", "Chute", "Son", "Décor", "Montage", "Tenue", "Format"];
 
@@ -34,6 +34,7 @@ function Capture({ store, initialUrl, initialTitle }: { store: Store; initialUrl
   const [influencerId, setInfluencerId] = useState<string>(store.influencers[0]?.id ?? "");
   const [tags, setTags] = useState<string[]>([]);
   const [note, setNote] = useState("");
+  const [collection, setCollection] = useState<string>("Cette semaine");
 
   const save = (thenCreate: boolean) => {
     const insp: Inspiration = {
@@ -44,6 +45,7 @@ function Capture({ store, initialUrl, initialTitle }: { store: Store; initialUrl
       notes: note.trim(),
       transcript: "",
       tags,
+      collection,
       createdAt: now(),
     };
     update((s) => ({ ...s, inspirations: [insp, ...s.inspirations] }));
@@ -71,6 +73,12 @@ function Capture({ store, initialUrl, initialTitle }: { store: Store; initialUrl
         <div className="flex flex-wrap gap-2">
           {store.influencers.map((i) => <button key={i.id} className={chip(influencerId === i.id)} onClick={() => setInfluencerId(i.id)}>{i.name}</button>)}
           <button className={chip(influencerId === "")} onClick={() => setInfluencerId("")}>À décider</button>
+        </div>
+      </div>
+      <div>
+        <p className="mb-2 text-xs font-semibold text-muted">COLLECTION</p>
+        <div className="flex flex-wrap gap-2">
+          {COLLECTIONS.map((c) => <button key={c} className={chip(collection === c)} onClick={() => setCollection(c)}>{c}</button>)}
         </div>
       </div>
       <div>

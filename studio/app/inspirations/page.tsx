@@ -6,13 +6,15 @@ import { useState } from "react";
 import Icon from "@/components/Icon";
 import { Avatar, Button, Card, Empty, Field, Loading, PageHeader } from "@/components/ui";
 import { newContent, now, saveContent, uid, update, useStore } from "@/lib/store";
-import type { Inspiration } from "@/lib/types";
+import { COLLECTIONS, type Inspiration } from "@/lib/types";
+import { startOfWeek } from "@/lib/today";
 
 export default function InspirationsPage() {
   const store = useStore();
   const router = useRouter();
-  const [draft, setDraft] = useState({ url: "", title: "", notes: "", transcript: "", tags: "", influencerId: "" });
+  const [draft, setDraft] = useState({ url: "", title: "", notes: "", transcript: "", tags: "", influencerId: "", collection: "Cette semaine" });
   const [filter, setFilter] = useState("");
+  const [collection, setCollection] = useState("");
   if (!store) return <Loading />;
 
   const add = () => {
@@ -24,10 +26,11 @@ export default function InspirationsPage() {
       notes: draft.notes,
       transcript: draft.transcript,
       tags: draft.tags.split(",").map((t) => t.trim()).filter(Boolean),
+      collection: draft.collection,
       createdAt: now(),
     };
     update((s) => ({ ...s, inspirations: [insp, ...s.inspirations] }));
-    setDraft({ url: "", title: "", notes: "", transcript: "", tags: "", influencerId: draft.influencerId });
+    setDraft({ url: "", title: "", notes: "", transcript: "", tags: "", influencerId: draft.influencerId, collection: draft.collection });
   };
 
   const toStudio = (i: Inspiration) => {
@@ -36,7 +39,11 @@ export default function InspirationsPage() {
     router.push(`/studio?id=${c.id}`);
   };
 
-  const list = store.inspirations.filter((i) => !filter || [i.title, i.notes, i.tags.join(" ")].join(" ").toLowerCase().includes(filter.toLowerCase()));
+  const weekStart = startOfWeek(new Date()).getTime();
+  const thisWeek = store.inspirations.filter((i) => new Date(i.createdAt).getTime() >= weekStart).length;
+  const list = store.inspirations
+    .filter((i) => !collection || (i.collection ?? "Inspiration") === collection)
+    .filter((i) => !filter || [i.title, i.notes, i.tags.join(" ")].join(" ").toLowerCase().includes(filter.toLowerCase()));
 
   return (
     <div>
@@ -53,12 +60,24 @@ export default function InspirationsPage() {
             </select></Field>
             <Field label="Ce qui marche dedans" hint="Accroche, beats, regards, mesures d'image si tu les as."><textarea className="input" rows={4} value={draft.notes} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></Field>
             <Field label="Transcription"><textarea className="input" rows={3} value={draft.transcript} onChange={(e) => setDraft({ ...draft, transcript: e.target.value })} /></Field>
+            <Field label="Collection"><select className="input" value={draft.collection} onChange={(e) => setDraft({ ...draft, collection: e.target.value })}>{COLLECTIONS.map((c) => <option key={c}>{c}</option>)}</select></Field>
             <Field label="Tags" hint="Séparés par des virgules"><input className="input" value={draft.tags} onChange={(e) => setDraft({ ...draft, tags: e.target.value })} /></Field>
           </div>
           <button disabled={!draft.url.trim() && !draft.title.trim()} onClick={add} className="w-full rounded-full bg-black py-3 text-sm font-semibold text-white disabled:opacity-40">Enregistrer</button>
         </Card>
 
         <div className="space-y-4">
+          <div className="rounded-[24px] bg-surface p-4 text-sm">
+            <span className="font-semibold">{thisWeek} Reel{thisWeek > 1 ? "s" : ""} retenu{thisWeek > 1 ? "s" : ""} cette semaine</span>
+            <span className="text-muted"> · objectif 5 à 7 : une veille courte et concentrée, pas du scroll. Avant, clique « Intéressé » sur les Reels de ta niche et « Pas intéressé » sur le reste pour éduquer ton fil.</span>
+          </div>
+          <div className="flex flex-wrap gap-1 rounded-full bg-surface p-1">
+            {["", ...COLLECTIONS].map((c) => (
+              <button key={c || "all"} onClick={() => setCollection(c)} className={`rounded-full px-3 py-1.5 text-xs font-medium ${collection === c ? "bg-white text-black" : "text-muted hover:text-white"}`}>
+                {c || "Toutes"} <span className="opacity-60">{c ? store.inspirations.filter((i) => (i.collection ?? "Inspiration") === c).length : store.inspirations.length}</span>
+              </button>
+            ))}
+          </div>
           <input className="input" placeholder="Rechercher…" value={filter} onChange={(e) => setFilter(e.target.value)} />
           {!list.length && <Empty title="Aucune inspiration">Enregistre les Reels qui t&apos;intéressent pour les transformer ensuite en création.</Empty>}
           {list.map((i) => {
@@ -74,6 +93,9 @@ export default function InspirationsPage() {
                     {i.notes && <p className="mt-2 whitespace-pre-wrap text-sm text-white/80">{i.notes}</p>}
                     {i.transcript && <p className="mt-2 line-clamp-3 text-sm italic text-muted">« {i.transcript} »</p>}
                     <div className="mt-3 flex flex-wrap gap-2">
+                      <select aria-label="Collection" value={i.collection ?? "Inspiration"} onChange={(e) => update((s) => ({ ...s, inspirations: s.inspirations.map((x) => (x.id === i.id ? { ...x, collection: e.target.value } : x)) }))} className="rounded-full bg-lime px-3 py-1 text-xs font-semibold text-black">
+                        {COLLECTIONS.map((c) => <option key={c}>{c}</option>)}
+                      </select>
                       {i.tags.map((t) => <span key={t} className="rounded-full bg-surface-2 px-3 py-1 text-xs">{t}</span>)}
                       {used > 0 && <span className="rounded-full bg-violet px-3 py-1 text-xs">{used} création(s)</span>}
                     </div>

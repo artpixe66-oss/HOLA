@@ -67,6 +67,7 @@ function Studio() {
 }
 
 const QUICK = [
+  { label: "10 thèmes + accroches", prompt: "Liste les 10 thèmes les plus recherchés et qui font le plus réagir dans la niche de cette influenceuse, en t'appuyant sur les performances quand elles existent. Pour chacun : une accroche forte des 2 premières secondes (image, texte à l'écran, première phrase) et une étiquette de titre. Termine par les 3 à produire en premier et pourquoi." },
   { label: "3 idées", prompt: "Propose-moi 3 idées de contenus pour cette influenceuse, en t'appuyant sur l'inspiration et sur les enseignements des performances. Pour chacune : sujet, accroche des 2 premières secondes, tenue, décor, durée, et pourquoi." },
   { label: "Scénario", prompt: "Écris le scénario de ce contenu : le tableau d'action en secondes réelles (corps, regard, mains, secondaire) et les répliques adaptées au personnage." },
   { label: "Prompt complet", prompt: "Écris le prompt vidéo complet, tous les blocs, avec les blocs fixes de la fiche mot pour mot, puis les réglages et les points de contrôle qualité." },
@@ -154,6 +155,7 @@ function AgentChat({ content, store }: { content: Content; store: Store }) {
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [viral, setViral] = useState(false);
   const bottom = useRef<HTMLDivElement>(null);
   const chat = content.chat ?? [];
   const agent = store.agentVersions.find((a) => a.id === store.activeAgentVersionId) ?? store.agentVersions[0];
@@ -163,7 +165,7 @@ function AgentChat({ content, store }: { content: Content; store: Store }) {
   const send = async (text: string) => {
     if (!text.trim() || streaming != null) return;
     setError(null);
-    const messages: AgentMessage[] = [...chat, { role: "user", content: text.trim() }];
+    const messages: AgentMessage[] = [...chat, { role: "user", content: (viral ? "Mode viral activé. " : "") + text.trim() }];
     saveContent({ ...content, chat: messages });
     setInput("");
     setStreaming("");
@@ -217,7 +219,7 @@ function AgentChat({ content, store }: { content: Content; store: Store }) {
 
   const [copied, setCopied] = useState<string | null>(null);
   const copyForClaude = async (label: string, request: string) => {
-    const text = `${buildContext(store, content)}\n\n# Demande\n\n${request}\n\nRéponds en suivant ta méthode habituelle (skill reverse-video-prompt).`;
+    const text = `${buildContext(store, content)}\n\n# Demande\n\n${viral ? "Mode viral activé. " : ""}${request}\n\nRéponds en suivant ta méthode habituelle (skill reverse-video-prompt${viral ? ", mode viral" : ""}).`;
     await navigator.clipboard.writeText(text);
     setCopied(label);
     setTimeout(() => setCopied(null), 2000);
@@ -232,7 +234,12 @@ function AgentChat({ content, store }: { content: Content; store: Store }) {
           <h3 className="text-lg font-semibold">Agent créatif</h3>
           <p className="text-xs text-muted">{agent?.label} · fiche, inspiration et stats envoyées automatiquement</p>
         </div>
-        {chat.length > 0 && <Button tone="ghost" small onClick={() => confirm("Effacer la conversation ?") && saveContent({ ...content, chat: [] })}>Effacer</Button>}
+        <div className="flex gap-2">
+          <button type="button" aria-pressed={viral} onClick={() => setViral(!viral)} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${viral ? "bg-violet text-white" : "border border-surface-2 text-muted hover:text-white"}`} title="Accroche 3 canaux, rétention, boucle, variantes, légende, miniature">
+            Mode viral {viral ? "activé" : "désactivé"}
+          </button>
+          {chat.length > 0 && <Button tone="ghost" small onClick={() => confirm("Effacer la conversation ?") && saveContent({ ...content, chat: [] })}>Effacer</Button>}
+        </div>
       </div>
 
       <div className="max-h-[560px] min-h-[160px] space-y-4 overflow-y-auto pr-1">

@@ -26,6 +26,9 @@ export interface Influencer {
   demo?: boolean;
 }
 
+/** Collections de veille : on range chaque Reel retenu au lieu de tout enregistrer en vrac. */
+export const COLLECTIONS = ["Cette semaine", "Carrousels", "Inspiration", "Émotion", "Valeur", "Divertissement"] as const;
+
 export interface Inspiration {
   id: ID;
   url: string;
@@ -34,6 +37,7 @@ export interface Inspiration {
   notes: string;
   transcript: string;
   tags: string[];
+  collection?: string;
   createdAt: string;
   demo?: boolean;
 }

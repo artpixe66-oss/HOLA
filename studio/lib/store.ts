@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import type { Content, CreativeAttributes, Influencer, Store } from "./types";
 import { AGENT_V1 } from "./seed/agent-v1";
+import { AGENT_V2 } from "./seed/agent-v2";
 import { GIULIA } from "./seed/giulia";
 
 const KEY = "studio-influence:v1";
@@ -58,6 +59,17 @@ export function newContent(partial: Partial<Content> = {}): Content {
   };
 }
 
+const V2_ID = "seed-v2";
+const V1_LABEL = "v1 — reverse-video-prompt";
+
+/** Ajoute la v2 (mode viral) aux données existantes ; l'active si la version active était la v1 d'origine. */
+function withSeeds(s: Store): Store {
+  if (s.agentVersions.some((a) => a.id === V2_ID)) return s;
+  const active = s.agentVersions.find((a) => a.id === s.activeAgentVersionId);
+  const v2 = { id: V2_ID, label: "v2 — mode viral", instructions: AGENT_V2, createdAt: now() };
+  return { ...s, agentVersions: [v2, ...s.agentVersions], activeAgentVersionId: !active || active.label === V1_LABEL ? V2_ID : s.activeAgentVersionId };
+}
+
 function initialStore(): Store {
   const agentId = uid();
   return {
@@ -74,8 +86,11 @@ function initialStore(): Store {
     ],
     inspirations: [],
     contents: [],
-    agentVersions: [{ id: agentId, label: "v1 — reverse-video-prompt", instructions: AGENT_V1, createdAt: now() }],
-    activeAgentVersionId: agentId,
+    agentVersions: [
+      { id: V2_ID, label: "v2 — mode viral", instructions: AGENT_V2, createdAt: now() },
+      { id: agentId, label: V1_LABEL, instructions: AGENT_V1, createdAt: now() },
+    ],
+    activeAgentVersionId: V2_ID,
     metrics: [],
     settings: {
       model: "claude-opus-5",
@@ -96,7 +111,8 @@ function read(): Store {
     const raw = window.localStorage.getItem(KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Store;
-      cache = { ...initialStore(), ...parsed, settings: { ...initialStore().settings, ...parsed.settings } };
+      cache = withSeeds({ ...initialStore(), ...parsed, settings: { ...initialStore().settings, ...parsed.settings } });
+      if (cache.agentVersions.length !== (parsed.agentVersions?.length ?? 0)) persist(cache);
       return cache;
     }
   } catch {
@@ -129,7 +145,7 @@ function startSync() {
       if (!data.enabled) return setSync("local");
       const local = read();
       if (data.state && (data.state.savedAt ?? "") >= (local.savedAt ?? "")) {
-        cache = { ...initialStore(), ...data.state, settings: { ...initialStore().settings, ...data.state.settings } };
+        cache = withSeeds({ ...initialStore(), ...data.state, settings: { ...initialStore().settings, ...data.state.settings } });
         persist(cache);
         setSync("synchronisé");
       } else {
