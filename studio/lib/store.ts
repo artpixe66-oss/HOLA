@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import type { Content, CreativeAttributes, Influencer, Store } from "./types";
 import { AGENT_V1 } from "./seed/agent-v1";
 import { AGENT_V2 } from "./seed/agent-v2";
+import { AGENT_V3 } from "./seed/agent-v3";
 import { GIULIA } from "./seed/giulia";
 
 const KEY = "studio-influence:v1";
@@ -60,16 +61,47 @@ export function newContent(partial: Partial<Content> = {}): Content {
 }
 
 const V2_ID = "seed-v2";
+const V3_ID = "seed-v3";
 const V1_LABEL = "v1 — reverse-video-prompt";
 
-/** Ajoute la v2 (mode viral) aux données existantes ; l'active si la version active était la v1 d'origine. */
+/** Versions d'agent fournies par le code, de la plus ancienne à la plus récente. */
+const SEED_AGENTS = [
+  { id: V2_ID, label: "v2 — mode viral", instructions: AGENT_V2 },
+  { id: V3_ID, label: "v3 — voix et rythme", instructions: AGENT_V3 },
+];
+
+/**
+ * Ajoute les versions d'agent fournies par le code et les tient à jour (elles ne sont jamais modifiées
+ * sur place : une modification crée une nouvelle version). Une version ajoutée devient active quand
+ * l'utilisateur était sur une version d'origine. Met aussi à jour la fiche de Giulia.
+ */
 function withSeeds(s: Store): Store {
-  const existing = s.agentVersions.find((a) => a.id === V2_ID);
-  // La v2 d'origine n'est jamais modifiée sur place (une modification crée une nouvelle version) : on la tient à jour.
-  if (existing) return existing.instructions === AGENT_V2 ? s : { ...s, agentVersions: s.agentVersions.map((a) => (a.id === V2_ID ? { ...a, instructions: AGENT_V2 } : a)) };
-  const active = s.agentVersions.find((a) => a.id === s.activeAgentVersionId);
-  const v2 = { id: V2_ID, label: "v2 — mode viral", instructions: AGENT_V2, createdAt: now() };
-  return { ...s, agentVersions: [v2, ...s.agentVersions], activeAgentVersionId: !active || active.label === V1_LABEL ? V2_ID : s.activeAgentVersionId };
+  let agentVersions = s.agentVersions;
+  let activeAgentVersionId = s.activeAgentVersionId;
+  for (const seed of SEED_AGENTS) {
+    const existing = agentVersions.find((a) => a.id === seed.id);
+    if (existing) {
+      if (existing.instructions !== seed.instructions) agentVersions = agentVersions.map((a) => (a.id === seed.id ? { ...a, instructions: seed.instructions } : a));
+      continue;
+    }
+    const active = agentVersions.find((a) => a.id === activeAgentVersionId);
+    agentVersions = [{ ...seed, createdAt: now() }, ...agentVersions];
+    if (!active || active.label === V1_LABEL || SEED_AGENTS.some((x) => x.id === active.id)) activeAgentVersionId = seed.id;
+  }
+  return { ...s, agentVersions, activeAgentVersionId, influencers: s.influencers.map(migrateInfluencer) };
+}
+
+/**
+ * Fiche de Giulia (oct. 2026) : un bloc VOIX qui contient encore « e muets parfois prononcés » passe au
+ * bloc VOIX v3, et ses yeux passent de noisette à marron clair. Le reste de la fiche ne bouge pas.
+ */
+function migrateInfluencer(i: Influencer): Influencer {
+  if (!/giulia|roxane/i.test(`${i.name} ${i.aliases}`)) return i;
+  const eyes = (t: string) => t.replace(/yeux(\s+)noisette/g, "yeux$1marron clair");
+  const voice = i.voice.includes("e muets parfois prononcés") ? GIULIA.voice : i.voice;
+  const anchors = eyes(i.anchors);
+  const formats = eyes(i.formats);
+  return voice === i.voice && anchors === i.anchors && formats === i.formats ? i : { ...i, voice, anchors, formats };
 }
 
 function initialStore(): Store {
@@ -89,10 +121,10 @@ function initialStore(): Store {
     inspirations: [],
     contents: [],
     agentVersions: [
-      { id: V2_ID, label: "v2 — mode viral", instructions: AGENT_V2, createdAt: now() },
+      ...[...SEED_AGENTS].reverse().map((a) => ({ ...a, createdAt: now() })),
       { id: agentId, label: V1_LABEL, instructions: AGENT_V1, createdAt: now() },
     ],
-    activeAgentVersionId: V2_ID,
+    activeAgentVersionId: V3_ID,
     metrics: [],
     settings: {
       model: "claude-opus-5",
@@ -114,7 +146,8 @@ function read(): Store {
     if (raw) {
       const parsed = JSON.parse(raw) as Store;
       cache = withSeeds({ ...initialStore(), ...parsed, settings: { ...initialStore().settings, ...parsed.settings } });
-      if (JSON.stringify(cache.agentVersions) !== JSON.stringify(parsed.agentVersions)) persist(cache);
+      const seeded = (x: Store) => JSON.stringify([x.agentVersions, x.activeAgentVersionId, x.influencers]);
+      if (seeded(cache) !== seeded(parsed)) persist(cache);
       return cache;
     }
   } catch {
