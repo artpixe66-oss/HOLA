@@ -19,6 +19,9 @@ il ajoute uniquement des sections, un snippet, deux assets et un template altern
 | `sections/apx-product-about.liquid` | Description du produit, visible et indexable |
 | `sections/apx-product-final-cta.liquid` | Rappel final |
 | `snippets/apx-product-schema.liquid` | Données structurées Product (prix, disponibilité, note Loox) |
+| `snippets/apx-variant-picker.liquid` | Choix des options : pastilles, cartes de format avec prix, icône, badge |
+| `snippets/apx-feature-cards.liquid` | Cartes avantages (à côté des photos sur ordinateur, sous le bouton sur mobile) |
+| `snippets/apx-icon.liquid` | Icônes |
 | `assets/apx-product.css` | Styles, mobile d'abord, couleurs en variables |
 | `assets/apx-product.js` | Configurateur, prix dynamiques, messages datés, galerie, barre fixe |
 
@@ -31,6 +34,21 @@ il ajoute uniquement des sections, un snippet, deux assets et un template altern
 3. Personnaliser dans l'éditeur de thème du brouillon : Produits > « apx-pdp ».
 4. Assigner le template à un produit (fiche produit > Modèle de thème > `apx-pdp`) seulement après validation.
    Tant que le thème brouillon n'est pas publié, rien ne change pour les visiteurs.
+
+## La zone d'achat
+
+Dans l'ordre du template One Piece (tout se réordonne dans l'éditeur) :
+badges Trustpilot et Loox, titre, accroche, prix (avec l'économie seulement pendant une vraie promotion),
+1. nombre de personnes (pastilles), 2. format (cartes avec prix réel, icône, badge),
+3. nom, prime et style, 4. photos (UploadKit + « pas encore la photo »), notes au graphiste,
+bouton « Commander mon portrait » avec le prix, avantages, carrousel photos Loox, livraison.
+
+Réglages utiles :
+- **Style des étapes** (section) : compact sur une ligne, ou encadré comme les anciens blocs Artpixe.
+- **Disposition** (bloc « Choix des options ») : une étape par option, ou toutes les options dans une seule étape.
+- **Afficher les cartes en premier** : met le format avant le nombre de personnes.
+- **Carte d'option** : nom affiché, icône ou vignette (photo du format ou du décor), badge, couleur (standard, vert, doré).
+- **Cartes avantages** : à côté des photos ou dans la zone d'achat.
 
 ## Ce qui protège le référencement
 

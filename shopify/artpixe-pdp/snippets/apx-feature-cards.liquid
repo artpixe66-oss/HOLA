@@ -1,0 +1,32 @@
+{%- comment -%}
+  Cartes avantages (4 au maximum) de la fiche produit Artpixe.
+
+  Accepte :
+  - block {Object} : bloc « feature_cards » de la section principale
+  - modifier {String} : classe ajoutée à la liste (apx-feat--gallery, apx-feat--mobile)
+
+  Usage :
+  {% render 'apx-feature-cards', block: block, modifier: 'apx-feat--gallery' %}
+{%- endcomment -%}
+<ul class="apx-feat {{ modifier }}" {{ block.shopify_attributes }}>
+  {%- for i in (1..4) -%}
+    {%- liquid
+      assign k_label = 'label_' | append: i
+      assign k_icon = 'icon_' | append: i
+      assign k_big = 'big_' | append: i
+      assign f_label = block.settings[k_label]
+      assign f_icon = block.settings[k_icon]
+      assign f_big = block.settings[k_big]
+    -%}
+    {%- if f_label != blank -%}
+      <li class="apx-feat__card{% if f_big != blank %} apx-feat__card--hl{% endif %}">
+        {%- if f_big != blank -%}
+          <span class="apx-feat__big">{{ f_big }}</span>
+        {%- elsif f_icon != 'none' -%}
+          <span class="apx-feat__icon apx-feat__icon--{{ i }}">{% render 'apx-icon', name: f_icon %}</span>
+        {%- endif -%}
+        <span class="apx-feat__label">{{ f_label }}</span>
+      </li>
+    {%- endif -%}
+  {%- endfor -%}
+</ul>

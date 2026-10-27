@@ -83,7 +83,7 @@
 
       fieldsets.forEach(function (fs) {
         var idx = parseInt(fs.getAttribute('data-apx-option'), 10);
-        var isCards = fs.classList.contains('apx-option--cards');
+        var isCards = fs.classList.contains('apx-opt--cards');
         var inputs = Array.prototype.slice.call(fs.querySelectorAll('[data-apx-value]'));
         var base = inputs.length ? priceFor(idx, inputs[0].value) : null;
 
@@ -129,6 +129,20 @@
         } else {
           el.hidden = true;
         }
+      });
+      root.querySelectorAll('[data-apx-savings]').forEach(function (el) {
+        var diff = variant.compare - variant.price;
+        if (diff > 0) {
+          el.textContent = el.getAttribute('data-template').replace('[montant]', money(diff));
+          el.hidden = false;
+        } else {
+          el.hidden = true;
+        }
+      });
+      fieldsets.forEach(function (fs) {
+        var checked = fs.querySelector('[data-apx-value]:checked');
+        var current = fs.querySelector('[data-apx-current]');
+        if (checked && current) current.textContent = checked.getAttribute('data-label') || checked.value;
       });
       root.querySelectorAll('[data-apx-price-context]').forEach(function (el) {
         var tpl = el.getAttribute('data-apx-price-context');

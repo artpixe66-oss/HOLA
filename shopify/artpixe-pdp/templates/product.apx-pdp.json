@@ -3,52 +3,86 @@
     "main": {
       "type": "apx-product-main",
       "blocks": {
+        "trust": {
+          "type": "trust_badges",
+          "settings": {
+            "loox_source": "shop",
+            "reviews_anchor": "avis",
+            "tp_enable": true,
+            "tp_score": "4,4",
+            "tp_count": "31",
+            "tp_url": "https://fr.trustpilot.com/review/artpixe.com"
+          }
+        },
         "title": {
           "type": "title",
           "settings": {}
         },
-        "rating": {
-          "type": "rating",
-          "settings": {
-            "label": "avis clients vérifiés",
-            "anchor": "avis"
-          }
-        },
         "subtitle": {
           "type": "subtitle",
           "settings": {
-            "text": "Un graphiste te dessine en pirate recherché, avec ton nom et ta prime. Tu vois l'aperçu avant l'impression et on retouche jusqu'à ce que ce soit vraiment toi."
+            "text": "Ton avis de recherche dessiné par un graphiste à partir de ta photo. Tu valides l'aperçu avant l'impression."
           }
         },
         "price": {
           "type": "price",
           "settings": {
-            "context": "[1] pers. · [2]",
+            "show_savings": true,
+            "savings_label": "Économise [montant]",
             "note": ""
           }
         },
-        "reassurance": {
-          "type": "reassurance",
+        "notice_noel": {
+          "type": "notice",
           "settings": {
-            "item_1": "Aperçu avant impression",
-            "item_2": "Retouches incluses",
-            "item_3": "Livraison offerte en France"
-          }
+            "text": "<p>🎄 <strong>Pour Noël :</strong> affiche et Displate à commander avant le [date à valider], fichier HD jusqu'au [date à valider].</p>",
+            "start": "2026-11-01 00:00",
+            "end": "2026-12-07 23:59",
+            "countdown_hours": 0,
+            "style": "accent"
+          },
+          "disabled": true
+        },
+        "notice_late": {
+          "type": "notice",
+          "settings": {
+            "text": "<p>🎁 <strong>Trop tard pour le 24 ?</strong> Commande quand même : tu reçois tout de suite un bon cadeau à imprimer, le portrait suit.</p>",
+            "start": "2026-12-08 00:00",
+            "end": "2026-12-24 23:59",
+            "countdown_hours": 0,
+            "style": "neutral"
+          },
+          "disabled": true
         },
         "picker": {
           "type": "variant_picker",
           "settings": {
+            "layout": "steps",
+            "group_heading": "Choisis ton format",
+            "group_hint": "",
             "card_option_name": "Version",
+            "cards_first": false,
             "cards_price": true,
-            "chips_price": "delta",
-            "heading_1": "Combien de personnes sur l'affiche ?",
-            "hint_1": "Animaux compris. Chaque personne est dessinée une à une.",
-            "heading_2": "Choisis ton format",
-            "hint_2": "Le prix de chaque format tient compte du nombre de personnes choisi.",
+            "chips_price": "none",
+            "heading_1": "Nombre de personnes (animaux compris)",
+            "hint_1": "",
+            "heading_2": "Format",
+            "hint_2": "",
             "heading_3": "",
             "hint_3": "",
             "upsell_option": 1,
-            "upsell_text": "Vous êtes deux fans ? Ajoute une personne pour +[ecart]."
+            "upsell_text": "Vous êtes deux ? +[ecart] pour une personne de plus."
+          }
+        },
+        "card_digital": {
+          "type": "option_card",
+          "settings": {
+            "value": "Digital",
+            "label": "Fichier HD",
+            "icon": "💻",
+            "description": "Par e-mail, à imprimer où tu veux",
+            "badge": "",
+            "style": "default"
           }
         },
         "card_a3": {
@@ -56,8 +90,10 @@
           "settings": {
             "value": "Poster A3",
             "label": "Affiche A3",
-            "description": "29,7 × 42 cm, papier premium, tube rigide.",
-            "badge": "Le plus choisi"
+            "icon": "🖼️",
+            "description": "29,7 × 42 cm, papier premium",
+            "badge": "Le plus choisi",
+            "style": "green"
           }
         },
         "card_displate": {
@@ -65,8 +101,10 @@
           "settings": {
             "value": "Displate",
             "label": "Displate métal",
-            "description": "Plaque métal, fixation magnétique sans clou.",
-            "badge": ""
+            "icon": "✨",
+            "description": "Fixation magnétique, sans clou",
+            "badge": "",
+            "style": "default"
           }
         },
         "card_cadre": {
@@ -74,24 +112,44 @@
           "settings": {
             "value": "Displate avec cadre",
             "label": "Displate + cadre",
-            "description": "Encadré, prêt à accrocher.",
-            "badge": ""
+            "icon": "🏆",
+            "description": "Encadré, prêt à accrocher",
+            "badge": "Premium",
+            "style": "gold"
           }
         },
-        "card_digital": {
-          "type": "option_card",
+        "step_name": {
+          "type": "step_heading",
           "settings": {
-            "value": "Digital",
-            "label": "Fichier HD seul",
-            "description": "Reçu par e-mail, à imprimer où tu veux.",
-            "badge": ""
+            "heading": "Nom, prime et style",
+            "hint": ""
+          }
+        },
+        "names": {
+          "type": "field_row",
+          "settings": {
+            "label_1": "Nom sur l'affiche",
+            "property_1": "Pseudo(s)",
+            "placeholder_1": "MONKEY D. LUFFY",
+            "label_2": "Prime (฿)",
+            "property_2": "Montant de la prime ฿",
+            "placeholder_2": "3 000 000 000"
+          }
+        },
+        "style": {
+          "type": "choice_field",
+          "settings": {
+            "label": "Style",
+            "property_name": "Style",
+            "choices": "Le graphiste choisit\nWanted classique\nWano\nMarineford",
+            "default_choice": "Le graphiste choisit"
           }
         },
         "step_photos": {
           "type": "step_heading",
           "settings": {
-            "heading": "Ajoute ta ou tes photos",
-            "hint": "Visage net, de face ou de trois quarts, bonne lumière. Une photo par personne ou une photo de groupe."
+            "heading": "Tes photos",
+            "hint": "Visage net, de face, bonne lumière. Une photo par personne ou une photo de groupe."
           }
         },
         "uploadkit": {
@@ -103,99 +161,68 @@
         "photo_later": {
           "type": "photo_later",
           "settings": {
-            "label": "Je n'ai pas encore la photo",
-            "help": "Commande maintenant, on te la demande par e-mail juste après. Idéal pour garder la surprise.",
+            "label": "Pas encore la photo ? Commande maintenant, on te la demande par e-mail juste après.",
             "property_name": "Photo",
             "property_value": "Envoyée plus tard par e-mail"
           }
         },
-        "step_details": {
-          "type": "step_heading",
-          "settings": {
-            "heading": "Personnalise ton avis de recherche",
-            "hint": ""
-          }
-        },
-        "field_name": {
+        "notes": {
           "type": "text_field",
           "settings": {
-            "label": "Nom sur l'affiche",
-            "property_name": "Pseudo(s)",
-            "placeholder": "Ex. MONKEY D. LUFFY",
-            "help": "",
-            "multiline": false,
-            "required": false,
-            "max_length": 60
-          }
-        },
-        "field_bounty": {
-          "type": "text_field",
-          "settings": {
-            "label": "Prime (en Berry)",
-            "property_name": "Montant de la prime ฿",
-            "placeholder": "Ex. 3 000 000 000",
-            "help": "",
-            "multiline": false,
-            "required": false,
-            "max_length": 40
-          }
-        },
-        "field_style": {
-          "type": "choice_field",
-          "settings": {
-            "label": "Style",
-            "property_name": "Style",
-            "choices": "Le graphiste choisit\nWanted classique\nWano\nMarineford",
-            "default_choice": "Le graphiste choisit"
-          }
-        },
-        "field_notes": {
-          "type": "text_field",
-          "settings": {
-            "label": "Une demande particulière ?",
+            "label": "Notes au graphiste",
             "property_name": "Demandes particulières",
-            "placeholder": "Tenue, accessoire, fond, couleur de cheveux…",
+            "placeholder": "Ex. : moi en Luffy avec son chapeau de paille, ma copine en Nami.",
             "help": "",
             "multiline": true,
             "required": false,
             "max_length": 0
           }
         },
-        "notice_noel": {
-          "type": "notice",
-          "settings": {
-            "text": "<p><strong>Pour Noël :</strong> affiche et Displate à commander avant le [date à valider], fichier HD jusqu'au [date à valider].</p>",
-            "start": "2026-11-01 00:00",
-            "end": "2026-12-07 23:59",
-            "countdown_hours": 0,
-            "style": "accent"
-          },
-          "disabled": true
-        },
-        "notice_late": {
-          "type": "notice",
-          "settings": {
-            "text": "<p><strong>Trop tard pour le 24 ?</strong> Commande quand même : tu reçois tout de suite un bon cadeau à imprimer, le portrait suit.</p>",
-            "start": "2026-12-08 00:00",
-            "end": "2026-12-24 23:59",
-            "countdown_hours": 0,
-            "style": "neutral"
-          },
-          "disabled": true
-        },
         "buy": {
           "type": "buy_buttons",
           "settings": {
-            "label": "Ajouter au panier",
+            "label": "Commander mon portrait",
             "soldout_label": "Indisponible",
             "show_price": true,
-            "microcopy": "<p>Rien n'est imprimé sans ta validation. Aperçu par e-mail sous 24-48 h ouvrées.</p>"
+            "show_compare": true,
+            "microcopy": "<p>Rien n'est imprimé sans ta validation · Aperçu sous 24-48 h ouvrées</p>"
           }
         },
-        "retouches": {
-          "type": "richtext",
+        "features": {
+          "type": "feature_cards",
           "settings": {
-            "text": "<p>Retouches incluses jusqu'à ta validation : traits, expression, coiffure, tenue, couleurs, textes.</p>"
+            "icon_1": "draw",
+            "label_1": "Dessiné par un graphiste",
+            "big_1": "",
+            "icon_2": "custom",
+            "label_2": "Personnalisation illimitée",
+            "big_2": "",
+            "icon_3": "retouch",
+            "label_3": "Retouches jusqu'à validation",
+            "big_3": "",
+            "icon_4": "clock",
+            "label_4": "Aperçu sous 24-48 h ouvrées",
+            "big_4": "48 h",
+            "position": "gallery"
+          }
+        },
+        "loox_carousel": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-gallery-carousel-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "maxWidth": 1100,
+            "borderRadius": 12,
+            "itemsPerView": 4,
+            "mobileItemsPerView": 3,
+            "imageRatio": "1",
+            "reviewerNameColor": "#ffffff",
+            "starsColor": "#f5a623",
+            "arrows_backgroundColor": "#ffffff",
+            "arrows_iconColor": "#9a9a9a",
+            "shadow": "none",
+            "border_active": false,
+            "border_width": 2,
+            "border_color": "#000000",
+            "productIds": ""
           }
         },
         "livraison": {
@@ -208,34 +235,33 @@
         }
       },
       "block_order": [
+        "trust",
         "title",
-        "rating",
         "subtitle",
         "price",
-        "reassurance",
+        "notice_noel",
+        "notice_late",
         "picker",
+        "card_digital",
         "card_a3",
         "card_displate",
         "card_cadre",
-        "card_digital",
+        "step_name",
+        "names",
+        "style",
         "step_photos",
         "uploadkit",
         "photo_later",
-        "step_details",
-        "field_name",
-        "field_bounty",
-        "field_style",
-        "field_notes",
-        "notice_noel",
-        "notice_late",
+        "notes",
         "buy",
-        "retouches",
+        "features",
+        "loox_carousel",
         "livraison"
       ],
       "settings": {
         "default_option_value": "Poster A3",
         "update_url": true,
-        "image_ratio": "square",
+        "image_ratio": "adapt",
         "show_thumbnails": true,
         "after_add": "cart",
         "sticky_enable": true,
@@ -244,7 +270,9 @@
         "emit_schema": true,
         "color_bg": "#141414",
         "color_text": "#f0ede8",
-        "color_accent": "#f5a623"
+        "color_accent": "#f5a623",
+        "step_style": "inline",
+        "load_fonts": true
       }
     },
     "reviews": {

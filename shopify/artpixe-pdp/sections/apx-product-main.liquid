@@ -1,10 +1,15 @@
 {%- comment -%}
   Artpixe · Fiche produit personnalisée · section principale
-  Galerie, zone d'achat, configurateur en étapes et barre fixe mobile.
+  Galerie, zone d'achat en étapes, barre fixe mobile.
   Le formulaire ne contient que la variante : les champs, boutons et blocs d'applications
   s'y rattachent par l'attribut form, ce qui évite les formulaires imbriqués.
 {%- endcomment -%}
 <script>document.documentElement.classList.add('apx-js');</script>
+{%- if section.settings.load_fonts -%}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&display=swap">
+{%- endif -%}
 {{ 'apx-product.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'apx-product.js' | asset_url }}" defer="defer"></script>
 
@@ -23,6 +28,10 @@
   endif
 
   assign ratio_class = 'apx-ratio--' | append: section.settings.image_ratio
+  assign savings = 0
+  if current_variant.compare_at_price > current_variant.price
+    assign savings = current_variant.compare_at_price | minus: current_variant.price
+  endif
 -%}
 
 {%- style -%}
@@ -34,7 +43,7 @@
 {%- endstyle -%}
 
 <div
-  class="apx-scope apx-main"
+  class="apx-scope apx-main{% if section.settings.load_fonts %} apx-brand-fonts{% endif %}"
   data-apx-root
   data-section-id="{{ section.id }}"
 >
@@ -43,7 +52,6 @@
       "formId": {{ form_id | json }},
       "moneyFormat": {{ shop.money_format | json }},
       "updateUrl": {{ section.settings.update_url | json }},
-      "productUrl": {{ product.url | json }},
       "currentVariantId": {{ current_variant.id | json }},
       "variants": [
         {%- for v in product.variants -%}
@@ -68,11 +76,7 @@
               assign img_priority = 'auto'
             endif
           -%}
-          <li
-            class="apx-gallery__slide"
-            id="apx-slide-{{ section.id }}-{{ media.id }}"
-            data-media-id="{{ media.id }}"
-          >
+          <li class="apx-gallery__slide" data-media-id="{{ media.id }}">
             {%- if media.media_type == 'image' -%}
               {{
                 media
@@ -93,6 +97,12 @@
           <li class="apx-gallery__slide">{{ 'product-1' | placeholder_svg_tag: 'apx-gallery__img' }}</li>
         {%- endfor -%}
       </ul>
+
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'feature_cards' and block.settings.position == 'gallery' -%}
+          {%- render 'apx-feature-cards', block: block, modifier: 'apx-feat--gallery' -%}
+        {%- endif -%}
+      {%- endfor -%}
 
       {%- if product.media.size > 1 -%}
         <p class="apx-gallery__count" aria-hidden="true">
@@ -140,7 +150,36 @@
       {%- for block in section.blocks -%}
         {%- case block.type -%}
           {%- when '@app' -%}
-            <div class="apx-app">{% render block %}</div>
+            <div class="apx-app" {{ block.shopify_attributes }}>{% render block %}</div>
+
+          {%- when 'trust_badges' -%}
+            {%- liquid
+              if block.settings.loox_source == 'product'
+                assign lx_avg = product.metafields.loox.avg_rating.value
+                assign lx_count = product.metafields.loox.num_reviews.value
+              else
+                assign lx_stats = shop.metafields.loox.global_stats.value | default: shop.metafields.loox.global_stats | split: ','
+                assign lx_avg = lx_stats[0] | plus: 0
+                assign lx_count = lx_stats[1] | plus: 0
+              endif
+            -%}
+            <div class="apx-trust" {{ block.shopify_attributes }}>
+              {%- if block.settings.tp_enable and block.settings.tp_score != blank -%}
+                <a class="apx-trust__badge apx-trust__badge--tp" href="{{ block.settings.tp_url }}" target="_blank" rel="noopener">
+                  <span class="apx-trust__star" aria-hidden="true">★</span>
+                  <strong>Trustpilot</strong>
+                  <span class="apx-trust__score">{{ block.settings.tp_score }}/5</span>
+                  {%- if block.settings.tp_count != blank -%}<span class="apx-trust__count">{{ block.settings.tp_count }} avis</span>{%- endif -%}
+                </a>
+              {%- endif -%}
+              {%- if lx_count > 0 -%}
+                <a class="apx-trust__badge apx-trust__badge--lx" href="#{{ block.settings.reviews_anchor | default: 'avis' | handle }}">
+                  <span class="apx-stars" style="--apx-rating: {{ lx_avg }};" aria-hidden="true"></span>
+                  <span class="apx-trust__score">{{ lx_avg | round: 1 | replace: '.', ',' }}/5</span>
+                  <span class="apx-trust__count">{{ lx_count }} avis</span>
+                </a>
+              {%- endif -%}
+            </div>
 
           {%- when 'title' -%}
             <h1 class="apx-title" {{ block.shopify_attributes }}>{{ product.title | escape }}</h1>
@@ -162,33 +201,26 @@
             {%- if r_count > 0 -%}
               <a class="apx-rating" href="#{{ block.settings.anchor | default: 'avis' | handle }}" {{ block.shopify_attributes }}>
                 <span class="apx-stars" style="--apx-rating: {{ r_avg }};" aria-hidden="true"></span>
-                <span>
-                  <strong>{{ r_avg | round: 1 | replace: '.', ',' }}/5</strong>
-                  · {{ r_count }}
-                  {{ block.settings.label }}
-                </span>
+                <span><strong>{{ r_avg | round: 1 | replace: '.', ',' }}/5</strong> · {{ r_count }} {{ block.settings.label }}</span>
               </a>
             {%- endif -%}
 
           {%- when 'price' -%}
-            {%- liquid
-              assign ctx = block.settings.context | default: ''
-              assign ctx = ctx | replace: '[1]', current_variant.option1 | replace: '[2]', current_variant.option2 | replace: '[3]', current_variant.option3
-            -%}
             <div class="apx-price" {{ block.shopify_attributes }}>
+              <s class="apx-price__was" data-apx-compare {% if savings == 0 %}hidden{% endif %}>
+                {{- current_variant.compare_at_price | money -}}
+              </s>
               <span class="apx-price__now" data-apx-price>{{ current_variant.price | money }}</span>
-              <s
-                class="apx-price__was"
-                data-apx-compare
-                {% unless current_variant.compare_at_price > current_variant.price %}hidden{% endunless %}
-                >{{- current_variant.compare_at_price | money -}}</s
-              >
-              {%- if ctx != blank -%}
+              {%- if block.settings.show_savings -%}
                 <span
-                  class="apx-price__ctx"
-                  data-apx-price-context="{{ block.settings.context | escape }}"
-                  >{{ ctx }}</span
+                  class="apx-price__save"
+                  data-apx-savings
+                  data-template="{{ block.settings.savings_label | escape }}"
+                  {% if savings == 0 %}hidden{% endif %}
                 >
+                  {%- assign savings_money = savings | money -%}
+                  {{- block.settings.savings_label | replace: '[montant]', savings_money -}}
+                </span>
               {%- endif -%}
               {%- if block.settings.note != blank -%}
                 <span class="apx-price__note">{{ block.settings.note }}</span>
@@ -202,139 +234,24 @@
               {%- if block.settings.item_3 != blank %}<li>{{ block.settings.item_3 }}</li>{% endif -%}
             </ul>
 
-          {%- when 'variant_picker' -%}
-            {%- unless product.has_only_default_variant -%}
-              <div
-                class="apx-picker"
-                id="apx-config"
-                data-apx-picker
-                data-chips-price="{{ block.settings.chips_price }}"
-                data-cards-price="{{ block.settings.cards_price }}"
-                {{ block.shopify_attributes }}
-              >
-                {%- for option in product.options_with_values -%}
-                  {%- liquid
-                    assign opt_index0 = forloop.index0
-                    assign opt_index = forloop.index
-                    assign heading_key = 'heading_' | append: opt_index
-                    assign hint_key = 'hint_' | append: opt_index
-                    assign heading = block.settings[heading_key] | default: option.name
-                    assign cur_val = current_variant.options[opt_index0]
-                    assign is_card = false
-                    if option.name == block.settings.card_option_name
-                      assign is_card = true
-                    endif
-                    assign base_price = nil
-                  -%}
-                  {%- if option.values.size > 1 -%}
-                    <fieldset
-                      class="apx-step apx-option {% if is_card %}apx-option--cards{% else %}apx-option--chips{% endif %}"
-                      data-apx-option="{{ opt_index0 }}"
-                    >
-                      <legend class="apx-step__title">
-                        <span class="apx-step__num" aria-hidden="true"></span>{{ heading }}
-                      </legend>
-                      {%- if block.settings[hint_key] != blank -%}
-                        <p class="apx-hint">{{ block.settings[hint_key] }}</p>
-                      {%- endif -%}
-                      <div class="apx-option__values">
-                        {%- for value in option.values -%}
-                          {%- liquid
-                            assign value_index0 = forloop.index0
-                            assign value_name = value.name | default: value
-                            assign input_id = 'apx-' | append: section.id | append: '-o' | append: opt_index | append: '-' | append: forloop.index
-
-                            assign match = nil
-                            for v in product.variants
-                              assign ok = true
-                              for o in v.options
-                                if forloop.index0 == opt_index0
-                                  if o != value_name
-                                    assign ok = false
-                                  endif
-                                elsif o != current_variant.options[forloop.index0]
-                                  assign ok = false
-                                endif
-                              endfor
-                              if ok
-                                assign match = v
-                                break
-                              endif
-                            endfor
-                            if value_index0 == 0 and match
-                              assign base_price = match.price
-                            endif
-
-                            assign card_label = value_name
-                            assign card_desc = ''
-                            assign card_badge = ''
-                            for b in section.blocks
-                              if b.type == 'option_card' and b.settings.value == value_name
-                                assign card_label = b.settings.label | default: value_name
-                                assign card_desc = b.settings.description
-                                assign card_badge = b.settings.badge
-                                break
-                              endif
-                            endfor
-                          -%}
-                          <div class="apx-val">
-                            <input
-                              type="radio"
-                              class="apx-val__input"
-                              id="{{ input_id }}"
-                              name="apx-{{ section.id }}-o{{ opt_index }}"
-                              value="{{ value_name | escape }}"
-                              data-apx-value
-                              {% if value_name == cur_val %}checked{% endif %}
-                              {% unless match and match.available %}data-unavailable{% endunless %}
-                            >
-                            <label class="apx-val__label" for="{{ input_id }}">
-                              {%- if is_card and card_badge != blank -%}
-                                <span class="apx-val__badge">{{ card_badge }}</span>
-                              {%- endif -%}
-                              <span class="apx-val__name">{{ card_label }}</span>
-                              {%- if is_card and card_desc != blank -%}
-                                <span class="apx-val__desc">{{ card_desc }}</span>
-                              {%- endif -%}
-                              <span class="apx-val__price" data-apx-value-price>
-                                {%- if match -%}
-                                  {%- if is_card -%}
-                                    {%- if block.settings.cards_price -%}{{ match.price | money }}{%- endif -%}
-                                  {%- elsif block.settings.chips_price == 'absolute' -%}
-                                    {{ match.price | money }}
-                                  {%- elsif block.settings.chips_price == 'delta' and base_price -%}
-                                    {%- assign delta = match.price | minus: base_price -%}
-                                    {%- if delta > 0 -%}+{{ delta | money }}{%- endif -%}
-                                  {%- endif -%}
-                                {%- endif -%}
-                              </span>
-                            </label>
-                          </div>
-                        {%- endfor -%}
-                      </div>
-                      {%- if opt_index == block.settings.upsell_option and block.settings.upsell_text != blank -%}
-                        <p
-                          class="apx-upsell"
-                          data-apx-upsell
-                          data-template="{{ block.settings.upsell_text | escape }}"
-                          hidden
-                        ></p>
-                      {%- endif -%}
-                    </fieldset>
-                  {%- endif -%}
-                {%- endfor -%}
-              </div>
-            {%- endunless -%}
-
           {%- when 'step_heading' -%}
-            <div class="apx-step apx-step--free" {{ block.shopify_attributes }}>
-              <p class="apx-step__title">
-                <span class="apx-step__num" aria-hidden="true"></span>{{ block.settings.heading }}
-              </p>
-              {%- if block.settings.hint != blank -%}
-                <p class="apx-hint">{{ block.settings.hint }}</p>
-              {%- endif -%}
-            </div>
+            {%- if section.settings.step_style == 'box' -%}
+              <div class="apx-stepbox" {{ block.shopify_attributes }}>
+                <span class="apx-stepbox__num" aria-hidden="true"></span>
+                <div class="apx-stepbox__body">
+                  <p class="apx-stepbox__title">{{ block.settings.heading }}</p>
+                  {%- if block.settings.hint != blank -%}<p class="apx-stepbox__desc">{{ block.settings.hint }}</p>{%- endif -%}
+                </div>
+              </div>
+            {%- else -%}
+              <div class="apx-stepline" {{ block.shopify_attributes }}>
+                <p class="apx-stephead"><span class="apx-stephead__num" aria-hidden="true"></span>{{ block.settings.heading }}</p>
+                {%- if block.settings.hint != blank -%}<p class="apx-hint">{{ block.settings.hint }}</p>{%- endif -%}
+              </div>
+            {%- endif -%}
+
+          {%- when 'variant_picker' -%}
+            {%- render 'apx-variant-picker', block: block, section: section, product: product, current_variant: current_variant -%}
 
           {%- when 'text_field' -%}
             {%- liquid
@@ -352,7 +269,7 @@
                   class="apx-input"
                   name="properties[{{ prop | escape }}]"
                   form="{{ form_id }}"
-                  rows="3"
+                  rows="2"
                   placeholder="{{ block.settings.placeholder | escape }}"
                   {% if block.settings.max_length > 0 %}maxlength="{{ block.settings.max_length }}"{% endif %}
                   {% if block.settings.required %}required{% endif %}
@@ -375,15 +292,46 @@
               {%- endif -%}
             </div>
 
+          {%- when 'field_row' -%}
+            {%- comment -%} Deux champs courts côte à côte {%- endcomment -%}
+            <div class="apx-field-row" {{ block.shopify_attributes }}>
+              {%- for i in (1..2) -%}
+                {%- liquid
+                  assign label_key = 'label_' | append: i
+                  assign prop_key = 'property_' | append: i
+                  assign ph_key = 'placeholder_' | append: i
+                  assign f_label = block.settings[label_key]
+                  assign f_prop = block.settings[prop_key] | default: f_label | strip
+                  assign fid = 'apx-f-' | append: block.id | append: '-' | append: i
+                -%}
+                {%- if f_label != blank -%}
+                  <div class="apx-field">
+                    <label class="apx-label" for="{{ fid }}">{{ f_label }}</label>
+                    <input
+                      id="{{ fid }}"
+                      class="apx-input"
+                      type="text"
+                      name="properties[{{ f_prop | escape }}]"
+                      form="{{ form_id }}"
+                      placeholder="{{ block.settings[ph_key] | escape }}"
+                      autocomplete="off"
+                      maxlength="60"
+                    >
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+
           {%- when 'choice_field' -%}
             {%- liquid
               assign prop = block.settings.property_name | default: block.settings.label | strip
               assign choices = block.settings.choices | newline_to_br | split: '<br />'
               assign default_choice = block.settings.default_choice | strip
+              assign label_id = 'apx-cl-' | append: block.id
             -%}
-            <fieldset class="apx-field apx-choice" {{ block.shopify_attributes }}>
-              <legend class="apx-label">{{ block.settings.label }}</legend>
-              <div class="apx-option__values">
+            <div class="apx-field apx-opt apx-opt--chips" role="radiogroup" aria-labelledby="{{ label_id }}" {{ block.shopify_attributes }}>
+              <p class="apx-label" id="{{ label_id }}">{{ block.settings.label }}</p>
+              <div class="apx-opt__values">
                 {%- for c in choices -%}
                   {%- assign choice = c | strip -%}
                   {%- if choice != blank -%}
@@ -398,16 +346,16 @@
                         value="{{ choice | escape }}"
                         {% if choice == default_choice %}checked{% endif %}
                       >
-                      <label class="apx-val__label" for="{{ cid }}"><span class="apx-val__name">{{ choice }}</span></label>
+                      <label class="apx-val__label apx-val__label--text" for="{{ cid }}"><span class="apx-val__name">{{ choice }}</span></label>
                     </div>
                   {%- endif -%}
                 {%- endfor -%}
               </div>
-            </fieldset>
+            </div>
 
           {%- when 'photo_later' -%}
             {%- assign pid = 'apx-p-' | append: block.id -%}
-            <div class="apx-field apx-check" {{ block.shopify_attributes }}>
+            <div class="apx-later" {{ block.shopify_attributes }}>
               <input
                 type="checkbox"
                 id="{{ pid }}"
@@ -416,8 +364,8 @@
                 value="{{ block.settings.property_value | escape }}"
               >
               <label for="{{ pid }}">
-                <strong>{{ block.settings.label }}</strong>
-                {%- if block.settings.help != blank %}<span class="apx-hint">{{ block.settings.help }}</span>{% endif -%}
+                <span aria-hidden="true">📎</span>
+                {{ block.settings.label }}
               </label>
             </div>
 
@@ -427,7 +375,7 @@
                 type="submit"
                 name="add"
                 form="{{ form_id }}"
-                class="apx-btn apx-btn--primary"
+                class="apx-btn apx-btn--primary apx-btn--buy"
                 data-apx-submit
                 data-label="{{ block.settings.label | escape }}"
                 data-soldout="{{ block.settings.soldout_label | escape }}"
@@ -441,8 +389,12 @@
                   {%- endif -%}
                 </span>
                 {%- if block.settings.show_price -%}
-                  <span aria-hidden="true">·</span>
-                  <span data-apx-price>{{ current_variant.price | money }}</span>
+                  <span class="apx-btn__prices">
+                    {%- if block.settings.show_compare -%}
+                      <s data-apx-compare {% if savings == 0 %}hidden{% endif %}>{{ current_variant.compare_at_price | money }}</s>
+                    {%- endif -%}
+                    <span data-apx-price>{{ current_variant.price | money }}</span>
+                  </span>
                 {%- endif -%}
               </button>
               <p class="apx-error" role="alert" data-apx-error hidden></p>
@@ -450,6 +402,13 @@
                 <div class="apx-micro">{{ block.settings.microcopy }}</div>
               {%- endif -%}
             </div>
+
+          {%- when 'feature_cards' -%}
+            {%- if block.settings.position == 'gallery' -%}
+              {%- render 'apx-feature-cards', block: block, modifier: 'apx-feat--mobile' -%}
+            {%- else -%}
+              {%- render 'apx-feature-cards', block: block, modifier: '' -%}
+            {%- endif -%}
 
           {%- when 'notice' -%}
             {%- liquid
@@ -547,9 +506,9 @@
         { "value": "square", "label": "Carré" },
         { "value": "portrait", "label": "Portrait" }
       ],
-      "default": "square"
+      "default": "adapt"
     },
-    { "type": "checkbox", "id": "show_thumbnails", "label": "Miniatures sur ordinateur", "default": true },
+    { "type": "checkbox", "id": "show_thumbnails", "label": "Miniatures", "default": true },
     { "type": "header", "content": "Après l'ajout au panier" },
     {
       "type": "select",
@@ -582,13 +541,54 @@
       "default": true,
       "info": "Prix, disponibilité et note réels, calculés depuis Shopify et Loox. Désactiver seulement si une application SEO en génère déjà."
     },
-    { "type": "header", "content": "Couleurs" },
+    { "type": "header", "content": "Style" },
+    {
+      "type": "select",
+      "id": "step_style",
+      "label": "Style des étapes",
+      "options": [
+        { "value": "inline", "label": "Compact : numéro, titre et choix en cours sur une ligne" },
+        { "value": "box", "label": "Encadré : carte avec titre et description" }
+      ],
+      "default": "inline"
+    },
+    {
+      "type": "checkbox",
+      "id": "load_fonts",
+      "label": "Polices Artpixe (Bebas Neue, DM Sans)",
+      "default": true,
+      "info": "Chargées une seule fois pour toute la page."
+    },
     { "type": "color", "id": "color_bg", "label": "Fond", "default": "#141414" },
     { "type": "color", "id": "color_text", "label": "Texte", "default": "#f0ede8" },
     { "type": "color", "id": "color_accent", "label": "Accent", "default": "#f5a623" }
   ],
   "blocks": [
     { "type": "@app" },
+    {
+      "type": "trust_badges",
+      "name": "Badges d'avis",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "loox_source",
+          "label": "Chiffres Loox",
+          "options": [
+            { "value": "shop", "label": "Toute la boutique" },
+            { "value": "product", "label": "Ce produit" }
+          ],
+          "default": "shop",
+          "info": "Lus automatiquement dans Loox."
+        },
+        { "type": "text", "id": "reviews_anchor", "label": "Ancre de la section avis", "default": "avis" },
+        { "type": "header", "content": "Trustpilot" },
+        { "type": "checkbox", "id": "tp_enable", "label": "Afficher Trustpilot", "default": true },
+        { "type": "text", "id": "tp_score", "label": "Note", "default": "4,4", "info": "Recopier la note affichée sur Trustpilot et la tenir à jour." },
+        { "type": "text", "id": "tp_count", "label": "Nombre d'avis", "default": "31" },
+        { "type": "url", "id": "tp_url", "label": "Lien", "default": "https://fr.trustpilot.com/review/artpixe.com" }
+      ]
+    },
     {
       "type": "title",
       "name": "Titre (H1)",
@@ -602,12 +602,7 @@
       "name": "Accroche",
       "limit": 1,
       "settings": [
-        {
-          "type": "textarea",
-          "id": "text",
-          "label": "Texte",
-          "default": "Un graphiste te dessine en pirate recherché, avec ton nom et ta prime. Tu vois l'aperçu avant l'impression et on retouche jusqu'à ce que ce soit vraiment toi."
-        }
+        { "type": "textarea", "id": "text", "label": "Texte", "default": "Un graphiste te dessine en pirate recherché. Tu valides l'aperçu avant l'impression." }
       ]
     },
     {
@@ -616,8 +611,7 @@
       "limit": 1,
       "settings": [
         { "type": "text", "id": "label", "label": "Libellé après le nombre", "default": "avis clients vérifiés" },
-        { "type": "text", "id": "anchor", "label": "Ancre de la section avis", "default": "avis" },
-        { "type": "paragraph", "content": "Note et nombre lus dans Loox. Rien ne s'affiche s'il n'y a pas d'avis." }
+        { "type": "text", "id": "anchor", "label": "Ancre de la section avis", "default": "avis" }
       ]
     },
     {
@@ -625,14 +619,9 @@
       "name": "Prix",
       "limit": 1,
       "settings": [
-        {
-          "type": "text",
-          "id": "context",
-          "label": "Précision après le prix",
-          "default": "[1] pers. · [2]",
-          "info": "[1], [2], [3] = valeurs des options choisies."
-        },
-        { "type": "text", "id": "note", "label": "Mention", "default": "Fichier HD offert avec toute impression" }
+        { "type": "checkbox", "id": "show_savings", "label": "Afficher l'économie pendant une promotion", "default": true },
+        { "type": "text", "id": "savings_label", "label": "Texte de l'économie", "default": "Économise [montant]", "info": "[montant] = écart réel entre le prix avant réduction et le prix." },
+        { "type": "text", "id": "note", "label": "Mention" }
       ]
     },
     {
@@ -645,17 +634,39 @@
       ]
     },
     {
+      "type": "step_heading",
+      "name": "Étape",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Titre", "default": "Tes photos" },
+        { "type": "textarea", "id": "hint", "label": "Description", "default": "Une photo par personne ou une photo de groupe, visage bien visible." },
+        { "type": "paragraph", "content": "Les étapes se numérotent toutes seules, dans l'ordre des blocs." }
+      ]
+    },
+    {
       "type": "variant_picker",
       "name": "Choix des options",
       "limit": 1,
       "settings": [
         {
+          "type": "select",
+          "id": "layout",
+          "label": "Disposition",
+          "options": [
+            { "value": "grouped", "label": "Une seule étape pour toutes les options" },
+            { "value": "steps", "label": "Une étape par option" }
+          ],
+          "default": "steps"
+        },
+        { "type": "text", "id": "group_heading", "label": "Titre de l'étape (une seule étape)", "default": "Choisis ton format" },
+        { "type": "text", "id": "group_hint", "label": "Description (une seule étape)", "default": "Format et nombre de personnes" },
+        {
           "type": "text",
           "id": "card_option_name",
           "label": "Option affichée en cartes",
           "default": "Version",
-          "info": "Nom exact de l'option Shopify. Les descriptions des cartes se règlent avec les blocs « Carte d'option »."
+          "info": "Nom exact de l'option Shopify. Descriptions, icônes et badges : blocs « Carte d'option »."
         },
+        { "type": "checkbox", "id": "cards_first", "label": "Afficher les cartes en premier", "default": true },
         { "type": "checkbox", "id": "cards_price", "label": "Prix sur chaque carte", "default": true },
         {
           "type": "select",
@@ -666,32 +677,24 @@
             { "value": "delta", "label": "Écart (+4 €)" },
             { "value": "absolute", "label": "Prix complet" }
           ],
-          "default": "delta"
+          "default": "none"
         },
         { "type": "header", "content": "Option 1" },
-        { "type": "text", "id": "heading_1", "label": "Titre", "default": "Combien de personnes sur l'affiche ?" },
-        { "type": "text", "id": "hint_1", "label": "Aide", "default": "Animaux compris. Chaque personne est dessinée une à une." },
+        { "type": "text", "id": "heading_1", "label": "Libellé", "default": "Nombre de personnes (animaux inclus)" },
+        { "type": "text", "id": "hint_1", "label": "Description (une étape par option)" },
         { "type": "header", "content": "Option 2" },
-        { "type": "text", "id": "heading_2", "label": "Titre", "default": "Choisis ton format" },
-        { "type": "text", "id": "hint_2", "label": "Aide", "default": "Tu hésites ? Après l'aperçu, tu peux encore passer à un format imprimé en payant la différence." },
+        { "type": "text", "id": "heading_2", "label": "Libellé", "default": "Format" },
+        { "type": "text", "id": "hint_2", "label": "Description (une étape par option)" },
         { "type": "header", "content": "Option 3" },
-        { "type": "text", "id": "heading_3", "label": "Titre" },
-        { "type": "text", "id": "hint_3", "label": "Aide" },
+        { "type": "text", "id": "heading_3", "label": "Libellé" },
+        { "type": "text", "id": "hint_3", "label": "Description (une étape par option)" },
         { "type": "header", "content": "Suggestion" },
-        {
-          "type": "range",
-          "id": "upsell_option",
-          "label": "Sous l'option n°",
-          "min": 1,
-          "max": 3,
-          "step": 1,
-          "default": 1
-        },
+        { "type": "range", "id": "upsell_option", "label": "Sous l'option n°", "min": 1, "max": 3, "step": 1, "default": 1 },
         {
           "type": "text",
           "id": "upsell_text",
           "label": "Texte quand la 1re valeur est choisie",
-          "default": "Vous êtes deux fans ? Ajoute une personne pour +[ecart].",
+          "default": "Vous êtes deux ? +[ecart] pour une personne de plus.",
           "info": "[ecart] = différence de prix réelle avec la valeur suivante. Laisser vide pour masquer."
         }
       ]
@@ -702,44 +705,53 @@
       "settings": [
         { "type": "text", "id": "value", "label": "Valeur Shopify exacte", "default": "Poster A3" },
         { "type": "text", "id": "label", "label": "Nom affiché", "default": "Affiche A3" },
-        { "type": "text", "id": "description", "label": "Description", "default": "29,7 × 42 cm, papier premium, tube rigide. Fichier HD offert." },
+        { "type": "image_picker", "id": "image", "label": "Vignette", "info": "Photo du format ou du décor. Remplace l'icône." },
+        { "type": "text", "id": "icon", "label": "Icône (emoji)", "default": "🖼️" },
+        { "type": "text", "id": "description", "label": "Description", "default": "29,7 × 42 cm, papier premium" },
         { "type": "text", "id": "badge", "label": "Badge", "info": "N'utiliser que s'il est vrai (ex. « Le plus choisi » d'après les ventes)." },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style de la carte",
+          "options": [
+            { "value": "default", "label": "Standard" },
+            { "value": "green", "label": "Vert" },
+            { "value": "gold", "label": "Doré" }
+          ],
+          "default": "default"
+        },
         { "type": "paragraph", "content": "Ce bloc ne s'affiche pas seul : il habille la valeur correspondante dans « Choix des options »." }
-      ]
-    },
-    {
-      "type": "step_heading",
-      "name": "Titre d'étape",
-      "settings": [
-        { "type": "text", "id": "heading", "label": "Titre", "default": "Ajoute ta ou tes photos" },
-        { "type": "textarea", "id": "hint", "label": "Aide", "default": "Visage net, de face ou de trois quarts, bonne lumière. Une photo par personne ou une photo de groupe." }
       ]
     },
     {
       "type": "text_field",
       "name": "Champ texte",
       "settings": [
-        { "type": "text", "id": "label", "label": "Libellé", "default": "Nom sur l'affiche" },
+        { "type": "text", "id": "label", "label": "Libellé", "default": "Demandes particulières" },
         {
           "type": "text",
           "id": "property_name",
           "label": "Nom de la propriété de commande",
-          "default": "Pseudo(s)",
+          "default": "Demandes particulières",
           "info": "Visible dans la commande. Garder le même nom pour ne pas perturber le traitement."
         },
-        { "type": "text", "id": "placeholder", "label": "Exemple dans le champ", "default": "Ex. MONKEY D. LUFFY" },
+        { "type": "text", "id": "placeholder", "label": "Exemple dans le champ" },
         { "type": "text", "id": "help", "label": "Aide" },
         { "type": "checkbox", "id": "multiline", "label": "Plusieurs lignes", "default": false },
         { "type": "checkbox", "id": "required", "label": "Obligatoire", "default": false },
-        {
-          "type": "range",
-          "id": "max_length",
-          "label": "Longueur maximale (0 = illimitée)",
-          "min": 0,
-          "max": 500,
-          "step": 10,
-          "default": 0
-        }
+        { "type": "range", "id": "max_length", "label": "Longueur maximale (0 = illimitée)", "min": 0, "max": 500, "step": 10, "default": 0 }
+      ]
+    },
+    {
+      "type": "field_row",
+      "name": "Deux champs côte à côte",
+      "settings": [
+        { "type": "text", "id": "label_1", "label": "Libellé 1", "default": "Nom sur l'affiche" },
+        { "type": "text", "id": "property_1", "label": "Propriété 1", "default": "Pseudo(s)" },
+        { "type": "text", "id": "placeholder_1", "label": "Exemple 1", "default": "LUFFY" },
+        { "type": "text", "id": "label_2", "label": "Libellé 2", "default": "Prime ฿" },
+        { "type": "text", "id": "property_2", "label": "Propriété 2", "default": "Montant de la prime ฿" },
+        { "type": "text", "id": "placeholder_2", "label": "Exemple 2", "default": "3 000 000 000" }
       ]
     },
     {
@@ -748,12 +760,7 @@
       "settings": [
         { "type": "text", "id": "label", "label": "Libellé", "default": "Style" },
         { "type": "text", "id": "property_name", "label": "Nom de la propriété de commande", "default": "Style" },
-        {
-          "type": "textarea",
-          "id": "choices",
-          "label": "Choix (un par ligne)",
-          "default": "Le graphiste choisit\nWanted classique\nWano\nMarineford"
-        },
+        { "type": "textarea", "id": "choices", "label": "Choix (un par ligne)", "default": "Le graphiste choisit\nWanted classique\nWano\nMarineford" },
         { "type": "text", "id": "default_choice", "label": "Choix par défaut", "default": "Le graphiste choisit" }
       ]
     },
@@ -762,8 +769,7 @@
       "name": "Photo envoyée plus tard",
       "limit": 1,
       "settings": [
-        { "type": "text", "id": "label", "label": "Libellé", "default": "Je n'ai pas encore la photo" },
-        { "type": "text", "id": "help", "label": "Aide", "default": "Commande maintenant, on te la demande par e-mail juste après. Idéal pour garder la surprise." },
+        { "type": "text", "id": "label", "label": "Libellé", "default": "Je n'ai pas encore la photo : je l'enverrai par e-mail après la commande" },
         { "type": "text", "id": "property_name", "label": "Nom de la propriété", "default": "Photo" },
         { "type": "text", "id": "property_value", "label": "Valeur enregistrée", "default": "Envoyée plus tard par e-mail" }
       ]
@@ -773,14 +779,107 @@
       "name": "Bouton d'achat",
       "limit": 1,
       "settings": [
-        { "type": "text", "id": "label", "label": "Texte", "default": "Ajouter au panier" },
+        { "type": "text", "id": "label", "label": "Texte", "default": "Commander mon portrait" },
         { "type": "text", "id": "soldout_label", "label": "Texte si indisponible", "default": "Indisponible" },
         { "type": "checkbox", "id": "show_price", "label": "Prix dans le bouton", "default": true },
+        { "type": "checkbox", "id": "show_compare", "label": "Prix barré dans le bouton pendant une promotion", "default": true },
+        { "type": "richtext", "id": "microcopy", "label": "Texte sous le bouton" }
+      ]
+    },
+    {
+      "type": "feature_cards",
+      "name": "Cartes avantages",
+      "limit": 2,
+      "settings": [
         {
-          "type": "richtext",
-          "id": "microcopy",
-          "label": "Texte sous le bouton",
-          "default": "<p>Rien n'est imprimé sans ta validation. Aperçu par e-mail sous 24-48 h ouvrées.</p>"
+          "type": "select",
+          "id": "icon_1",
+          "label": "Icône 1",
+          "options": [
+            { "value": "none", "label": "Aucune" },
+            { "value": "draw", "label": "Crayon" },
+            { "value": "custom", "label": "Étincelle" },
+            { "value": "retouch", "label": "Retouche" },
+            { "value": "gift", "label": "Cadeau" },
+            { "value": "clock", "label": "Horloge" },
+            { "value": "truck", "label": "Camion" },
+            { "value": "lock", "label": "Cadenas" },
+            { "value": "star", "label": "Étoile" },
+            { "value": "photo", "label": "Photo" }
+          ],
+          "default": "draw"
+        },
+        { "type": "text", "id": "label_1", "label": "Texte 1", "default": "Dessiné par un graphiste" },
+        { "type": "text", "id": "big_1", "label": "Grand texte 1 (remplace l'icône)" },
+        {
+          "type": "select",
+          "id": "icon_2",
+          "label": "Icône 2",
+          "options": [
+            { "value": "none", "label": "Aucune" },
+            { "value": "draw", "label": "Crayon" },
+            { "value": "custom", "label": "Étincelle" },
+            { "value": "retouch", "label": "Retouche" },
+            { "value": "gift", "label": "Cadeau" },
+            { "value": "clock", "label": "Horloge" },
+            { "value": "truck", "label": "Camion" },
+            { "value": "lock", "label": "Cadenas" },
+            { "value": "star", "label": "Étoile" },
+            { "value": "photo", "label": "Photo" }
+          ],
+          "default": "retouch"
+        },
+        { "type": "text", "id": "label_2", "label": "Texte 2", "default": "Retouches jusqu'à validation" },
+        { "type": "text", "id": "big_2", "label": "Grand texte 2 (remplace l'icône)" },
+        {
+          "type": "select",
+          "id": "icon_3",
+          "label": "Icône 3",
+          "options": [
+            { "value": "none", "label": "Aucune" },
+            { "value": "draw", "label": "Crayon" },
+            { "value": "custom", "label": "Étincelle" },
+            { "value": "retouch", "label": "Retouche" },
+            { "value": "gift", "label": "Cadeau" },
+            { "value": "clock", "label": "Horloge" },
+            { "value": "truck", "label": "Camion" },
+            { "value": "lock", "label": "Cadenas" },
+            { "value": "star", "label": "Étoile" },
+            { "value": "photo", "label": "Photo" }
+          ],
+          "default": "truck"
+        },
+        { "type": "text", "id": "label_3", "label": "Texte 3", "default": "Livraison offerte en France" },
+        { "type": "text", "id": "big_3", "label": "Grand texte 3 (remplace l'icône)" },
+        {
+          "type": "select",
+          "id": "icon_4",
+          "label": "Icône 4",
+          "options": [
+            { "value": "none", "label": "Aucune" },
+            { "value": "draw", "label": "Crayon" },
+            { "value": "custom", "label": "Étincelle" },
+            { "value": "retouch", "label": "Retouche" },
+            { "value": "gift", "label": "Cadeau" },
+            { "value": "clock", "label": "Horloge" },
+            { "value": "truck", "label": "Camion" },
+            { "value": "lock", "label": "Cadenas" },
+            { "value": "star", "label": "Étoile" },
+            { "value": "photo", "label": "Photo" }
+          ],
+          "default": "clock"
+        },
+        { "type": "text", "id": "label_4", "label": "Texte 4", "default": "Aperçu sous 24-48 h ouvrées" },
+        { "type": "text", "id": "big_4", "label": "Grand texte 4 (remplace l'icône)", "default": "24-48 h" },
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Emplacement",
+          "options": [
+            { "value": "gallery", "label": "À côté des photos (sur mobile : à cet endroit de la zone d'achat)" },
+            { "value": "buy", "label": "Dans la zone d'achat" }
+          ],
+          "default": "gallery"
         }
       ]
     },
@@ -789,12 +888,7 @@
       "name": "Message daté",
       "settings": [
         { "type": "richtext", "id": "text", "label": "Texte", "default": "<p>Pour Noël : affiche et Displate à commander avant le 7 décembre, fichier HD jusqu'au 21 décembre.</p>" },
-        {
-          "type": "text",
-          "id": "start",
-          "label": "Début (AAAA-MM-JJ HH:MM)",
-          "info": "Vide = tout de suite. Fuseau horaire de la boutique."
-        },
+        { "type": "text", "id": "start", "label": "Début (AAAA-MM-JJ HH:MM)", "info": "Vide = tout de suite. Fuseau horaire de la boutique." },
         { "type": "text", "id": "end", "label": "Fin (AAAA-MM-JJ HH:MM)", "info": "Vide = sans fin. Le message disparaît à cette date, pour tout le monde." },
         {
           "type": "range",
@@ -822,7 +916,7 @@
       "type": "richtext",
       "name": "Texte",
       "settings": [
-        { "type": "richtext", "id": "text", "label": "Texte", "default": "<p>Retouches incluses jusqu'à ta validation : traits, expression, coiffure, tenue, couleurs, textes.</p>" }
+        { "type": "richtext", "id": "text", "label": "Texte", "default": "<p>Retouches incluses jusqu'à ta validation.</p>" }
       ]
     },
     {

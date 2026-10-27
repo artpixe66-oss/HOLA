@@ -1,0 +1,197 @@
+{%- comment -%}
+  Choix des options (nombre de personnes, format…) de la fiche produit Artpixe.
+  Chaque option devient une étape numérotée ; l'option « cartes » affiche prix, icône, badge.
+
+  Accepte :
+  - block {Object} : bloc « variant_picker »
+  - section {Object}
+  - product {Object}
+  - current_variant {Object}
+
+  Usage :
+  {% render 'apx-variant-picker', block: block, section: section, product: product, current_variant: current_variant %}
+{%- endcomment -%}
+{%- unless product.has_only_default_variant -%}
+  {%- liquid
+    assign grouped = false
+    if block.settings.layout == 'grouped'
+      assign grouped = true
+    endif
+    assign html_all = ''
+    assign html_cards = ''
+    assign html_chips = ''
+  -%}
+  {%- for option in product.options_with_values -%}
+    {%- liquid
+      assign opt_index0 = forloop.index0
+      assign opt_index = forloop.index
+      assign heading_key = 'heading_' | append: opt_index
+      assign hint_key = 'hint_' | append: opt_index
+      assign heading = block.settings[heading_key] | default: option.name
+      assign cur_val = current_variant.options[opt_index0]
+      assign label_id = 'apx-' | append: section.id | append: '-l' | append: opt_index
+      assign is_card = false
+      if option.name == block.settings.card_option_name
+        assign is_card = true
+      endif
+      assign base_price = nil
+      assign cur_label = cur_val
+    -%}
+    {%- if option.values.size > 1 -%}
+      {%- capture option_values_html -%}
+        {%- for value in option.values -%}
+          {%- liquid
+            assign value_index0 = forloop.index0
+            assign value_name = value.name | default: value
+            assign input_id = 'apx-' | append: section.id | append: '-o' | append: opt_index | append: '-' | append: forloop.index
+
+            assign match = nil
+            for v in product.variants
+              assign ok = true
+              for o in v.options
+                if forloop.index0 == opt_index0
+                  if o != value_name
+                    assign ok = false
+                  endif
+                elsif o != current_variant.options[forloop.index0]
+                  assign ok = false
+                endif
+              endfor
+              if ok
+                assign match = v
+                break
+              endif
+            endfor
+            if value_index0 == 0 and match
+              assign base_price = match.price
+            endif
+
+            assign card_label = value_name
+            assign card_desc = ''
+            assign card_badge = ''
+            assign card_icon = ''
+            assign card_image = nil
+            assign card_style = 'default'
+            for b in section.blocks
+              if b.type == 'option_card' and b.settings.value == value_name
+                assign card_label = b.settings.label | default: value_name
+                assign card_desc = b.settings.description
+                assign card_badge = b.settings.badge
+                assign card_icon = b.settings.icon
+                assign card_image = b.settings.image
+                assign card_style = b.settings.style
+                break
+              endif
+            endfor
+            if value_name == cur_val
+              assign cur_label = card_label
+            endif
+          -%}
+          <div class="apx-val apx-val--{{ card_style }}">
+            <input
+              type="radio"
+              class="apx-val__input"
+              id="{{ input_id }}"
+              name="apx-{{ section.id }}-o{{ opt_index }}"
+              value="{{ value_name | escape }}"
+              data-apx-value
+              data-label="{{ card_label | escape }}"
+              {% if value_name == cur_val %}checked{% endif %}
+              {% unless match and match.available %}data-unavailable{% endunless %}
+            >
+            <label class="apx-val__label" for="{{ input_id }}">
+              {%- if is_card -%}
+                <span class="apx-val__check" aria-hidden="true">{% render 'apx-icon', name: 'check' %}</span>
+                {%- if card_badge != blank -%}<span class="apx-val__badge">{{ card_badge }}</span>{%- endif -%}
+                {%- if card_image != blank -%}
+                  <span class="apx-val__thumb">{{ card_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '' }}</span>
+                {%- elsif card_icon != blank -%}
+                  <span class="apx-val__icon" aria-hidden="true">{{ card_icon }}</span>
+                {%- endif -%}
+              {%- endif -%}
+              <span class="apx-val__name">{{ card_label }}</span>
+              {%- if is_card and card_desc != blank -%}
+                <span class="apx-val__desc">{{ card_desc }}</span>
+              {%- endif -%}
+              <span class="apx-val__price" data-apx-value-price>
+                {%- if match -%}
+                  {%- if is_card -%}
+                    {%- if block.settings.cards_price -%}{{ match.price | money }}{%- endif -%}
+                  {%- elsif block.settings.chips_price == 'absolute' -%}
+                    {{ match.price | money }}
+                  {%- elsif block.settings.chips_price == 'delta' and base_price -%}
+                    {%- assign delta = match.price | minus: base_price -%}
+                    {%- if delta > 0 -%}+{{ delta | money }}{%- endif -%}
+                  {%- endif -%}
+                {%- endif -%}
+              </span>
+            </label>
+          </div>
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      {%- capture option_html -%}
+        <div
+          class="apx-opt {% if is_card %}apx-opt--cards{% else %}apx-opt--chips{% endif %}{% unless grouped %} apx-opt--step{% endunless %}"
+          role="radiogroup"
+          aria-labelledby="{{ label_id }}"
+          data-apx-option="{{ opt_index0 }}"
+        >
+          <p class="apx-opt__label{% unless grouped %} apx-stephead{% endunless %}" id="{{ label_id }}">
+            {%- unless grouped -%}<span class="apx-stephead__num" aria-hidden="true"></span>{%- endunless -%}
+            <span class="apx-opt__name">{{ heading }}</span>
+            <span class="apx-opt__sep" aria-hidden="true"> : </span>
+            <span class="apx-opt__current" data-apx-current>{{ cur_label }}</span>
+          </p>
+          {%- if grouped == false and block.settings[hint_key] != blank -%}
+            <p class="apx-hint">{{ block.settings[hint_key] }}</p>
+          {%- endif -%}
+          <div class="apx-opt__values">{{ option_values_html }}</div>
+          {%- if opt_index == block.settings.upsell_option and block.settings.upsell_text != blank -%}
+            <p class="apx-upsell" data-apx-upsell data-template="{{ block.settings.upsell_text | escape }}" hidden></p>
+          {%- endif -%}
+        </div>
+      {%- endcapture -%}
+
+      {%- liquid
+        assign html_all = html_all | append: option_html
+        if is_card
+          assign html_cards = html_cards | append: option_html
+        else
+          assign html_chips = html_chips | append: option_html
+        endif
+      -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  <div
+    class="apx-picker{% if grouped %} apx-picker--grouped{% endif %}"
+    id="apx-config"
+    data-apx-picker
+    data-chips-price="{{ block.settings.chips_price }}"
+    data-cards-price="{{ block.settings.cards_price }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- if grouped -%}
+      {%- if section.settings.step_style == 'box' -%}
+        <div class="apx-stepbox">
+          <span class="apx-stepbox__num" aria-hidden="true"></span>
+          <div class="apx-stepbox__body">
+            <p class="apx-stepbox__title">{{ block.settings.group_heading }}</p>
+            {%- if block.settings.group_hint != blank -%}<p class="apx-stepbox__desc">{{ block.settings.group_hint }}</p>{%- endif -%}
+          </div>
+        </div>
+      {%- else -%}
+        <div class="apx-stepline">
+          <p class="apx-stephead"><span class="apx-stephead__num" aria-hidden="true"></span>{{ block.settings.group_heading }}</p>
+          {%- if block.settings.group_hint != blank -%}<p class="apx-hint">{{ block.settings.group_hint }}</p>{%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+    {%- if block.settings.cards_first -%}
+      {{ html_cards }}{{ html_chips }}
+    {%- else -%}
+      {{ html_all }}
+    {%- endif -%}
+  </div>
+{%- endunless -%}
