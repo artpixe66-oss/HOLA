@@ -1,0 +1,141 @@
+/* Artpixe · Mise en forme de la zone d'achat (fiches portraits)
+   Ne change aucun contenu : uniquement espacements, tailles, contrastes et disposition.
+   Chargée dans le <head> par snippets/apx-polish.liquid, seulement pour les templates listés.
+   Les sélecteurs commencent par « html body .t4s-product__info-container » pour passer devant
+   les styles des blocs existants sans les modifier. */
+
+/* ---------- Rythme vertical : 14 px au lieu de 20 px entre les blocs ---------- */
+html body .t4s-product__info-container > :not(:last-child) { margin-bottom: 14px !important; }
+html body .t4s-product__info-container .t4s-product__title { margin-bottom: 4px !important; line-height: 1.25 !important; }
+
+/* ---------- Badges Trustpilot / Loox : un peu plus lisibles sur mobile ---------- */
+html body .t4s-product__info-container .apx-trust-wrap { margin-bottom: 0 !important; }
+@media (max-width: 767px) {
+  html body .t4s-product__info-container .apx-tb { font-size: 12px !important; padding: 8px 10px !important; }
+  html body .t4s-product__info-container .apx-tb__name,
+  html body .t4s-product__info-container .apx-tb__score,
+  html body .t4s-product__info-container .apx-tb__stars-lx { font-size: 12px !important; }
+  html body .t4s-product__info-container .apx-tb__count { font-size: 11.5px !important; color: rgba(255, 255, 255, .62) !important; }
+}
+
+/* ---------- Étapes : titre numéroté sur une ligne, séparées par un filet ---------- */
+html body .t4s-product__info-container .apx-stepbox {
+  margin: 0 !important;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(255, 255, 255, .08) !important;
+}
+html body .t4s-product__info-container .apx-stepbox__inner {
+  background: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+}
+html body .t4s-product__info-container .apx-stepbox__num { width: 24px !important; height: 24px !important; margin-top: -1px; }
+html body .t4s-product__info-container .apx-stepbox__body { gap: 2px !important; }
+html body .t4s-product__info-container .apx-stepbox__title { font-size: 15px !important; }
+html body .t4s-product__info-container .apx-stepbox__desc { font-size: 13px !important; color: #b5b0a8 !important; }
+html body .t4s-product__info-container .apx-stepbox__desc b { color: #f0ede8 !important; }
+html body .t4s-product__info-container .apx-stepbox__later {
+  margin-top: 4px !important;
+  padding: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  font-size: 12.5px !important;
+}
+
+/* ---------- Cartes de format : textes plus grands et plus contrastés ---------- */
+html body .t4s-product__info-container #apx-fmt { margin: 0 !important; }
+html body .t4s-product__info-container #apx-fmt .apx-label { font-size: 13px !important; font-weight: 600 !important; margin-bottom: 4px !important; }
+html body .t4s-product__info-container #apx-fmt .apx-grid { gap: 8px !important; }
+html body .t4s-product__info-container #apx-fmt .apx-card { padding: 14px 10px 13px !important; border-radius: 12px !important; }
+html body .t4s-product__info-container #apx-fmt .apx-ico { font-size: 22px !important; margin-bottom: 6px !important; }
+html body .t4s-product__info-container #apx-fmt .apx-name { font-size: 17px !important; margin-bottom: 4px !important; }
+html body .t4s-product__info-container #apx-fmt .apx-desc {
+  font-size: 11.5px !important;
+  line-height: 1.4 !important;
+  font-weight: 400 !important;
+  color: #a8a299 !important;
+}
+html body .t4s-product__info-container #apx-fmt .apx-bs-tag,
+html body .t4s-product__info-container #apx-fmt .apx-premium-tag { font-size: 9.5px !important; }
+html body .t4s-product__info-container #apx-fmt .apx-check { width: 17px !important; height: 17px !important; }
+
+/* ---------- Nombre de personnes ---------- */
+/* Libellé lisible, valeur choisie en couleur */
+html body .t4s-product__info-container .t4s-swatch__title,
+html body .t4s-product__info-container .t4s-swatch__option > p.t4s-swatch__title {
+  font-size: 13px !important;
+  color: #f0ede8 !important;
+  margin: 2px 0 6px !important;
+}
+html body .t4s-product__info-container .t4s-swatch__current { color: #f5a623 !important; }
+/* Pastilles carrées, plus faciles à toucher */
+html body .t4s-product__info-container .t4s-swatch__list { gap: 8px !important; margin-top: 0 !important; }
+html body .t4s-product__info-container .t4s-swatch__item {
+  min-width: 42px !important;
+  min-height: 42px !important;
+  padding: 6px 10px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 9px !important;
+}
+/* Le libellé « Version : … » de Kalles répète celui des cartes de format juste au-dessus :
+   on masque ce doublon (ses boutons sont déjà masqués par le sélecteur visuel). */
+html body .t4s-product__info-container .t4s-swatch__option.is-t4s-name__version:has(.apx-version-hidden),
+html body .t4s-product__info-container .t4s-swatch__option.is-t4s-name__version:has(> .apx-version-hidden) { display: none !important; }
+
+/* ---------- Champs de personnalisation ---------- */
+/* Prénom et prime côte à côte quand les deux champs courts se suivent */
+html body .t4s-product__info-container form.has--properties {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 10px;
+  row-gap: 12px;
+}
+html body .t4s-product__info-container form.has--properties > * { grid-column: 1 / -1; margin: 0 !important; min-width: 0; }
+html body .t4s-product__info-container form.has--properties > .is--type-short:has(+ .is--type-short),
+html body .t4s-product__info-container form.has--properties > .is--type-short + .is--type-short { grid-column: auto; }
+html body .t4s-product__info-container .t4s-line-item-property__field > br { display: none !important; }
+html body .t4s-product__info-container form.has--properties > .t4s-line-item-property__field {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+html body .t4s-product__info-container form.has--properties > .is--type-short:has(+ .is--type-short) .t4s-line-item-property__label,
+html body .t4s-product__info-container form.has--properties > .is--type-short + .is--type-short .t4s-line-item-property__label { font-size: 12.5px !important; }
+html body .t4s-product__info-container .t4s-line-item-property__label,
+html body .t4s-product__info-container .has--properties label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #f0ede8 !important;
+  margin: 0 0 6px !important;
+  line-height: 1.3 !important;
+}
+/* 16 px minimum : évite le zoom automatique de l'iPhone quand on touche un champ */
+html body .t4s-product__info-container .has--properties input[type="text"],
+html body .t4s-product__info-container .has--properties textarea {
+  font-size: 16px !important;
+  min-height: 46px !important;
+  padding: 11px 12px !important;
+  border-radius: 10px !important;
+  margin: 0 !important;
+}
+html body .t4s-product__info-container .has--properties textarea { min-height: 76px !important; resize: vertical; }
+
+/* ---------- Bouton et bandeau livraison ---------- */
+html body .t4s-product__info-container .apx-buy-buttons { margin-top: 2px !important; }
+html body .t4s-product__info-container .apx-buy-now-btn { min-height: 54px !important; border-radius: 10px !important; }
+html body .t4s-product__info-container .aliv-banner { padding: 10px 14px !important; }
+
+/* ---------- Cartes avantages : 4 sur une ligne dès 360 px ---------- */
+html body .t4s-product__info-container .apx-feat { margin-bottom: 0 !important; gap: 6px !important; }
+@media (min-width: 360px) and (max-width: 480px) {
+  html body .t4s-product__info-container .apx-feat { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  html body .t4s-product__info-container .apx-feat__card { padding: 10px 4px !important; gap: 6px !important; }
+  html body .t4s-product__info-container .apx-feat__label { font-size: 10.5px !important; line-height: 1.25 !important; }
+  html body .t4s-product__info-container .apx-feat__big { font-size: 20px !important; }
+}
+
+/* ---------- Garanties : moins d'espace perdu ---------- */
+html body .t4s-product__info-container .apx-guar { margin-top: 0 !important; }

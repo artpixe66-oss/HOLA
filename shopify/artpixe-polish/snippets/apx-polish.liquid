@@ -1,0 +1,13 @@
+{%- comment -%}
+  Charge la mise en forme de la zone d'achat Artpixe (assets/apx-polish.css), sans changer aucun contenu.
+  Ne s'applique qu'aux templates produit listés ci-dessous : ajouter un template ici pour l'étendre.
+
+  Usage, dans le <head> du thème :
+  {% render 'apx-polish' %}
+{%- endcomment -%}
+{%- liquid
+  assign apx_polish_templates = 'onepiecesolo' | split: ','
+  if request.page_type == 'product' and apx_polish_templates contains template.suffix
+    echo 'apx-polish.css' | asset_url | stylesheet_tag
+  endif
+-%}
