@@ -547,8 +547,8 @@
       "id": "step_style",
       "label": "Style des étapes",
       "options": [
-        { "value": "inline", "label": "Compact : numéro, titre et choix en cours sur une ligne" },
-        { "value": "box", "label": "Encadré : carte avec titre et description" }
+        { "value": "inline", "label": "Compact (une ligne)" },
+        { "value": "box", "label": "Encadré (carte)" }
       ],
       "default": "inline"
     },
@@ -876,10 +876,11 @@
           "id": "position",
           "label": "Emplacement",
           "options": [
-            { "value": "gallery", "label": "À côté des photos (sur mobile : à cet endroit de la zone d'achat)" },
+            { "value": "gallery", "label": "À côté des photos" },
             { "value": "buy", "label": "Dans la zone d'achat" }
           ],
-          "default": "gallery"
+          "default": "gallery",
+          "info": "Sur mobile, les cartes s'affichent à l'emplacement du bloc dans la zone d'achat."
         }
       ]
     },
