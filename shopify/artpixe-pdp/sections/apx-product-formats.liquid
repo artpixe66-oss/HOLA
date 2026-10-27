@@ -1,0 +1,93 @@
+{%- comment -%}
+  Artpixe · Formats comparés. Le prix « dès » de chaque format est calculé
+  à partir des variantes du produit : il suit automatiquement les changements de prix.
+{%- endcomment -%}
+{{ 'apx-product.css' | asset_url | stylesheet_tag }}
+
+<div class="apx-scope apx-sec" id="{{ section.settings.anchor | default: section.id | handle }}">
+  <div class="apx-sec__inner">
+    <header class="apx-sec__head">
+      {%- if section.settings.heading != blank -%}<h2 class="apx-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.intro != blank -%}<p class="apx-lede">{{ section.settings.intro }}</p>{%- endif -%}
+    </header>
+
+    <ul class="apx-formats">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign value = block.settings.option_value | strip
+          assign min_price = nil
+          for v in product.variants
+            if v.options contains value
+              if min_price == nil or v.price < min_price
+                assign min_price = v.price
+              endif
+            endif
+          endfor
+        -%}
+        <li class="apx-formats__item" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {{
+              block.settings.image
+              | image_url: width: 640
+              | image_tag:
+                loading: 'lazy',
+                widths: '320, 480, 640',
+                sizes: '(min-width: 990px) 25vw, 50vw',
+                class: 'apx-formats__img'
+            }}
+          {%- endif -%}
+          <h3 class="apx-h3">{{ block.settings.name }}</h3>
+          {%- if block.settings.pitch != blank -%}<p class="apx-formats__pitch">{{ block.settings.pitch }}</p>{%- endif -%}
+          <dl class="apx-formats__specs">
+            {%- if block.settings.size != blank -%}<dt>Dimensions</dt><dd>{{ block.settings.size }}</dd>{%- endif -%}
+            {%- if block.settings.material != blank -%}<dt>Matière</dt><dd>{{ block.settings.material }}</dd>{%- endif -%}
+            {%- if block.settings.fixing != blank -%}<dt>Fixation</dt><dd>{{ block.settings.fixing }}</dd>{%- endif -%}
+            {%- if min_price -%}<dt>Prix</dt><dd>dès {{ min_price | money }}</dd>{%- endif -%}
+          </dl>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Artpixe · Formats",
+  "tag": "section",
+  "class": "apx-section",
+  "enabled_on": { "templates": ["product"] },
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Titre (H2)", "default": "Quel format choisir ?" },
+    { "type": "textarea", "id": "intro", "label": "Introduction" },
+    { "type": "text", "id": "anchor", "label": "Ancre", "default": "formats" }
+  ],
+  "blocks": [
+    {
+      "type": "format",
+      "name": "Format",
+      "settings": [
+        {
+          "type": "text",
+          "id": "option_value",
+          "label": "Valeur Shopify exacte",
+          "default": "Poster A3",
+          "info": "Sert à calculer le prix « dès » à partir des variantes."
+        },
+        { "type": "text", "id": "name", "label": "Nom (H3)", "default": "Affiche A3" },
+        { "type": "text", "id": "pitch", "label": "Phrase", "default": "Le format le plus choisi. Facile à encadrer ou à punaiser." },
+        { "type": "text", "id": "size", "label": "Dimensions", "default": "29,7 × 42 cm" },
+        { "type": "text", "id": "material", "label": "Matière", "default": "Papier premium" },
+        { "type": "text", "id": "fixing", "label": "Fixation", "default": "Cadre ou punaises" },
+        { "type": "image_picker", "id": "image", "label": "Photo du format" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Artpixe · Formats",
+      "blocks": [{ "type": "format" }, { "type": "format" }]
+    }
+  ]
+}
+{% endschema %}

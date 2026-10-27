@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Application Studio, construite séparément (dossier racine Vercel : studio)
     "studio/**",
+    // Fichiers de thème Shopify (Liquid et scripts navigateur), hors application Next
+    "shopify/**",
   ]),
 ]);
 

@@ -1,0 +1,46 @@
+{%- comment -%}
+  Artpixe · Avis clients. Héberge les blocs d'application (widget ou galerie Loox),
+  pour que les avis affichés soient toujours ceux de Loox, mot pour mot.
+{%- endcomment -%}
+{{ 'apx-product.css' | asset_url | stylesheet_tag }}
+
+<div class="apx-scope apx-sec" id="{{ section.settings.anchor | default: 'avis' | handle }}">
+  <div class="apx-sec__inner">
+    <header class="apx-sec__head">
+      {%- if section.settings.heading != blank -%}<h2 class="apx-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.intro != blank -%}<p class="apx-lede">{{ section.settings.intro }}</p>{%- endif -%}
+    </header>
+    {%- for block in section.blocks -%}
+      <div class="apx-app">{% render block %}</div>
+    {%- endfor -%}
+    {%- if section.blocks.size == 0 and section.settings.loox_widget -%}
+      <div id="looxReviews" data-product-id="{{ product.id }}" class="loox-reviews-default">
+        {{- product.metafields.loox.reviews -}}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Artpixe · Avis",
+  "tag": "section",
+  "class": "apx-section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Titre (H2)", "default": "Ils sont devenus pirates" },
+    { "type": "textarea", "id": "intro", "label": "Introduction", "default": "Photos et avis envoyés par nos clients après réception." },
+    { "type": "text", "id": "anchor", "label": "Ancre (lien de la note en haut de page)", "default": "avis" },
+    {
+      "type": "checkbox",
+      "id": "loox_widget",
+      "label": "Afficher le widget d'avis Loox",
+      "default": true,
+      "info": "Utilisé quand aucun bloc d'application n'est ajouté à la section."
+    },
+    { "type": "paragraph", "content": "On peut aussi ajouter ici un bloc d'application Loox (galerie photos, carrousel)." }
+  ],
+  "blocks": [{ "type": "@app" }],
+  "presets": [{ "name": "Artpixe · Avis" }]
+}
+{% endschema %}

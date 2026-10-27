@@ -1,0 +1,112 @@
+{%- comment -%}
+  Artpixe · Liste d'arguments ou de garanties, avec comparatif optionnel.
+  Utilisée deux fois dans le template : « Ce qui change avec Artpixe » et « Ce qu'on te garantit ».
+{%- endcomment -%}
+{{ 'apx-product.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign left_items = section.settings.compare_left_items | newline_to_br | split: '<br />'
+  assign right_items = section.settings.compare_right_items | newline_to_br | split: '<br />'
+-%}
+
+<div class="apx-scope apx-sec" id="{{ section.settings.anchor | default: section.id | handle }}">
+  <div class="apx-sec__inner">
+    <header class="apx-sec__head">
+      {%- if section.settings.eyebrow != blank -%}<p class="apx-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="apx-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.intro != blank -%}<p class="apx-lede">{{ section.settings.intro }}</p>{%- endif -%}
+    </header>
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="apx-features apx-features--{{ section.settings.layout }}">
+        {%- for block in section.blocks -%}
+          <li class="apx-features__item" {{ block.shopify_attributes }}>
+            <h3 class="apx-h3">{{ block.settings.title }}</h3>
+            {%- if block.settings.text != blank -%}<div class="apx-rte">{{ block.settings.text }}</div>{%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if section.settings.compare_enable -%}
+      <div class="apx-compare">
+        <div class="apx-compare__col apx-compare__col--muted">
+          <h3 class="apx-h3">{{ section.settings.compare_left_title }}</h3>
+          <ul>
+            {%- for item in left_items -%}
+              {%- assign line = item | strip -%}
+              {%- if line != blank %}<li>{{ line }}</li>{% endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+        <div class="apx-compare__col apx-compare__col--accent">
+          <h3 class="apx-h3">{{ section.settings.compare_right_title }}</h3>
+          <ul>
+            {%- for item in right_items -%}
+              {%- assign line = item | strip -%}
+              {%- if line != blank %}<li>{{ line }}</li>{% endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Artpixe · Arguments",
+  "tag": "section",
+  "class": "apx-section",
+  "enabled_on": { "templates": ["product"] },
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Surtitre" },
+    { "type": "text", "id": "heading", "label": "Titre (H2)", "default": "Ce qu'on te garantit" },
+    { "type": "textarea", "id": "intro", "label": "Introduction" },
+    { "type": "text", "id": "anchor", "label": "Ancre" },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Disposition",
+      "options": [
+        { "value": "grid", "label": "Grille" },
+        { "value": "list", "label": "Liste" }
+      ],
+      "default": "grid"
+    },
+    { "type": "header", "content": "Comparatif" },
+    { "type": "checkbox", "id": "compare_enable", "label": "Afficher un comparatif", "default": false },
+    { "type": "text", "id": "compare_left_title", "label": "Titre colonne gauche", "default": "Modèle automatique" },
+    {
+      "type": "textarea",
+      "id": "compare_left_items",
+      "label": "Points colonne gauche (un par ligne)",
+      "default": "Visage collé sur un modèle\nRessemblance au hasard\nAucun échange, aucune retouche"
+    },
+    { "type": "text", "id": "compare_right_title", "label": "Titre colonne droite", "default": "Artpixe" },
+    {
+      "type": "textarea",
+      "id": "compare_right_items",
+      "label": "Points colonne droite (un par ligne)",
+      "default": "Dessiné pour toi par un graphiste\nAperçu avant l'impression\nRetouches jusqu'à ta validation"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Point",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Titre (H3)", "default": "Aperçu avant impression" },
+        { "type": "richtext", "id": "text", "label": "Texte", "default": "<p>Sous 24-48 h ouvrées après ta commande et ta photo.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Artpixe · Arguments",
+      "blocks": [{ "type": "item" }, { "type": "item" }, { "type": "item" }]
+    }
+  ]
+}
+{% endschema %}

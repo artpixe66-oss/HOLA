@@ -1,0 +1,585 @@
+{
+  "sections": {
+    "main": {
+      "type": "apx-product-main",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "rating": {
+          "type": "rating",
+          "settings": {
+            "label": "avis clients vérifiés",
+            "anchor": "avis"
+          }
+        },
+        "subtitle": {
+          "type": "subtitle",
+          "settings": {
+            "text": "Un graphiste te dessine en pirate recherché, avec ton nom et ta prime. Tu vois l'aperçu avant l'impression et on retouche jusqu'à ce que ce soit vraiment toi."
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "context": "[1] pers. · [2]",
+            "note": ""
+          }
+        },
+        "reassurance": {
+          "type": "reassurance",
+          "settings": {
+            "item_1": "Aperçu avant impression",
+            "item_2": "Retouches incluses",
+            "item_3": "Livraison offerte en France"
+          }
+        },
+        "picker": {
+          "type": "variant_picker",
+          "settings": {
+            "card_option_name": "Version",
+            "cards_price": true,
+            "chips_price": "delta",
+            "heading_1": "Combien de personnes sur l'affiche ?",
+            "hint_1": "Animaux compris. Chaque personne est dessinée une à une.",
+            "heading_2": "Choisis ton format",
+            "hint_2": "Le prix de chaque format tient compte du nombre de personnes choisi.",
+            "heading_3": "",
+            "hint_3": "",
+            "upsell_option": 1,
+            "upsell_text": "Vous êtes deux fans ? Ajoute une personne pour +[ecart]."
+          }
+        },
+        "card_a3": {
+          "type": "option_card",
+          "settings": {
+            "value": "Poster A3",
+            "label": "Affiche A3",
+            "description": "29,7 × 42 cm, papier premium, tube rigide.",
+            "badge": "Le plus choisi"
+          }
+        },
+        "card_displate": {
+          "type": "option_card",
+          "settings": {
+            "value": "Displate",
+            "label": "Displate métal",
+            "description": "Plaque métal, fixation magnétique sans clou.",
+            "badge": ""
+          }
+        },
+        "card_cadre": {
+          "type": "option_card",
+          "settings": {
+            "value": "Displate avec cadre",
+            "label": "Displate + cadre",
+            "description": "Encadré, prêt à accrocher.",
+            "badge": ""
+          }
+        },
+        "card_digital": {
+          "type": "option_card",
+          "settings": {
+            "value": "Digital",
+            "label": "Fichier HD seul",
+            "description": "Reçu par e-mail, à imprimer où tu veux.",
+            "badge": ""
+          }
+        },
+        "step_photos": {
+          "type": "step_heading",
+          "settings": {
+            "heading": "Ajoute ta ou tes photos",
+            "hint": "Visage net, de face ou de trois quarts, bonne lumière. Une photo par personne ou une photo de groupe."
+          }
+        },
+        "uploadkit": {
+          "type": "shopify://apps/file-uploads-by-uploadkit/blocks/app-block/d7b05810-6170-4288-808a-df45248c4d28",
+          "settings": {
+            "product": "{{product}}"
+          }
+        },
+        "photo_later": {
+          "type": "photo_later",
+          "settings": {
+            "label": "Je n'ai pas encore la photo",
+            "help": "Commande maintenant, on te la demande par e-mail juste après. Idéal pour garder la surprise.",
+            "property_name": "Photo",
+            "property_value": "Envoyée plus tard par e-mail"
+          }
+        },
+        "step_details": {
+          "type": "step_heading",
+          "settings": {
+            "heading": "Personnalise ton avis de recherche",
+            "hint": ""
+          }
+        },
+        "field_name": {
+          "type": "text_field",
+          "settings": {
+            "label": "Nom sur l'affiche",
+            "property_name": "Pseudo(s)",
+            "placeholder": "Ex. MONKEY D. LUFFY",
+            "help": "",
+            "multiline": false,
+            "required": false,
+            "max_length": 60
+          }
+        },
+        "field_bounty": {
+          "type": "text_field",
+          "settings": {
+            "label": "Prime (en Berry)",
+            "property_name": "Montant de la prime ฿",
+            "placeholder": "Ex. 3 000 000 000",
+            "help": "",
+            "multiline": false,
+            "required": false,
+            "max_length": 40
+          }
+        },
+        "field_style": {
+          "type": "choice_field",
+          "settings": {
+            "label": "Style",
+            "property_name": "Style",
+            "choices": "Le graphiste choisit\nWanted classique\nWano\nMarineford",
+            "default_choice": "Le graphiste choisit"
+          }
+        },
+        "field_notes": {
+          "type": "text_field",
+          "settings": {
+            "label": "Une demande particulière ?",
+            "property_name": "Demandes particulières",
+            "placeholder": "Tenue, accessoire, fond, couleur de cheveux…",
+            "help": "",
+            "multiline": true,
+            "required": false,
+            "max_length": 0
+          }
+        },
+        "notice_noel": {
+          "type": "notice",
+          "settings": {
+            "text": "<p><strong>Pour Noël :</strong> affiche et Displate à commander avant le [date à valider], fichier HD jusqu'au [date à valider].</p>",
+            "start": "2026-11-01 00:00",
+            "end": "2026-12-07 23:59",
+            "countdown_hours": 0,
+            "style": "accent"
+          },
+          "disabled": true
+        },
+        "notice_late": {
+          "type": "notice",
+          "settings": {
+            "text": "<p><strong>Trop tard pour le 24 ?</strong> Commande quand même : tu reçois tout de suite un bon cadeau à imprimer, le portrait suit.</p>",
+            "start": "2026-12-08 00:00",
+            "end": "2026-12-24 23:59",
+            "countdown_hours": 0,
+            "style": "neutral"
+          },
+          "disabled": true
+        },
+        "buy": {
+          "type": "buy_buttons",
+          "settings": {
+            "label": "Ajouter au panier",
+            "soldout_label": "Indisponible",
+            "show_price": true,
+            "microcopy": "<p>Rien n'est imprimé sans ta validation. Aperçu par e-mail sous 24-48 h ouvrées.</p>"
+          }
+        },
+        "retouches": {
+          "type": "richtext",
+          "settings": {
+            "text": "<p>Retouches incluses jusqu'à ta validation : traits, expression, coiffure, tenue, couleurs, textes.</p>"
+          }
+        },
+        "livraison": {
+          "type": "collapsible",
+          "settings": {
+            "heading": "Livraison et délais",
+            "text": "<p>Livraison offerte en France (Colissimo, 2-4 jours ouvrés) après validation de ton aperçu. Livraison rapide assurée : 2,90 €. Belgique : 4,90 €. Union européenne : offerte. Reste du monde : 5,90 €.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "rating",
+        "subtitle",
+        "price",
+        "reassurance",
+        "picker",
+        "card_a3",
+        "card_displate",
+        "card_cadre",
+        "card_digital",
+        "step_photos",
+        "uploadkit",
+        "photo_later",
+        "step_details",
+        "field_name",
+        "field_bounty",
+        "field_style",
+        "field_notes",
+        "notice_noel",
+        "notice_late",
+        "buy",
+        "retouches",
+        "livraison"
+      ],
+      "settings": {
+        "default_option_value": "Poster A3",
+        "update_url": true,
+        "image_ratio": "square",
+        "show_thumbnails": true,
+        "after_add": "cart",
+        "sticky_enable": true,
+        "sticky_label": "Personnaliser",
+        "sticky_mode": "scroll",
+        "emit_schema": true,
+        "color_bg": "#141414",
+        "color_text": "#f0ede8",
+        "color_accent": "#f5a623"
+      }
+    },
+    "reviews": {
+      "type": "apx-product-reviews",
+      "settings": {
+        "heading": "Ils sont devenus pirates",
+        "intro": "Photos et avis envoyés par nos clients après réception.",
+        "anchor": "avis",
+        "loox_widget": true
+      }
+    },
+    "steps": {
+      "type": "apx-product-steps",
+      "blocks": {
+        "step1": {
+          "type": "step",
+          "settings": {
+            "title": "Tu commandes",
+            "text": "Nombre de personnes, format, photos, nom et prime. La photo peut attendre."
+          }
+        },
+        "step2": {
+          "type": "step",
+          "settings": {
+            "title": "Le graphiste dessine",
+            "text": "Il crée ton portrait dans l'univers de One Piece à partir de ta photo."
+          }
+        },
+        "step3": {
+          "type": "step",
+          "settings": {
+            "title": "Tu valides l'aperçu",
+            "text": "Reçu par e-mail sous 24-48 h ouvrées. Tu demandes les retouches que tu veux."
+          }
+        },
+        "step4": {
+          "type": "step",
+          "settings": {
+            "title": "On imprime et on expédie",
+            "text": "Seulement après ton accord. Le fichier HD arrive par e-mail, l'affiche en tube rigide."
+          }
+        }
+      },
+      "block_order": [
+        "step1",
+        "step2",
+        "step3",
+        "step4"
+      ],
+      "settings": {
+        "eyebrow": "Comment ça marche",
+        "heading": "De ta photo à ton avis de recherche",
+        "intro": "",
+        "anchor": "comment-ca-marche"
+      }
+    },
+    "difference": {
+      "type": "apx-product-features",
+      "blocks": {
+        "item1": {
+          "type": "item",
+          "settings": {
+            "title": "Dessiné pour toi",
+            "text": "<p>Un graphiste spécialisé manga crée ton portrait à partir de ta photo.</p>"
+          }
+        },
+        "item2": {
+          "type": "item",
+          "settings": {
+            "title": "Tu vois avant de valider",
+            "text": "<p>L'aperçu arrive avant toute impression. Rien ne part sans ton accord.</p>"
+          }
+        },
+        "item3": {
+          "type": "item",
+          "settings": {
+            "title": "Ton affiche, tes détails",
+            "text": "<p>Ton nom, ta prime, ton style, ta tenue, jusqu'à 6 personnes.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item1",
+        "item2",
+        "item3"
+      ],
+      "settings": {
+        "eyebrow": "Pourquoi Artpixe",
+        "heading": "Un vrai dessin, pas un visage collé sur un modèle",
+        "intro": "",
+        "anchor": "difference",
+        "layout": "grid",
+        "compare_enable": true,
+        "compare_left_title": "Modèle automatique",
+        "compare_left_items": "Visage collé sur un modèle\nRessemblance au hasard\nAucun échange, aucune retouche",
+        "compare_right_title": "Artpixe",
+        "compare_right_items": "Dessiné pour toi par un graphiste\nAperçu avant l'impression\nRetouches jusqu'à ta validation"
+      }
+    },
+    "formats": {
+      "type": "apx-product-formats",
+      "blocks": {
+        "format1": {
+          "type": "format",
+          "settings": {
+            "option_value": "Poster A3",
+            "name": "Affiche A3",
+            "pitch": "Le format le plus choisi. Facile à encadrer ou à punaiser.",
+            "size": "29,7 × 42 cm",
+            "material": "Papier premium",
+            "fixing": "Cadre ou punaises"
+          }
+        },
+        "format2": {
+          "type": "format",
+          "settings": {
+            "option_value": "Displate",
+            "name": "Displate métal",
+            "pitch": "Pour un effet objet : métal, aimants, aucun trou dans le mur.",
+            "size": "À préciser",
+            "material": "Métal",
+            "fixing": "Aimant, sans clou"
+          }
+        },
+        "format3": {
+          "type": "format",
+          "settings": {
+            "option_value": "Displate avec cadre",
+            "name": "Displate + cadre",
+            "pitch": "Le cadeau qu'on accroche le jour même.",
+            "size": "À préciser",
+            "material": "Métal encadré",
+            "fixing": "Prêt à accrocher"
+          }
+        },
+        "format4": {
+          "type": "format",
+          "settings": {
+            "option_value": "Digital",
+            "name": "Fichier HD",
+            "pitch": "Pour imprimer soi-même ou l'envoyer le jour J.",
+            "size": "Haute résolution",
+            "material": "Fichier numérique",
+            "fixing": "Reçu par e-mail"
+          }
+        }
+      },
+      "block_order": [
+        "format1",
+        "format2",
+        "format3",
+        "format4"
+      ],
+      "settings": {
+        "heading": "Quel format choisir ?",
+        "intro": "",
+        "anchor": "formats"
+      }
+    },
+    "guarantees": {
+      "type": "apx-product-features",
+      "blocks": {
+        "item1": {
+          "type": "item",
+          "settings": {
+            "title": "Aperçu avant impression",
+            "text": "<p>Sous 24-48 h ouvrées après ta commande et ta photo. En décembre, on t'indique le délai du moment dès la commande.</p>"
+          }
+        },
+        "item2": {
+          "type": "item",
+          "settings": {
+            "title": "Retouches incluses",
+            "text": "<p>Jusqu'à ta validation : traits, expression, coiffure, tenue, couleurs, textes. Changer d'univers ou de personnes après le dessin compte comme un nouveau portrait.</p>"
+          }
+        },
+        "item3": {
+          "type": "item",
+          "settings": {
+            "title": "Livraison offerte en France",
+            "text": "<p>Colissimo, 2-4 jours ouvrés après validation. Livraison rapide assurée : 2,90 €. Belgique : 4,90 €. Union européenne : offerte. Reste du monde : 5,90 €.</p>"
+          }
+        },
+        "item4": {
+          "type": "item",
+          "settings": {
+            "title": "Paiement sécurisé",
+            "text": "<p>Paiement chiffré via Shopify.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item1",
+        "item2",
+        "item3",
+        "item4"
+      ],
+      "settings": {
+        "eyebrow": "",
+        "heading": "Ce qu'on te garantit",
+        "intro": "",
+        "anchor": "garanties",
+        "layout": "grid",
+        "compare_enable": false
+      }
+    },
+    "faq": {
+      "type": "apx-product-faq",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "Est-ce que ça va vraiment me ressembler ?",
+            "answer": "<p>Le graphiste dessine à partir de ta photo, puis tu reçois un aperçu avant toute impression. Tant que tu n'as pas validé, on retouche. Rien n'est imprimé sans ton accord.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "Quelle photo envoyer ?",
+            "answer": "<p>Une photo nette, visage bien visible, de face ou de trois quarts, avec une bonne lumière. Évite les lunettes de soleil et les photos prises de loin. Pour plusieurs personnes, une photo de chacune ou une photo de groupe.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "Je n'ai pas encore la photo, je peux commander ?",
+            "answer": "<p>Oui. Commande maintenant et envoie la photo plus tard en répondant à notre e-mail. Le délai d'aperçu commence à la réception de la photo.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "Qu'est-ce qui compte comme retouche ?",
+            "answer": "<p>Tout ce qui ajuste ton portrait : traits, expression, coiffure, tenue, couleurs, nom, prime. Changer d'univers ou ajouter une personne après le dessin compte comme un nouveau portrait.</p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "question": "Quand vais-je recevoir mon affiche ?",
+            "answer": "<p>Aperçu sous 24-48 h ouvrées, puis expédition après ta validation et livraison en 2-4 jours en France.</p>"
+          }
+        },
+        "q6": {
+          "type": "question",
+          "settings": {
+            "question": "Combien de personnes sur une affiche ?",
+            "answer": "<p>Jusqu'à 6, animaux compris. Le prix dépend du nombre de personnes et du format.</p>"
+          }
+        },
+        "q7": {
+          "type": "question",
+          "settings": {
+            "question": "Quel format choisir pour offrir ?",
+            "answer": "<p>L'affiche A3 est le format le plus choisi. Le Displate encadré fait le plus d'effet à l'ouverture. Le fichier HD convient si tu veux l'envoyer le jour même ou l'imprimer toi-même.</p>"
+          }
+        },
+        "q8": {
+          "type": "question",
+          "settings": {
+            "question": "Je peux changer de format après l'aperçu ?",
+            "answer": "<p>Oui, jusqu'à ta validation finale : tu paies seulement la différence.</p>"
+          },
+          "disabled": true
+        },
+        "q9": {
+          "type": "question",
+          "settings": {
+            "question": "Et si l'affiche arrive abîmée ?",
+            "answer": "<p>Envoie-nous une photo sous 7 jours, on la réimprime gratuitement.</p>"
+          },
+          "disabled": true
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6",
+        "q7",
+        "q8",
+        "q9"
+      ],
+      "settings": {
+        "heading": "Tes questions",
+        "anchor": "faq",
+        "open_first": true,
+        "use_metafield": true,
+        "emit_schema": true
+      }
+    },
+    "crosssell": {
+      "type": "apx-product-crosssell",
+      "settings": {
+        "heading": "Un autre fan à gâter ?",
+        "intro": "<p>Même graphiste, même qualité, dans d'autres univers.</p>",
+        "anchor": "autres-univers",
+        "products": [
+          "portrait-personnalise-naruto",
+          "portrait-manga-personnalise-demon-slayer",
+          "portrait-personnalise-dragon-ball-z",
+          "portrait-manga-personnalise-miyazaki-studio-ghibli"
+        ]
+      }
+    },
+    "about": {
+      "type": "apx-product-about",
+      "settings": {
+        "heading": "À propos de ton affiche",
+        "anchor": "description"
+      }
+    },
+    "final": {
+      "type": "apx-product-final-cta",
+      "settings": {
+        "heading": "Prêt à devenir le prochain pirate recherché ?",
+        "text": "Dès [prix] · Aperçu avant impression · Livraison offerte en France",
+        "button_label": "Créer mon avis de recherche",
+        "anchor": "commander"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "reviews",
+    "steps",
+    "difference",
+    "formats",
+    "guarantees",
+    "faq",
+    "crosssell",
+    "about",
+    "final"
+  ]
+}

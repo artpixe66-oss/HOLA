@@ -1,0 +1,42 @@
+{%- comment -%}
+  Artpixe · Description du produit, visible et indexable.
+  Le texte vient de la description Shopify : le modifier dans la fiche produit.
+{%- endcomment -%}
+{{ 'apx-product.css' | asset_url | stylesheet_tag }}
+
+{%- assign heading = section.settings.heading | replace: '[titre]', product.title -%}
+
+{%- if product.description != blank -%}
+  <div class="apx-scope apx-sec" id="{{ section.settings.anchor | default: 'description' | handle }}">
+    <div class="apx-sec__inner apx-sec__inner--narrow">
+      <header class="apx-sec__head">
+        {%- if heading != blank -%}<h2 class="apx-h2">{{ heading | escape }}</h2>{%- endif -%}
+      </header>
+      <div class="apx-rte apx-about">{{ product.description }}</div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Artpixe · Description",
+  "tag": "section",
+  "class": "apx-section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titre (H2)",
+      "default": "À propos de ton affiche",
+      "info": "[titre] = titre du produit."
+    },
+    { "type": "text", "id": "anchor", "label": "Ancre", "default": "description" },
+    {
+      "type": "paragraph",
+      "content": "Affiche la description du produit. Elle ne doit contenir aucun H1 : le titre du produit est déjà le H1 de la page."
+    }
+  ],
+  "presets": [{ "name": "Artpixe · Description" }]
+}
+{% endschema %}

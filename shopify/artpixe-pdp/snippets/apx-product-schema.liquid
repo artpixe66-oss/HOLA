@@ -1,0 +1,65 @@
+{%- comment -%}
+  Données structurées Product, calculées à partir de Shopify et de Loox.
+  Remplace le balisage de la section Kalles « main-product », qui n'est pas utilisée par ce template.
+  Le fil d'Ariane et la FAQ (métachamp artpixe.faq) restent générés par snippets/artpixe-seo-schema.liquid.
+
+  Accepte :
+  - product {Object}
+  - current_variant {Object}
+
+  Usage :
+  {% render 'apx-product-schema', product: product, current_variant: current_variant %}
+{%- endcomment -%}
+{%- liquid
+  assign r_avg = product.metafields.loox.avg_rating.value
+  assign r_count = product.metafields.loox.num_reviews.value
+  if r_count == blank or r_count == 0
+    assign r_avg = product.metafields.reviews.rating.value.rating
+    assign r_count = product.metafields.reviews.rating_count.value
+  endif
+  assign price_valid_until = 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d'
+-%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": {{ canonical_url | append: '#product' | json }},
+    "name": {{ product.title | strip_html | json }},
+    "url": {{ canonical_url | json }},
+    "description": {{ product.description | strip_html | strip_newlines | strip | truncate: 5000 | json }},
+    "productID": {{ product.id | json }},
+    "sku": {{ current_variant.sku | default: current_variant.id | json }},
+    "brand": { "@type": "Brand", "name": {{ product.vendor | default: shop.name | json }} },
+    {%- if product.media.size > 0 -%}
+    "image": [
+      {%- for media in product.media limit: 3 -%}
+        {{ media.preview_image | image_url: width: 1200 | prepend: 'https:' | json }}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ],
+    {%- endif -%}
+    {%- if r_count > 0 -%}
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": {{ r_avg | json }},
+      "reviewCount": {{ r_count | json }},
+      "bestRating": 5,
+      "worstRating": 1
+    },
+    {%- endif -%}
+    "offers": [
+      {%- for v in product.variants -%}
+        {
+          "@type": "Offer",
+          "name": {{ v.title | json }},
+          "sku": {{ v.sku | default: v.id | json }},
+          "url": {{ request.origin | append: v.url | json }},
+          "price": {{ v.price | divided_by: 100.0 | json }},
+          "priceCurrency": {{ cart.currency.iso_code | json }},
+          "priceValidUntil": {{ price_valid_until | json }},
+          "itemCondition": "https://schema.org/NewCondition",
+          "availability": "https://schema.org/{% if v.available %}InStock{% else %}OutOfStock{% endif %}"
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>

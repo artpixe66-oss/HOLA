@@ -1,0 +1,59 @@
+{%- comment -%}
+  Artpixe · Autres univers. Les prix « dès » viennent des produits : ils ne peuvent pas être faux.
+{%- endcomment -%}
+{{ 'apx-product.css' | asset_url | stylesheet_tag }}
+
+<div class="apx-scope apx-sec" id="{{ section.settings.anchor | default: section.id | handle }}">
+  <div class="apx-sec__inner">
+    <header class="apx-sec__head">
+      {%- if section.settings.heading != blank -%}<h2 class="apx-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.intro != blank -%}<div class="apx-lede apx-rte">{{ section.settings.intro }}</div>{%- endif -%}
+    </header>
+    {%- if section.settings.products != blank -%}
+      <ul class="apx-cross">
+        {%- for p in section.settings.products -%}
+          {%- if p.id != product.id -%}
+            <li class="apx-cross__item">
+              <a class="apx-cross__link" href="{{ p.url }}">
+                {%- if p.featured_media -%}
+                  {{
+                    p.featured_media
+                    | image_url: width: 480
+                    | image_tag:
+                      loading: 'lazy',
+                      widths: '240, 360, 480',
+                      sizes: '(min-width: 990px) 20vw, 45vw',
+                      class: 'apx-cross__img'
+                  }}
+                {%- endif -%}
+                <span class="apx-cross__title">{{ p.title | escape }}</span>
+                <span class="apx-cross__price">dès {{ p.price_min | money }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Artpixe · Autres univers",
+  "tag": "section",
+  "class": "apx-section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Titre (H2)", "default": "Un autre fan à gâter ?" },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Texte",
+      "default": "<p>Même graphiste, même qualité, dans d'autres univers.</p>"
+    },
+    { "type": "text", "id": "anchor", "label": "Ancre" },
+    { "type": "product_list", "id": "products", "label": "Produits", "limit": 8 }
+  ],
+  "presets": [{ "name": "Artpixe · Autres univers" }]
+}
+{% endschema %}

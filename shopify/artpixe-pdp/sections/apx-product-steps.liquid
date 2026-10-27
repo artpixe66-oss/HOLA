@@ -1,0 +1,54 @@
+{%- comment -%}
+  Artpixe · Comment ça marche : étapes numérotées, sans carrousel.
+{%- endcomment -%}
+{{ 'apx-product.css' | asset_url | stylesheet_tag }}
+
+<div class="apx-scope apx-sec" id="{{ section.settings.anchor | default: section.id | handle }}">
+  <div class="apx-sec__inner">
+    <header class="apx-sec__head">
+      {%- if section.settings.eyebrow != blank -%}<p class="apx-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="apx-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.intro != blank -%}<p class="apx-lede">{{ section.settings.intro }}</p>{%- endif -%}
+    </header>
+    <ol class="apx-steps">
+      {%- for block in section.blocks -%}
+        <li class="apx-steps__item" {{ block.shopify_attributes }}>
+          <h3 class="apx-h3">{{ block.settings.title }}</h3>
+          {%- if block.settings.text != blank -%}<p>{{ block.settings.text }}</p>{%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Artpixe · Étapes",
+  "tag": "section",
+  "class": "apx-section",
+  "enabled_on": { "templates": ["product"] },
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Surtitre", "default": "Comment ça marche" },
+    { "type": "text", "id": "heading", "label": "Titre (H2)", "default": "De ta photo à ton avis de recherche" },
+    { "type": "textarea", "id": "intro", "label": "Introduction" },
+    { "type": "text", "id": "anchor", "label": "Ancre", "default": "comment-ca-marche" }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Étape",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Titre (H3)", "default": "Tu commandes" },
+        { "type": "textarea", "id": "text", "label": "Texte", "default": "Nombre de personnes, format, photos, nom et prime. La photo peut attendre." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Artpixe · Étapes",
+      "blocks": [{ "type": "step" }, { "type": "step" }, { "type": "step" }, { "type": "step" }]
+    }
+  ]
+}
+{% endschema %}

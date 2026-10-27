@@ -1,0 +1,39 @@
+{%- comment -%}
+  Artpixe · Rappel final de l'offre. Le lien renvoie au configurateur, sans JavaScript.
+{%- endcomment -%}
+{{ 'apx-product.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign price_min = product.price_min | money
+  assign text = section.settings.text | replace: '[prix]', price_min
+-%}
+
+<div class="apx-scope apx-sec apx-final" id="{{ section.settings.anchor | default: section.id | handle }}">
+  <div class="apx-sec__inner apx-sec__inner--narrow">
+    {%- if section.settings.heading != blank -%}<h2 class="apx-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+    {%- if text != blank -%}<p class="apx-lede">{{ text }}</p>{%- endif -%}
+    <a class="apx-btn apx-btn--primary" href="#apx-config" data-apx-goto-config>{{ section.settings.button_label }}</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Artpixe · Rappel final",
+  "tag": "section",
+  "class": "apx-section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Titre (H2)", "default": "Prêt à devenir le prochain pirate recherché ?" },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Texte",
+      "default": "Dès [prix] · Aperçu avant impression · Livraison offerte en France",
+      "info": "[prix] = prix le plus bas du produit, calculé automatiquement."
+    },
+    { "type": "text", "id": "button_label", "label": "Bouton", "default": "Créer mon avis de recherche" },
+    { "type": "text", "id": "anchor", "label": "Ancre" }
+  ],
+  "presets": [{ "name": "Artpixe · Rappel final" }]
+}
+{% endschema %}
