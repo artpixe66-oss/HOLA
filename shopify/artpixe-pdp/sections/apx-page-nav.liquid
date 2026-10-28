@@ -1,0 +1,88 @@
+{%- comment -%}
+  Artpixe · Navigation de la page produit.
+  Une barre de liens vers les sections apparaît sous l'en-tête une fois la fiche produit dépassée,
+  surligne la section en cours et fait défiler en douceur. Le script améliore aussi la lecture des
+  sections existantes sans modifier leur contenu (FAQ en accordéon, texte long replié, boutons de
+  commande qui ramènent à la zone d'achat) : voir assets/apx-sections.js.
+  Chaque lien vise une section du template par sa clé (ex. custom_liquid_NAqn6n).
+{%- endcomment -%}
+{{ 'apx-sections.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'apx-sections.js' | asset_url }}" defer="defer"></script>
+
+<nav
+  class="apx-pnav"
+  data-apx-pnav
+  data-after="{{ section.settings.after | escape }}"
+  data-buy="{{ section.settings.buy_target | escape }}"
+  data-order-links="{{ section.settings.order_links | escape }}"
+  data-fold="{{ section.settings.fold_selector | escape }}"
+  data-fold-height="{{ section.settings.fold_height }}"
+  data-more="{{ section.settings.more_label | escape }}"
+  data-less="{{ section.settings.less_label | escape }}"
+  aria-label="{{ section.settings.aria_label | escape }}"
+  hidden
+>
+  <div class="apx-pnav__inner">
+    <ul class="apx-pnav__list">
+      {%- for block in section.blocks -%}
+        <li>
+          <a
+            class="apx-pnav__link"
+            href="#{{ block.settings.target | handle }}"
+            data-target="{{ block.settings.target | escape }}"
+            {% if block.settings.open_reviews %}data-open-reviews{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            {{- block.settings.label -}}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+  <span class="apx-pnav__progress" aria-hidden="true"></span>
+</nav>
+
+{% schema %}
+{
+  "name": "Artpixe · Navigation",
+  "tag": "div",
+  "class": "apx-section-pnav",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "text", "id": "aria_label", "label": "Nom de la navigation (lecteurs d'écran)", "default": "Sections de la page" },
+    {
+      "type": "text",
+      "id": "after",
+      "label": "Apparaît après la section",
+      "default": "main",
+      "info": "Clé de la section dans le template (la fiche produit : main)."
+    },
+    { "type": "header", "content": "Boutons de commande" },
+    {
+      "type": "text",
+      "id": "order_links",
+      "label": "Liens qui ramènent à la zone d'achat",
+      "default": ".apx-how__btn, .ap-faq-cta",
+      "info": "Sélecteurs CSS. Le lien garde son adresse, le clic fait défiler jusqu'à la zone d'achat."
+    },
+    { "type": "text", "id": "buy_target", "label": "Zone d'achat", "default": "#apx-config" },
+    { "type": "header", "content": "Textes longs" },
+    { "type": "text", "id": "fold_selector", "label": "Blocs à replier", "default": ".apx-seo" },
+    { "type": "range", "id": "fold_height", "label": "Hauteur visible", "min": 200, "max": 600, "step": 20, "unit": "px", "default": 320 },
+    { "type": "text", "id": "more_label", "label": "Bouton pour déplier", "default": "Lire la suite" },
+    { "type": "text", "id": "less_label", "label": "Bouton pour replier", "default": "Réduire" }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Lien",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Texte", "default": "FAQ" },
+        { "type": "text", "id": "target", "label": "Clé de la section visée", "info": "Ex. custom_liquid_NAqn6n, tabs" },
+        { "type": "checkbox", "id": "open_reviews", "label": "Ouvrir l'onglet des avis", "default": false }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Artpixe · Navigation" }]
+}
+{% endschema %}

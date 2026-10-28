@@ -314,6 +314,68 @@
         "anchor": "avis"
       }
     },
+    "page_nav": {
+      "type": "apx-page-nav",
+      "blocks": {
+        "nav_avis": {
+          "type": "link",
+          "settings": {
+            "label": "Avis",
+            "target": "tabs",
+            "open_reviews": true
+          }
+        },
+        "nav_etapes": {
+          "type": "link",
+          "settings": {
+            "label": "Comment ça marche",
+            "target": "9af9f87f-4d1f-4610-8b35-051976b34b07",
+            "open_reviews": false
+          }
+        },
+        "nav_univers": {
+          "type": "link",
+          "settings": {
+            "label": "Autres univers",
+            "target": "custom_liquid_VXNTDi",
+            "open_reviews": false
+          }
+        },
+        "nav_faq": {
+          "type": "link",
+          "settings": {
+            "label": "FAQ",
+            "target": "custom_liquid_NAqn6n",
+            "open_reviews": false
+          }
+        },
+        "nav_guide": {
+          "type": "link",
+          "settings": {
+            "label": "Guide",
+            "target": "custom_liquid_QqXUgf",
+            "open_reviews": false
+          }
+        }
+      },
+      "block_order": [
+        "nav_avis",
+        "nav_etapes",
+        "nav_univers",
+        "nav_faq",
+        "nav_guide"
+      ],
+      "settings": {
+        "aria_label": "Sections de la page",
+        "after": "main",
+        "order_links": ".apx-how__btn, .ap-faq-cta",
+        "buy_target": "#apx-config",
+        "fold_selector": ".apx-seo",
+        "fold_height": 320,
+        "more_label": "Lire la suite",
+        "less_label": "Réduire"
+      }
+    },
     "17700291493732a25d": {
       "type": "apps",
       "settings": {}
@@ -659,6 +721,7 @@
     "breadcrumb",
     "main",
     "tabs",
+    "page_nav",
     "17700291493732a25d",
     "recently-viewed-products",
     "sidebar",

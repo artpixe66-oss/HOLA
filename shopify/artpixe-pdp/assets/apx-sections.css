@@ -1,0 +1,180 @@
+/* Artpixe · Design, navigation et défilement des sections sous la fiche produit
+   Chargé par la section « Artpixe · Navigation ». Ne modifie aucun texte : uniquement mise en forme.
+   Les sélecteurs commencent par « html body » pour passer devant les styles intégrés aux sections. */
+
+/* ---------- Barre de navigation ---------- */
+.apx-pnav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 60;
+  background: rgba(16, 16, 18, .88);
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  animation: apx-pnav-in .25s ease-out;
+}
+.apx-pnav[hidden] { display: none; }
+@keyframes apx-pnav-in { from { transform: translateY(-100%); opacity: 0; } to { transform: none; opacity: 1; } }
+.apx-pnav__inner { max-width: 1100px; margin: 0 auto; padding: 0 12px; }
+.apx-pnav__list {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 8px 0;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+}
+.apx-pnav__list::-webkit-scrollbar { display: none; }
+.apx-pnav__list li { flex: none; }
+.apx-pnav__list li:first-child { margin-left: 6px; }
+.apx-pnav__list li:last-child { margin-right: 6px; }
+@media (min-width: 750px) { .apx-pnav__list { justify-content: center; } }
+.apx-pnav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  color: #b5b0a8;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .15s, background-color .15s, border-color .15s;
+}
+.apx-pnav__link:hover { color: #f0ede8; background: rgba(255, 255, 255, .05); }
+.apx-pnav__link[aria-current="true"] { color: #f5a623; background: rgba(245, 166, 35, .1); border-color: rgba(245, 166, 35, .35); }
+.apx-pnav__link:focus-visible { outline: 2px solid #f5a623; outline-offset: 2px; }
+.apx-pnav__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: #f5a623;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* ---------- Rythme des sections ---------- */
+html body .apx-how { padding-top: 56px; padding-bottom: 56px; }
+html body .apx-how__head { margin-bottom: 32px; }
+html body .apx-reco {
+  padding-top: 52px;
+  padding-bottom: 56px;
+  background: rgba(255, 255, 255, .02);
+  border-top: 1px solid rgba(255, 255, 255, .06);
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+html body .op-hub { padding-top: 48px; padding-bottom: 8px; }
+html body .apx-seo { padding-top: 24px; }
+@media (max-width: 760px) {
+  html body .apx-how { padding-top: 40px; padding-bottom: 40px; }
+  html body .apx-reco { padding-top: 40px; padding-bottom: 40px; }
+  html body .op-hub { padding-top: 36px; }
+}
+
+/* Cartes cliquables : réaction au survol et au toucher */
+html body .apx-reco__card,
+html body .op-hub-card { transition: transform .2s, border-color .2s, box-shadow .2s; }
+html body .apx-reco__card:hover,
+html body .op-hub-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 0, 0, .35); }
+html body .apx-reco__card:active,
+html body .op-hub-card:active { transform: scale(.99); }
+
+/* ---------- Onglets Description / Avis (Kalles) ---------- */
+html body .apx-section-tabs .t4s-product-tabs-wrapper { margin: 40px 0 8px; }
+html body .apx-section-tabs .t4s-container { max-width: 1100px; }
+html body .apx-section-tabs .t4s-type-tabs { padding: 0; }
+html body .apx-section-tabs .t4s-tab-wrapper {
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #141416;
+  transition: border-color .2s;
+}
+html body .apx-section-tabs .t4s-tab-wrapper.t4s-active { border-color: rgba(245, 166, 35, .35); }
+html body .apx-section-tabs .t4s-tab__title {
+  min-height: 58px;
+  padding: 0 12px 0 6px;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+}
+html body .apx-section-tabs .t4s-tab__title .t4s-tab__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(245, 166, 35, .12);
+  color: #f5a623;
+}
+html body .apx-section-tabs .t4s-tab__title .t4s-tab__icon::before,
+html body .apx-section-tabs .t4s-tab__title .t4s-tab__icon::after { background-color: currentColor; }
+html body .apx-section-tabs .t4s-tab-content {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, .07);
+  padding: 18px 20px 22px;
+}
+
+/* ---------- FAQ : cartes, une réponse ouverte à la fois (data-apx-faq posé par le script) ---------- */
+html body [data-apx-faq] div:has(> details) { border-bottom: 0 !important; margin-bottom: 8px; }
+html body [data-apx-faq] details {
+  background: #141416;
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 12px;
+  transition: border-color .2s, background-color .2s;
+}
+html body [data-apx-faq] details:hover { border-color: rgba(255, 255, 255, .14); }
+html body [data-apx-faq] details[open] { border-color: rgba(245, 166, 35, .35); background: #17161a; }
+html body [data-apx-faq] summary { padding: 16px 18px !important; min-height: 56px; }
+html body [data-apx-faq] summary::-webkit-details-marker { display: none; }
+html body [data-apx-faq] summary:focus-visible { outline: 2px solid #f5a623; outline-offset: -2px; border-radius: 12px; }
+html body [data-apx-faq] details[open] summary h3 { color: #f5a623 !important; }
+html body [data-apx-faq] .ap-arr { transition: transform .2s; }
+html body [data-apx-faq] details[open] .ap-arr { transform: rotate(45deg); }
+html body [data-apx-faq] details > div { padding: 0 18px 18px !important; animation: apx-faq-in .25s ease-out; }
+@keyframes apx-faq-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Texte long replié ---------- */
+html body .apx-fold { position: relative; max-height: var(--apx-fold-h, 320px); overflow: hidden; transition: max-height .35s ease; }
+html body .apx-fold::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 96px;
+  background: linear-gradient(rgba(20, 20, 20, 0), #141414);
+  pointer-events: none;
+}
+html body .apx-fold.is-open { max-height: none; }
+html body .apx-fold.is-open::after { display: none; }
+html body .apx-fold__btn {
+  display: block;
+  margin: 4px auto 40px;
+  min-height: 40px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 166, 35, .4);
+  background: transparent;
+  color: #f5a623;
+  font: 600 13.5px 'DM Sans', system-ui, sans-serif;
+  cursor: pointer;
+}
+html body .apx-fold__btn:hover { background: rgba(245, 166, 35, .1); }
+html body .apx-fold__btn:focus-visible { outline: 2px solid #f5a623; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .apx-pnav { animation: none; }
+  html body .apx-fold,
+  html body [data-apx-faq] details > div,
+  html body .apx-reco__card,
+  html body .op-hub-card { transition: none; animation: none; }
+}

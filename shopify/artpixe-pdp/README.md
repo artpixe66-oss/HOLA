@@ -12,6 +12,8 @@ il ajoute uniquement des sections, un snippet, deux assets et un template altern
 | `templates/product.onepiecesolo.json` | Fiche One Piece actuelle avec la nouvelle zone d'achat (voir plus bas) |
 | `sections/apx-product-main.liquid` | Galerie, zone d'achat, configurateur en étapes, barre fixe mobile |
 | `sections/apx-product-tabs.liquid` | Onglets Kalles « Description » et « Nos avis clients » sous la fiche |
+| `sections/apx-page-nav.liquid` | Barre de navigation entre les sections, défilement, FAQ et texte long repliés |
+| `assets/apx-sections.css`, `assets/apx-sections.js` | Design et navigation des sections sous la fiche (aucun texte modifié) |
 | `sections/apx-product-reviews.liquid` | Avis Loox (widget ou blocs d'application) |
 | `sections/apx-product-steps.liquid` | « Comment ça marche » |
 | `sections/apx-product-features.liquid` | Arguments, garanties, comparatif (utilisée deux fois) |
@@ -51,6 +53,13 @@ seule la section Kalles `main-product` est remplacée. Elle est installée dans 
   Les 4 cartes avantages sont à côté des photos sur ordinateur, sous le bouton sur mobile.
 - Sous la fiche : les onglets Description et Nos avis clients (section `apx-product-tabs`), puis toutes les
   sections actuelles, sans changement.
+- Navigation (section `apx-page-nav`, placée après les onglets) : une fois la fiche dépassée, une barre
+  « Avis · Comment ça marche · Autres univers · FAQ · Guide » apparaît sous l'en-tête, surligne la section en cours
+  et montre la progression. Le défilement tient compte de l'en-tête fixe ; « Avis » ouvre l'onglet des avis.
+  Les boutons « Commander » des sections (Comment ça marche, FAQ) ramènent à la zone d'achat au lieu de quitter
+  la page (leur lien reste dans le HTML). La FAQ n'ouvre qu'une réponse à la fois ; le bloc SEO du bas est replié
+  avec « Lire la suite » (son texte reste dans la page). Les sections gardent leur contenu : seuls l'espacement,
+  les cartes et les états (survol, ouvert) changent. Sans JavaScript, la page s'affiche comme avant.
 - Les propriétés de commande gardent les noms actuels : « Prénom(s) ou Pseudo(s) : », « Montant de la prime ฿ : »,
   « Demandes particulières : » et « Uploaded file » (UploadKit). S'y ajoutent « Photo » quand la case
   « pas encore la photo » est cochée, et « Offre Displate » pendant l'offre.
@@ -60,9 +69,9 @@ seule la section Kalles `main-product` est remplacée. Elle est installée dans 
 - Les textes de la zone d'achat sont en français. Pour les autres langues de la boutique, les traduire dans
   Translate & Adapt (contenu du thème, modèle produit « onepiecesolo »).
 
-Pour publier : ajouter au thème en ligne les sections `apx-product-main` et `apx-product-tabs`, les snippets
-`apx-variant-picker`, `apx-feature-cards`, `apx-icon` et `apx-product-schema`, les assets `apx-product.css`
-et `apx-product.js`, puis remplacer `templates/product.onepiecesolo.json`. Si la fiche en ligne a été modifiée
+Pour publier : ajouter au thème en ligne les sections `apx-product-main`, `apx-product-tabs` et `apx-page-nav`, les snippets
+`apx-variant-picker`, `apx-feature-cards`, `apx-icon` et `apx-product-schema`, les assets `apx-product.css`,
+`apx-product.js`, `apx-sections.css` et `apx-sections.js`, puis remplacer `templates/product.onepiecesolo.json`. Si la fiche en ligne a été modifiée
 depuis le 27 octobre, reporter ces changements avant de remplacer le template.
 
 ## La zone d'achat
