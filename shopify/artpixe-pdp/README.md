@@ -52,6 +52,7 @@ Les modèles JSON ne changent pas : chaque univers garde ses sections (FAQ, text
 - Formats : les cartes Displate passent en premier. Le Displate est présélectionné (sauf lien `?variant=`), mis en
   avant (bordure et halo, badge « Recommandé », « Offre spéciale » pendant l'offre) ; « Premium » doré sur le Displate
   avec cadre, « Choix éco » vert sur le fichier HD, pas de badge sur l'affiche A3 (coûts logistiques).
+  Les deux cartes Displate indiquent la taille vendue : 32 × 45 cm (Displate M).
 - Champs : ceux des blocs Kalles « properties » du modèle, avec les mêmes noms de propriétés de commande et la même
   logique de visibilité (`snippets/apx-portrait-field.liquid`). Les champs courts vont à l'étape 3, les textes longs
   après les photos. One Piece (champ prime) garde « Nom sur l'affiche » et « Prime (฿) ».
