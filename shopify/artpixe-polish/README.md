@@ -49,6 +49,7 @@ Sur la page :
 - un encadré « Offre spéciale Displate » remplace le bandeau « livraison offerte » sous le bouton ;
 - son interrupteur, désactivé à l'arrivée (un supplément payant ne doit pas être pré-coché), fait passer le portrait
   en Displate pour la différence de prix réelle avec le format choisi (« +20,00 € » depuis l'affiche A3) ;
+- la liste commence par « Impression sur métal HD » (19,90 € barré ; c'est ce que paie le supplément) ;
 - une fois activé, il débloque trois cadeaux, chacun sur une ligne avec sa valeur barrée : livraison express
   offerte (3,90 €), commande prioritaire offerte (4,90 €), version digitale HD offerte (19,90 €). Les valeurs se
   règlent dans `perks` (`"value"`, ou `"[hd]"` pour le prix réel du fichier HD seul) ;
