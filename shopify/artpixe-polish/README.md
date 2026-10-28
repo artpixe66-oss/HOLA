@@ -58,5 +58,5 @@ La date de fin se règle en haut de `snippets/apx-offer-displate.liquid` (`offer
 rien ne s'affiche plus, même si la page vient du cache.
 
 Livraison : le profil d'expédition « Offre Displate » (Paramètres > Expédition et livraison) contient les
-12 variantes Displate One Piece, avec la livraison express offerte en France, Belgique et UE, et les tarifs
-habituels ailleurs. **Le supprimer le 8 décembre** : les variantes reviennent au profil général.
+12 variantes Displate One Piece : express assurée offerte en France et dans l'UE, Bpost offert en Belgique,
+tarifs habituels ailleurs (5,90 €). **Le supprimer le 8 décembre** : les variantes reviennent au profil général.
