@@ -1,0 +1,55 @@
+{%- comment -%}
+  Offre Displate : fichier HD offert + livraison express assurée offerte, jusqu'à une date de fin réelle.
+  Rendu dans le <head> par snippets/apx-polish.liquid. Rien ne s'affiche hors des dates.
+  La livraison offerte est assurée par le profil d'expédition « Offre Displate » (Paramètres > Expédition) :
+  le supprimer après la fin de l'offre.
+
+  Usage :
+  {% render 'apx-offer-displate' %}
+{%- endcomment -%}
+{%- liquid
+  assign offer_start = ''
+  assign offer_end = '2026-12-07 23:59'
+  assign offer_end_label = 'dimanche 7 décembre'
+
+  assign now_s = 'now' | date: '%s' | plus: 0
+  assign start_s = 0
+  assign end_s = 0
+  if offer_start != blank
+    assign start_s = offer_start | date: '%s' | plus: 0
+  endif
+  if offer_end != blank
+    assign end_s = offer_end | date: '%s' | plus: 0
+  endif
+  assign offer_live = true
+  if start_s > 0 and now_s < start_s
+    assign offer_live = false
+  endif
+  if end_s > 0 and now_s > end_s
+    assign offer_live = false
+  endif
+-%}
+{%- if offer_live -%}
+  {{ 'apx-offer.css' | asset_url | stylesheet_tag }}
+  <script type="application/json" id="apx-offer-config">
+    {
+      "start": {{ start_s }},
+      "end": {{ end_s }},
+      "formats": ["Displate", "Displate avec cadre"],
+      "digitalFormat": "Digital",
+      "posterFormat": "Poster A3",
+      "displateFormat": "Displate",
+      "preselect": true,
+      "badge": "HD + express offerts",
+      "title": {{ 'Offre Displate jusqu’au ' | append: offer_end_label | json }},
+      "perkHd": "Fichier HD offert, vendu seul [hd]",
+      "perkShipping": "Livraison express assurée offerte en France, Belgique et UE",
+      "compare": "Affiche A3 + fichier HD : [a3hd]. Ton Displate avec fichier HD : [displate].",
+      "upsell": "Passe au Displate pour +[ecart] : plaque métal, fichier HD offert (vendu seul [hd]) et livraison express offerte.",
+      "upsellButton": "Choisir le Displate",
+      "propertyName": "Offre Displate",
+      "propertyValue": "Fichier HD offert + livraison express offerte"
+    }
+  </script>
+  <script src="{{ 'apx-offer.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}

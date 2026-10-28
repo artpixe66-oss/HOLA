@@ -38,3 +38,25 @@ Elle ne touche qu'aux espacements, tailles de texte, contrastes et à la disposi
    `'onepiecesolo,narutosolo,dbzsolo'`.
 
 Aucun impact SEO : pas de texte ajouté ou retiré, pas de changement de titres, d'URL ou de balisage.
+
+## Offre Displate (jusqu'au 7 décembre 2026)
+
+Fichiers : `snippets/apx-offer-displate.liquid`, `assets/apx-offer.js`, `assets/apx-offer.css`.
+Chargés par `apx-polish.liquid` sur les mêmes templates.
+
+Sur la page :
+- le badge de la carte Displate devient « HD + express offerts » ;
+- sous les cartes de format, un encadré liste les bonus quand un Displate est choisi
+  (fichier HD offert avec sa valeur réelle selon le nombre de personnes, livraison express offerte,
+  comparaison « Affiche A3 + fichier HD » contre « Displate avec fichier HD ») ;
+- si un autre format est choisi, l'encadré propose de passer au Displate avec l'écart de prix réel ;
+- le Displate est présélectionné, sauf si l'URL contient `?variant=` (lien Google Shopping par exemple) ;
+- la propriété de commande « Offre Displate : Fichier HD offert + livraison express offerte » est ajoutée :
+  elle apparaît dans le panier, au paiement et dans la commande, pour que l'atelier envoie le fichier HD.
+
+La date de fin se règle en haut de `snippets/apx-offer-displate.liquid` (`offer_end`). Après cette date,
+rien ne s'affiche plus, même si la page vient du cache.
+
+Livraison : le profil d'expédition « Offre Displate » (Paramètres > Expédition et livraison) contient les
+12 variantes Displate One Piece, avec la livraison express offerte en France, Belgique et UE, et les tarifs
+habituels ailleurs. **Le supprimer le 8 décembre** : les variantes reviennent au profil général.

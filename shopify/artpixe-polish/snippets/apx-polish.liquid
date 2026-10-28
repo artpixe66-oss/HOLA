@@ -9,5 +9,6 @@
   assign apx_polish_templates = 'onepiecesolo' | split: ','
   if request.page_type == 'product' and apx_polish_templates contains template.suffix
     echo 'apx-polish.css' | asset_url | stylesheet_tag
+    render 'apx-offer-displate'
   endif
 -%}
