@@ -70,12 +70,13 @@
 @media (min-width: 990px) {
   .apx-main { padding-block: 28px 64px; }
   .apx-main__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 44px; align-items: start; }
-  .apx-gallery { position: sticky; top: 20px; }
 }
 
 /* Galerie */
 .apx-gallery { position: relative; display: grid; gap: 10px; margin-inline: -16px; }
-@media (min-width: 990px) { .apx-gallery { margin-inline: 0; } }
+/* Ordinateur : photos et cartes avantages restent visibles pendant qu'on remplit la zone d'achat
+   (déclaré après la règle de base, sinon position: relative l'emporte) */
+@media (min-width: 990px) { .apx-gallery { margin-inline: 0; position: sticky; top: 3rem; } }
 .apx-gallery__track {
   display: flex;
   overflow-x: auto;
