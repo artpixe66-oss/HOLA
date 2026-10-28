@@ -247,7 +247,8 @@
       cfg.perks.forEach(function (perk) {
         var li = el('li');
         li.appendChild(el('span', 'apx-offer__perk', perk.text));
-        if (perk.value && hd) li.appendChild(el('s', 'apx-offer__value', perk.value.replace('[hd]', money(hd.price))));
+        var value = perk.value && perk.value.indexOf('[hd]') !== -1 ? (hd ? perk.value.replace('[hd]', money(hd.price)) : '') : perk.value;
+        if (value) li.appendChild(el('s', 'apx-offer__value', value));
         perks.appendChild(li);
       });
       setProperty(on);

@@ -49,8 +49,9 @@ Sur la page :
 - un encadré « Offre spéciale Displate » remplace le bandeau « livraison offerte » sous le bouton ;
 - son interrupteur, désactivé à l'arrivée (un supplément payant ne doit pas être pré-coché), fait passer le portrait
   en Displate pour la différence de prix réelle avec le format choisi (« +20,00 € » depuis l'affiche A3) ;
-- une fois activé, il débloque trois cadeaux, chacun sur une ligne : livraison express offerte (partout),
-  commande prioritaire, version digitale HD offerte (avec son prix réel seul, barré) ;
+- une fois activé, il débloque trois cadeaux, chacun sur une ligne avec sa valeur barrée : livraison express
+  offerte (3,90 €), commande prioritaire offerte (4,90 €), version digitale HD offerte (19,90 €). Les valeurs se
+  règlent dans `perks` (`"value"`, ou `"[hd]"` pour le prix réel du fichier HD seul) ;
 - le désactiver revient au format choisi avant ; choisir une carte Displate l'active aussi ;
 - le badge de la carte Displate devient « Offre spéciale » ;
 - un compte à rebours « Fin de l'offre dans … » apparaît les 14 derniers jours (`countdownDays`), avant la date seule.
