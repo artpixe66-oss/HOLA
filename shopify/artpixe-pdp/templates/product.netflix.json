@@ -255,7 +255,7 @@
           "disabled": true
         },
         "instafeed_story_app_block_story_VDChDA": {
-          "type": "shopify://apps/instafeed/blocks/app-block-story/4169bff3-1d6b-44ad-9377-2ebc3d31f01c",
+          "type": "shopify://apps/flox-instafeed/blocks/app-block-story/4169bff3-1d6b-44ad-9377-2ebc3d31f01c",
           "settings": {},
           "disabled": true
         },

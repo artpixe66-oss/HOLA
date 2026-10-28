@@ -79,6 +79,13 @@ les assets `apx-product.css`, `apx-product.js`, `apx-sections.css`, `apx-section
 
 ### Anciens modèles passés à la mise en page One Piece (28 octobre 2026)
 
+Le thème « Artpixe PDP v2 » a été publié le 28 octobre. Ces changements et la correction One Piece ci-dessous sont dans
+sa copie « Artpixe PDP v3 (brouillon) », à publier à son tour (Shopify n'autorise pas l'écriture sur le thème en ligne).
+
+Correction : le champ « prime » est présent dans tous les modèles mais limité à One Piece par sa visibilité. La fiche
+vérifie maintenant cette visibilité (mode `probe` de `apx-portrait-field`) ; avant, les autres portraits reprenaient
+les textes de l'affiche Wanted (« Nom sur l'affiche », « MONKEY D. LUFFY »).
+
 `one-piece-a-b` (8 fiches manga), `page-produit-pop-culture` (4), `cartoone` (3) et `netflix` ont la mise en page
 du modèle One Piece, avec leurs textes d'origine :
 - sous le bouton : carrousel « Ce que disent nos clients » et cadre « Pourquoi Artpixe » (titre par famille ; nombre
