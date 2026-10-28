@@ -53,6 +53,8 @@ Sur la page :
   commande prioritaire, version digitale HD offerte (avec son prix réel seul, barré) ;
 - le désactiver revient au format choisi avant ; choisir une carte Displate l'active aussi ;
 - le badge de la carte Displate devient « Offre spéciale » ;
+- un compte à rebours « Fin de l'offre dans … » apparaît les 14 derniers jours (`countdownDays`), avant la date seule.
+  Il vise la vraie date de fin : le même pour tous, il ne redémarre pas ; les secondes s'affichent le dernier jour ;
 - la propriété de commande « Offre Displate : Livraison express offerte + commande prioritaire + version digitale HD
   offerte » est ajoutée : elle apparaît dans le panier, au paiement et dans la commande, pour que l'atelier traite la
   commande en priorité et envoie le fichier HD.

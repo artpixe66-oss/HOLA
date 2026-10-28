@@ -174,6 +174,23 @@
     box.appendChild(perks);
     box.appendChild(until);
 
+    // Compte à rebours jusqu'à la vraie date de fin : le même pour tous, il ne redémarre jamais
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+    function tick() {
+      var left = Math.floor(cfg.end - Date.now() / 1000);
+      var from = (cfg.countdownDays || 0) * 86400;
+      if (!cfg.end || !cfg.countdown || left <= 0 || (from && left > from)) { until.textContent = cfg.until; return; }
+      var d = Math.floor(left / 86400);
+      var h = Math.floor((left % 86400) / 3600);
+      var m = Math.floor((left % 3600) / 60);
+      var time = d > 0 ? d + ' j ' + pad(h) + ' h ' + pad(m) + ' min' : pad(h) + ' h ' + pad(m) + ' min ' + pad(left % 60) + ' s';
+      until.textContent = cfg.countdown.replace('[temps]', time);
+      until.classList.add('apx-offer__until--live');
+      until.classList.toggle('apx-offer__until--last', left < 48 * 3600);
+    }
+    tick();
+    setInterval(tick, 1000);
+
     function currentVariant() {
       var id = String(page.currentId());
       return page.variants.filter(function (v) { return String(v.id) === id; })[0] || null;

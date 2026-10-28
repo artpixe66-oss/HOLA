@@ -102,6 +102,8 @@ html body .apx-offer__value { flex: none; margin-left: auto; font-size: 12px; co
 html body .apx-offer--on .apx-offer__perks li { color: #f0ede8; }
 html body .apx-offer--on .apx-offer__perks li::before { background: #22c55e; border-color: #22c55e; color: #0b0b0b; }
 html body .apx-offer__until { font-size: 12px; color: #9a958d; white-space: nowrap; }
+html body .apx-offer__until--live { color: #f5a623; font-weight: 600; font-variant-numeric: tabular-nums; }
+html body .apx-offer__until--last { font-weight: 800; }
 
 /* Petits écrans (320 px) : tout tient encore sur une ligne */
 @media (max-width: 359px) {
