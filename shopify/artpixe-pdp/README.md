@@ -52,8 +52,9 @@ seule la section Kalles `main-product` est remplacée. Elle est installée dans 
 - Les propriétés de commande gardent les noms actuels : « Prénom(s) ou Pseudo(s) : », « Montant de la prime ฿ : »,
   « Demandes particulières : » et « Uploaded file » (UploadKit). S'y ajoutent « Photo » quand la case
   « pas encore la photo » est cochée, et « Offre Displate » pendant l'offre.
-- Le Displate est présélectionné jusqu'au 7 décembre 2026 à 23:59, puis l'affiche A3
-  (réglages « Valeur présélectionnée », « Présélection jusqu'au », « Valeur présélectionnée ensuite »).
+- L'affiche A3 est présélectionnée. Pendant l'offre Displate, l'interrupteur « Offre spéciale » remplace le bandeau
+  « livraison offerte » (voir `../artpixe-polish/README.md`). Pour présélectionner un format jusqu'à une date :
+  réglages « Valeur présélectionnée », « Présélection jusqu'au », « Valeur présélectionnée ensuite ».
 - Les textes de la zone d'achat sont en français. Pour les autres langues de la boutique, les traduire dans
   Translate & Adapt (contenu du thème, modèle produit « onepiecesolo »).
 

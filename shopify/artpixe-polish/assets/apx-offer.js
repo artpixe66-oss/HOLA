@@ -1,10 +1,11 @@
-/* Artpixe · Offre Displate (fichier HD + livraison express offerts)
+/* Artpixe · Offre spéciale Displate
+   Un interrupteur remplace le bandeau « livraison offerte » (cfg.replace) : l'activer fait passer le portrait
+   en Displate, pour la différence de prix réelle, et débloque les cadeaux (livraison express, commande prioritaire,
+   version digitale HD). Le désactiver revient au format choisi avant.
    Fonctionne sur les deux zones d'achat :
    - la section « Artpixe · Fiche produit » (cartes .apx-opt--cards, formulaire [data-apx-json]) ;
    - la fiche Kalles avec le sélecteur de format #apx-fmt et les variantes .pr_variants_json.
-   Il remplace le badge de la carte Displate, affiche l'encadré de l'offre sous les cartes de format
-   (bonus si Displate, incitation sinon), ajoute la propriété de commande « Offre Displate » quand
-   un Displate est choisi et présélectionne le Displate si aucune variante n'est imposée par l'URL. */
+   Ajoute la propriété de commande « Offre Displate » tant qu'un format de l'offre est choisi. */
 (function () {
   'use strict';
 
@@ -41,8 +42,10 @@
     var select = root.querySelector('[data-apx-variant-select]');
     if (!form || !select) return null;
 
-    var inputs = Array.prototype.slice.call(cards.querySelectorAll('[data-apx-value]'));
-    var displateInput = inputs.filter(function (i) { return i.value === cfg.displateFormat; })[0];
+    function input(format) {
+      return Array.prototype.slice.call(cards.querySelectorAll('[data-apx-value]'))
+        .filter(function (i) { return i.value === format; })[0];
+    }
 
     return {
       variants: data.variants.map(function (v) {
@@ -50,27 +53,29 @@
       }),
       currentId: function () { return select.value; },
       form: form,
-      anchor: cards,
-      canPick: !!displateInput,
-      setBadge: function (text) {
-        if (!displateInput) return;
-        var label = displateInput.parentNode.querySelector('.apx-val__label');
-        var badge = label && label.querySelector('.apx-val__badge');
-        if (label && !badge) {
+      cards: cards,
+      canPick: function (format) { return !!input(format); },
+      setBadge: function (format, text) {
+        var i = input(format);
+        var label = i && i.parentNode.querySelector('.apx-val__label');
+        if (!label) return;
+        var badge = label.querySelector('.apx-val__badge');
+        if (!badge) {
           badge = el('span', 'apx-val__badge');
           var check = label.querySelector('.apx-val__check');
           label.insertBefore(badge, check ? check.nextSibling : label.firstChild);
         }
-        if (badge) badge.textContent = text;
+        badge.textContent = text;
       },
-      pick: function () {
-        if (!displateInput) return;
-        displateInput.checked = true;
-        displateInput.dispatchEvent(new Event('change', { bubbles: true }));
+      pick: function (format) {
+        var i = input(format);
+        if (!i) return;
+        i.checked = true;
+        i.dispatchEvent(new Event('change', { bubbles: true }));
       },
       watch: function (onChange) {
         root.addEventListener('change', function (e) {
-          if (e.target && e.target.matches && e.target.matches('[data-apx-value]')) onChange(e.isTrusted);
+          if (e.target && e.target.matches && e.target.matches('[data-apx-value]')) onChange();
         });
       }
     };
@@ -86,31 +91,34 @@
     if (!fmt || !form || !select || !variantsEl) return null;
     var variants;
     try { variants = JSON.parse(variantsEl.textContent); } catch (e) { return null; }
-    var displateCard = fmt.querySelector('.apx-card[data-fmt="' + cfg.displateFormat + '"]');
+
+    function card(format) { return fmt.querySelector('.apx-card[data-fmt="' + format + '"]'); }
 
     return {
       variants: variants.map(function (v) { return { id: v.id, title: String(v.title).trim(), price: v.price }; }),
       currentId: function () { return select.value; },
       form: form,
-      anchor: fmt,
-      canPick: !!displateCard && typeof window.apxPick === 'function',
-      setBadge: function (text) {
-        var tag = displateCard && displateCard.parentNode.querySelector('.apx-bs-tag');
+      cards: fmt,
+      canPick: function (format) { return !!card(format); },
+      setBadge: function (format, text) {
+        var c = card(format);
+        var tag = c && c.parentNode.querySelector('.apx-bs-tag');
         if (tag) tag.textContent = text;
       },
-      pick: function () {
-        if (!displateCard) return;
-        if (typeof window.apxPick === 'function') window.apxPick(displateCard);
-        else displateCard.click();
+      pick: function (format) {
+        var c = card(format);
+        if (!c) return;
+        if (typeof window.apxPick === 'function') window.apxPick(c);
+        else c.click();
       },
       watch: function (onChange) {
         // Kalles déclenche « change » sur [name=id]
         document.addEventListener('change', function (e) {
-          if (e.target && e.target.matches && e.target.matches('[name="id"]')) onChange(false);
+          if (e.target && e.target.matches && e.target.matches('[name="id"]')) onChange();
         });
         document.addEventListener('click', function (e) {
           var t = e.target && e.target.closest && e.target.closest('.apx-card, [data-swatch-item]');
-          if (t) setTimeout(function () { onChange(e.isTrusted); }, 80);
+          if (t) setTimeout(onChange, 80);
         });
       }
     };
@@ -119,25 +127,55 @@
   function init() {
     if (!live()) return;
     var page = apxPage() || kallesPage();
-    if (!page) return;
+    if (!page || !page.canPick(cfg.displateFormat)) return;
 
     var byTitle = {};
     page.variants.forEach(function (v) { byTitle[v.title] = v; });
 
-    if (cfg.badge) page.setBadge(cfg.badge);
+    if (cfg.badge) page.setBadge(cfg.displateFormat, cfg.badge);
 
+    // L'encadré prend la place du bandeau à remplacer, sinon il se place sous les cartes de format
     var box = el('div', 'apx-offer');
-    box.setAttribute('aria-live', 'polite');
-    page.anchor.parentNode.insertBefore(box, page.anchor.nextSibling);
+    var replaced = cfg.replace && document.querySelector(cfg.replace);
+    if (replaced) {
+      var block = replaced.closest('.apx-liquid, .t4s-pr__custom-liquid') || replaced;
+      block.parentNode.insertBefore(box, block);
+      block.style.display = 'none';
+    } else {
+      page.cards.parentNode.insertBefore(box, page.cards.nextSibling);
+    }
 
-    var userTouched = false;
+    var head = el('div', 'apx-offer__head');
+    var intro = el('div', 'apx-offer__intro');
+    var title = el('p', 'apx-offer__title', '🎁 ' + cfg.title);
+    var sub = el('p', 'apx-offer__sub');
+    sub.id = 'apx-offer-sub';
+    intro.appendChild(title);
+    intro.appendChild(sub);
+    var toggle = el('button', 'apx-switch');
+    toggle.type = 'button';
+    toggle.setAttribute('role', 'switch');
+    toggle.setAttribute('aria-label', cfg.switchLabel);
+    toggle.setAttribute('aria-describedby', sub.id);
+    toggle.appendChild(el('span', 'apx-switch__knob'));
+    head.appendChild(intro);
+    head.appendChild(toggle);
+    var perks = el('ul', 'apx-offer__perks');
+    var until = el('p', 'apx-offer__until', cfg.until);
+    box.appendChild(head);
+    box.appendChild(perks);
+    box.appendChild(until);
 
     function currentVariant() {
       var id = String(page.currentId());
       return page.variants.filter(function (v) { return String(v.id) === id; })[0] || null;
     }
-
+    function peopleOf(v) { return v.title.split(' / ')[0]; }
     function formatOf(v) { return v ? v.title.split(' / ').slice(1).join(' / ') : ''; }
+    function isOffer(format) { return cfg.formats.indexOf(format) !== -1; }
+
+    // Format à retrouver quand on désactive l'offre : le dernier choisi hors offre, sinon l'affiche
+    var base = cfg.posterFormat;
 
     function setProperty(on) {
       var input = page.form.querySelector('input[data-apx-offer-prop]');
@@ -158,67 +196,41 @@
       if (!live()) { box.hidden = true; setProperty(false); return; }
       var v = currentVariant();
       if (!v) return;
-      var people = v.title.split(' / ')[0];
       var format = formatOf(v);
-      var key = v.id + '|' + format;
-      if (key === lastKey && !force) return;
+      var key = v.id + '|' + base;
+      if (key === lastKey && force !== true) return;
       lastKey = key;
 
+      var people = peopleOf(v);
+      var on = isOffer(format);
+      if (!on) base = format;
+      var offerFormat = on ? format : cfg.displateFormat;
+      var offerVariant = byTitle[people + ' / ' + offerFormat];
+      var baseVariant = byTitle[people + ' / ' + base];
       var hd = byTitle[people + ' / ' + cfg.digitalFormat];
-      var a3 = byTitle[people + ' / ' + cfg.posterFormat];
-      var displate = byTitle[people + ' / ' + cfg.displateFormat];
-      var isOffer = cfg.formats.indexOf(format) !== -1;
+      var ecart = offerVariant && baseVariant ? Math.max(offerVariant.price - baseVariant.price, 0) : 0;
 
-      box.innerHTML = '';
-      box.classList.toggle('apx-offer--on', isOffer);
-      setProperty(isOffer);
+      box.classList.toggle('apx-offer--on', on);
+      toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+      sub.textContent = (on ? cfg.subOn : cfg.subOff)
+        .replace('[format]', (cfg.labels && cfg.labels[offerFormat]) || offerFormat)
+        .replace('[ecart]', money(ecart));
 
-      if (isOffer) {
-        box.appendChild(el('p', 'apx-offer__title', '🎁 ' + cfg.title));
-        var list = el('ul', 'apx-offer__perks');
-        if (hd) list.appendChild(el('li', '', cfg.perkHd.replace('[hd]', money(hd.price))));
-        list.appendChild(el('li', '', cfg.perkShipping));
-        box.appendChild(list);
-        if (format === cfg.displateFormat && hd && a3 && displate && displate.price < a3.price + hd.price) {
-          box.appendChild(el('p', 'apx-offer__compare', cfg.compare
-            .replace('[a3hd]', money(a3.price + hd.price))
-            .replace('[displate]', money(displate.price))));
-        }
-      } else if (displate && page.canPick) {
-        var text = cfg.upsell
-          .replace('[ecart]', money(Math.max(displate.price - v.price, 0)))
-          .replace('[hd]', hd ? money(hd.price) : '');
-        box.appendChild(el('p', 'apx-offer__upsell', text));
-        var btn = el('button', 'apx-offer__btn', cfg.upsellButton);
-        btn.type = 'button';
-        btn.addEventListener('click', function () {
-          userTouched = true;
-          page.pick();
-          setTimeout(function () { update(true); }, 80);
-        });
-        box.appendChild(btn);
-      }
+      perks.innerHTML = '';
+      cfg.perks.forEach(function (text) {
+        perks.appendChild(el('li', '', text.replace('[hd]', hd ? money(hd.price) : '')));
+      });
+      setProperty(on);
     }
 
-    page.watch(function (trusted) {
-      if (trusted) userTouched = true;
-      setTimeout(function () { update(true); }, 0);
+    toggle.addEventListener('click', function () {
+      var on = toggle.getAttribute('aria-checked') === 'true';
+      page.pick(on ? base : cfg.displateFormat);
+      setTimeout(function () { update(true); }, 80);
     });
+
+    page.watch(function () { setTimeout(function () { update(true); }, 0); });
     setInterval(update, 1000);
-
-    // Présélection du Displate, sauf si l'URL vise une variante précise
-    var hasVariantParam = /[?&]variant=/.test(window.location.search);
-    if (cfg.preselect && !hasVariantParam && page.canPick) {
-      var tries = 0;
-      (function pick() {
-        if (userTouched || tries > 6) return;
-        tries++;
-        if (formatOf(currentVariant()) === cfg.displateFormat) { update(true); return; }
-        page.pick();
-        setTimeout(pick, 300);
-      })();
-    }
-
     update(true);
   }
 

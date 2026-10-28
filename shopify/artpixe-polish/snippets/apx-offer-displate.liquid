@@ -1,5 +1,7 @@
 {%- comment -%}
-  Offre Displate : fichier HD offert + livraison express assurée offerte, jusqu'à une date de fin réelle.
+  Offre spéciale Displate : interrupteur à la place du bandeau « livraison offerte » ; l'activer passe le portrait
+  en Displate (différence de prix réelle) et débloque livraison express, commande prioritaire et version HD offertes.
+  Désactivé à l'arrivée : un supplément payant ne doit pas être pré-coché.
   Rendu dans le <head> par snippets/apx-polish.liquid. Rien ne s'affiche hors des dates.
   La livraison offerte est assurée par le profil d'expédition « Offre Displate » (Paramètres > Expédition) :
   le supprimer après la fin de l'offre.
@@ -39,16 +41,21 @@
       "digitalFormat": "Digital",
       "posterFormat": "Poster A3",
       "displateFormat": "Displate",
-      "preselect": true,
-      "badge": "HD + express offerts",
-      "title": {{ 'Offre Displate jusqu’au ' | append: offer_end_label | json }},
-      "perkHd": "Fichier HD offert, vendu seul [hd]",
-      "perkShipping": "Livraison express assurée offerte en France et dans l’UE (Bpost offert en Belgique)",
-      "compare": "Affiche A3 + fichier HD : [a3hd]. Ton Displate avec fichier HD : [displate].",
-      "upsell": "Passe au Displate pour +[ecart] : plaque métal, fichier HD offert (vendu seul [hd]) et livraison express offerte.",
-      "upsellButton": "Choisir le Displate",
+      "labels": { "Displate": "Displate métal", "Displate avec cadre": "Displate + cadre" },
+      "replace": ".aliv-wrap",
+      "badge": "Offre spéciale",
+      "title": "Offre spéciale Displate",
+      "switchLabel": "Activer l’offre spéciale Displate",
+      "subOff": "Passe ton portrait en [format] pour +[ecart] et débloque :",
+      "subOn": "Activée : ton portrait passe en [format] (+[ecart]). Offerts :",
+      "perks": [
+        "Livraison express offerte en France et dans l’UE (Bpost en Belgique)",
+        "Commande prioritaire",
+        "Version digitale HD offerte (vendue seule [hd])"
+      ],
+      "until": {{ 'Jusqu’au ' | append: offer_end_label | append: '.' | json }},
       "propertyName": "Offre Displate",
-      "propertyValue": "Fichier HD offert + livraison express offerte"
+      "propertyValue": "Livraison express offerte + commande prioritaire + version digitale HD offerte"
     }
   </script>
   <script src="{{ 'apx-offer.js' | asset_url }}" defer="defer"></script>

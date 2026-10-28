@@ -46,17 +46,19 @@ Chargés par `apx-polish.liquid` sur les mêmes templates. Le script fonctionne 
 (sélecteur `#apx-fmt`) comme avec la nouvelle zone d'achat (section « Artpixe · Fiche produit »).
 
 Sur la page :
-- le badge de la carte Displate devient « HD + express offerts » ;
-- sous les cartes de format, un encadré liste les bonus quand un Displate est choisi
-  (fichier HD offert avec sa valeur réelle selon le nombre de personnes, livraison express offerte,
-  comparaison « Affiche A3 + fichier HD » contre « Displate avec fichier HD ») ;
-- si un autre format est choisi, l'encadré propose de passer au Displate avec l'écart de prix réel ;
-- le Displate est présélectionné, sauf si l'URL contient `?variant=` (lien Google Shopping par exemple) ;
-- la propriété de commande « Offre Displate : Fichier HD offert + livraison express offerte » est ajoutée :
-  elle apparaît dans le panier, au paiement et dans la commande, pour que l'atelier envoie le fichier HD.
+- un encadré « Offre spéciale Displate » remplace le bandeau « livraison offerte » sous le bouton ;
+- son interrupteur, désactivé à l'arrivée (un supplément payant ne doit pas être pré-coché), fait passer le portrait
+  en Displate pour la différence de prix réelle avec le format choisi (« +20,00 € » depuis l'affiche A3) ;
+- une fois activé, il débloque trois cadeaux : livraison express offerte (France et UE, Bpost en Belgique),
+  commande prioritaire, version digitale HD offerte (avec son prix réel seul) ;
+- le désactiver revient au format choisi avant ; choisir une carte Displate l'active aussi ;
+- le badge de la carte Displate devient « Offre spéciale » ;
+- la propriété de commande « Offre Displate : Livraison express offerte + commande prioritaire + version digitale HD
+  offerte » est ajoutée : elle apparaît dans le panier, au paiement et dans la commande, pour que l'atelier traite la
+  commande en priorité et envoie le fichier HD.
 
 La date de fin se règle en haut de `snippets/apx-offer-displate.liquid` (`offer_end`). Après cette date,
-rien ne s'affiche plus, même si la page vient du cache.
+rien ne s'affiche plus, même si la page vient du cache, et le bandeau « livraison offerte » revient.
 
 Livraison : le profil d'expédition « Offre Displate – express offerte (jusqu'au 7 déc.) »
 (Paramètres > Expédition et livraison) contient les 12 variantes Displate One Piece : express assurée offerte

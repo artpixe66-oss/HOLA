@@ -271,7 +271,7 @@
         "garanties"
       ],
       "settings": {
-        "default_option_value": "Displate",
+        "default_option_value": "Poster A3",
         "update_url": true,
         "image_ratio": "adapt",
         "show_thumbnails": true,
@@ -285,7 +285,7 @@
         "color_accent": "#f5a623",
         "step_style": "inline",
         "load_fonts": true,
-        "default_option_until": "2026-12-07 23:59",
+        "default_option_until": "",
         "default_option_after": "Poster A3"
       }
     },
