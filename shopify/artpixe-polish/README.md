@@ -42,7 +42,8 @@ Aucun impact SEO : pas de texte ajouté ou retiré, pas de changement de titres,
 ## Offre Displate (jusqu'au 7 décembre 2026)
 
 Fichiers : `snippets/apx-offer-displate.liquid`, `assets/apx-offer.js`, `assets/apx-offer.css`.
-Chargés par `apx-polish.liquid` sur les mêmes templates.
+Chargés par `apx-polish.liquid` sur les mêmes templates. Le script fonctionne avec la fiche Kalles actuelle
+(sélecteur `#apx-fmt`) comme avec la nouvelle zone d'achat (section « Artpixe · Fiche produit »).
 
 Sur la page :
 - le badge de la carte Displate devient « HD + express offerts » ;

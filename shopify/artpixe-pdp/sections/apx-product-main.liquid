@@ -18,6 +18,13 @@
   assign url_variant = product.selected_variant
   assign current_variant = product.selected_or_first_available_variant
   assign default_value = section.settings.default_option_value | strip
+  if section.settings.default_option_until != blank
+    assign until_s = section.settings.default_option_until | date: '%s' | plus: 0
+    assign now_s = 'now' | date: '%s' | plus: 0
+    if until_s > 0 and now_s > until_s
+      assign default_value = section.settings.default_option_after | strip
+    endif
+  endif
   if url_variant == blank and default_value != blank
     for v in product.variants
       if v.available and v.options contains default_value
@@ -447,6 +454,10 @@
           {%- when 'richtext' -%}
             <div class="apx-rte apx-block-text" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
 
+          {%- when 'custom_liquid' -%}
+            {%- comment -%} Mêmes classes que le bloc Kalles, pour reprendre un bloc existant sans le modifier {%- endcomment -%}
+            <div class="apx-liquid t4s-pr__custom-liquid t4s-rte" {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
+
           {%- when 'collapsible' -%}
             <details class="apx-collapsible" {{ block.shopify_attributes }} {% if block.settings.open %}open{% endif %}>
               <summary>{{ block.settings.heading }}</summary>
@@ -488,6 +499,18 @@
       "label": "Valeur présélectionnée",
       "default": "Poster A3",
       "info": "Variante choisie à l'arrivée, sauf si le lien contient déjà ?variant=. Laisser vide pour la première variante disponible."
+    },
+    {
+      "type": "text",
+      "id": "default_option_until",
+      "label": "Présélection jusqu'au (AAAA-MM-JJ HH:MM)",
+      "info": "Facultatif, pour une offre datée. Fuseau horaire de la boutique."
+    },
+    {
+      "type": "text",
+      "id": "default_option_after",
+      "label": "Valeur présélectionnée ensuite",
+      "default": "Poster A3"
     },
     {
       "type": "checkbox",
@@ -918,6 +941,18 @@
       "name": "Texte",
       "settings": [
         { "type": "richtext", "id": "text", "label": "Texte", "default": "<p>Retouches incluses jusqu'à ta validation.</p>" }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Liquid personnalisé",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Code Liquid",
+          "info": "Pour reprendre un bloc « Liquid personnalisé » de la fiche Kalles : coller son code tel quel."
+        }
       ]
     },
     {

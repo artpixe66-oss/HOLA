@@ -9,7 +9,9 @@ il ajoute uniquement des sections, un snippet, deux assets et un template altern
 | Fichier | Rôle |
 | --- | --- |
 | `templates/product.apx-pdp.json` | Template alternatif, pré-rempli avec le contenu One Piece |
+| `templates/product.onepiecesolo.json` | Fiche One Piece actuelle avec la nouvelle zone d'achat (voir plus bas) |
 | `sections/apx-product-main.liquid` | Galerie, zone d'achat, configurateur en étapes, barre fixe mobile |
+| `sections/apx-product-tabs.liquid` | Onglets Kalles « Description » et « Nos avis clients » sous la fiche |
 | `sections/apx-product-reviews.liquid` | Avis Loox (widget ou blocs d'application) |
 | `sections/apx-product-steps.liquid` | « Comment ça marche » |
 | `sections/apx-product-features.liquid` | Arguments, garanties, comparatif (utilisée deux fois) |
@@ -34,6 +36,31 @@ il ajoute uniquement des sections, un snippet, deux assets et un template altern
 3. Personnaliser dans l'éditeur de thème du brouillon : Produits > « apx-pdp ».
 4. Assigner le template à un produit (fiche produit > Modèle de thème > `apx-pdp`) seulement après validation.
    Tant que le thème brouillon n'est pas publié, rien ne change pour les visiteurs.
+
+## Fiche One Piece : nouvelle zone d'achat, reste de la page inchangé
+
+`templates/product.onepiecesolo.json` est la fiche One Piece actuelle (copie du 27 octobre 2026) dans laquelle
+seule la section Kalles `main-product` est remplacée. Elle est installée dans le thème brouillon.
+
+- Jusqu'au bouton : badges d'avis, titre, accroche, prix, 1. nombre de personnes, 2. format (cartes),
+  3. nom et prime (sans le choix de style), 4. photos (UploadKit, « pas encore la photo »), notes au graphiste,
+  bouton « Commander mon portrait » qui mène directement au paiement, comme aujourd'hui.
+- Après le bouton : les blocs actuels, code inchangé (bandeau livraison, avis clients, garanties), dans des blocs
+  « Liquid personnalisé ». Les 4 cartes avantages sont à côté des photos sur ordinateur, sous le bouton sur mobile.
+- Sous la fiche : les onglets Description et Nos avis clients (section `apx-product-tabs`), puis toutes les
+  sections actuelles, sans changement.
+- Les propriétés de commande gardent les noms actuels : « Prénom(s) ou Pseudo(s) : », « Montant de la prime ฿ : »,
+  « Demandes particulières : » et « Uploaded file » (UploadKit). S'y ajoutent « Photo » quand la case
+  « pas encore la photo » est cochée, et « Offre Displate » pendant l'offre.
+- Le Displate est présélectionné jusqu'au 7 décembre 2026 à 23:59, puis l'affiche A3
+  (réglages « Valeur présélectionnée », « Présélection jusqu'au », « Valeur présélectionnée ensuite »).
+- Les textes de la zone d'achat sont en français. Pour les autres langues de la boutique, les traduire dans
+  Translate & Adapt (contenu du thème, modèle produit « onepiecesolo »).
+
+Pour publier : ajouter au thème en ligne les sections `apx-product-main` et `apx-product-tabs`, les snippets
+`apx-variant-picker`, `apx-feature-cards`, `apx-icon` et `apx-product-schema`, les assets `apx-product.css`
+et `apx-product.js`, puis remplacer `templates/product.onepiecesolo.json`. Si la fiche en ligne a été modifiée
+depuis le 27 octobre, reporter ces changements avant de remplacer le template.
 
 ## La zone d'achat
 

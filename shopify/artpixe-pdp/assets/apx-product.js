@@ -199,8 +199,12 @@
     // Envoi : état de chargement et message clair si un champ obligatoire manque.
     if (form) {
       form.addEventListener('submit', function (event) {
+        // Propriétés ajoutées hors du formulaire par une application (photos UploadKit…) : on les y rattache.
+        root.querySelectorAll('input[name^="properties["]:not([type="file"]), textarea[name^="properties["], select[name^="properties["]').forEach(function (el) {
+          if (!el.form && !el.closest('form')) el.setAttribute('form', data.formId);
+        });
         var error = root.querySelector('[data-apx-error]');
-        var invalid = Array.prototype.slice.call(document.querySelectorAll('[form="' + form.id + '"]'))
+        var invalid = Array.prototype.slice.call(document.querySelectorAll('[form="' + data.formId + '"]'))
           .filter(function (el) { return el.willValidate && !el.checkValidity(); })[0];
         if (invalid) {
           event.preventDefault();

@@ -1,0 +1,97 @@
+{%- comment -%}
+  Artpixe · Onglets Kalles (Description, Avis) sous la section « Artpixe · Fiche produit ».
+  Reprend le snippet Kalles product_tabs, comme la section main-product le fait en
+  « Product content external » : même rendu, même description indexée, mêmes avis Loox.
+  Nécessite le thème Kalles (snippets/product_tabs.liquid).
+{%- endcomment -%}
+{{ 'accordion.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign id_tab_des = 't4s-tab-des' | append: section.id
+  assign id_tab_review = 't4s-tab-review' | append: section.id
+-%}
+<div id="{{ section.settings.anchor | default: 'avis' | handle }}">
+  {%- render 'product_tabs', product: product, se_stts: section.settings, seBlocks: section.blocks, idTabDes: id_tab_des, idTabReview: id_tab_review, isProductDefault: product.has_only_default_variant -%}
+</div>
+
+{% schema %}
+{
+  "name": "Artpixe · Onglets Kalles",
+  "tag": "section",
+  "class": "apx-section-tabs",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    {
+      "type": "select",
+      "id": "tabs_design",
+      "label": "Présentation",
+      "options": [
+        { "value": "tab", "label": "Onglets" },
+        { "value": "accordion", "label": "Accordéon" }
+      ],
+      "default": "accordion"
+    },
+    {
+      "type": "select",
+      "id": "tabs_design_mb",
+      "label": "Présentation sur mobile",
+      "options": [
+        { "value": "tab", "label": "Onglets" },
+        { "value": "accordion", "label": "Accordéon" }
+      ],
+      "default": "accordion"
+    },
+    { "type": "checkbox", "id": "enable_first_tab", "label": "Ouvrir le premier élément", "default": false },
+    {
+      "type": "select",
+      "id": "tabs_layout_fix",
+      "label": "Largeur",
+      "options": [
+        { "value": "default", "label": "Normale" },
+        { "value": "wide", "label": "Large (1600 px)" },
+        { "value": "full", "label": "Pleine largeur" },
+        { "value": "content_full", "label": "Contenu pleine largeur" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "select",
+      "id": "tabs_position",
+      "label": "Position (classe Kalles)",
+      "options": [{ "value": "external", "label": "Sous la fiche" }],
+      "default": "external"
+    },
+    { "type": "color", "id": "bg", "label": "Fond", "default": "#141414" },
+    { "type": "color", "id": "bg_mb", "label": "Fond sur mobile", "default": "#141414" },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Ancre",
+      "default": "avis",
+      "info": "Le badge d'avis en haut de la fiche renvoie ici (#avis)."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab_des",
+      "name": "Description",
+      "limit": 1,
+      "settings": [{ "type": "text", "id": "title", "label": "Titre", "default": "Description" }]
+    },
+    {
+      "type": "tab_rivui",
+      "name": "Avis",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Titre", "default": "Nos avis clients" },
+        { "type": "liquid", "id": "review_liquid", "label": "Code d'une autre application d'avis" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Artpixe · Onglets Kalles",
+      "blocks": [{ "type": "tab_des" }, { "type": "tab_rivui" }]
+    }
+  ]
+}
+{% endschema %}
