@@ -552,7 +552,12 @@
                 <span class="apx-opt__sep" aria-hidden="true"> : </span>
                 <span class="apx-opt__current" data-apx-current>{{ cur_label }}</span>
               </p>
-              <div class="apx-opt__values">{{ values_html }}</div>
+              {%- comment -%} Plus de 7 pastilles : deux lignes égales sur mobile {%- endcomment -%}
+              {%- assign rows_cols = 0 -%}
+              {%- if is_card == false and option.values.size > 7 -%}
+                {%- assign rows_cols = option.values.size | plus: 1 | divided_by: 2 | floor -%}
+              {%- endif -%}
+              <div class="apx-opt__values{% if rows_cols > 0 %} apx-opt__values--rows{% endif %}"{% if rows_cols > 0 %} style="--apx-cols: {{ rows_cols }}"{% endif %}>{{ values_html }}</div>
               {%- if opt_index == 1 and is_card == false -%}
                 <p class="apx-upsell" data-apx-upsell data-template="{{ t_upsell | escape }}" hidden></p>
               {%- endif -%}

@@ -338,6 +338,9 @@
 }
 .apx-val__label:hover { border-color: rgba(245, 166, 35, .45); }
 .apx-val__label--text { min-height: 38px; padding-inline: 11px; font-weight: 500; font-size: 13px; }
+@media (max-width: 749px) {
+  .apx-opt__values--rows { display: grid; grid-template-columns: repeat(var(--apx-cols, 5), minmax(0, 1fr)); }
+}
 .apx-val__price { font-size: 12px; color: var(--apx-muted); font-weight: 500; font-variant-numeric: tabular-nums; }
 .apx-val__price:empty { display: none; }
 .apx-val__input:checked + .apx-val__label {
