@@ -408,6 +408,13 @@
 .apx-val--green .apx-val__check { background: var(--apx-green); }
 .apx-val--green .apx-val__input:checked + .apx-val__label { border-color: var(--apx-green); background: rgba(34, 197, 94, .1); }
 .apx-val--gold .apx-val__label { border-color: rgba(245, 166, 35, .4); background: rgba(245, 166, 35, .04); }
+/* Carte mise en avant (Displate) : bordure pleine et halo, même choisie ou non */
+.apx-val--feat .apx-val__label {
+  border-color: var(--apx-accent);
+  background: rgba(245, 166, 35, .08);
+  box-shadow: 0 0 0 1px rgba(245, 166, 35, .35), 0 8px 22px -10px rgba(245, 166, 35, .7);
+}
+.apx-val--feat .apx-val__input:checked + .apx-val__label { background: rgba(245, 166, 35, .14); }
 .apx-upsell { font-size: 13px; color: var(--apx-accent); }
 
 /* Champs */

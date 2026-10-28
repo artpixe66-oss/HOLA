@@ -49,6 +49,9 @@ Les modèles JSON ne changent pas : chaque univers garde ses sections (FAQ, text
 
 - Jusqu'au bouton : badges d'avis, titre, accroche, prix, 1. nombre de personnes (ou d'animaux), 2. format en cartes,
   3. champs de personnalisation, 4. photos (UploadKit, « pas encore la photo »), notes, bouton qui mène au paiement.
+- Formats : les cartes Displate passent en premier. Le Displate est présélectionné (sauf lien `?variant=`), mis en
+  avant (bordure et halo, badge « Recommandé », « Offre spéciale » pendant l'offre) ; « Premium » doré sur le Displate
+  avec cadre, « Choix éco » vert sur le fichier HD, pas de badge sur l'affiche A3 (coûts logistiques).
 - Champs : ceux des blocs Kalles « properties » du modèle, avec les mêmes noms de propriétés de commande et la même
   logique de visibilité (`snippets/apx-portrait-field.liquid`). Les champs courts vont à l'étape 3, les textes longs
   après les photos. One Piece (champ prime) garde « Nom sur l'affiche » et « Prime (฿) ».
@@ -135,7 +138,8 @@ Ces éléments sont désactivés ou neutres par défaut, parce qu'ils engagent l
 - Les messages datés de Noël (blocs « Message daté », désactivés) : dates à fixer selon la capacité réelle.
 - Les questions FAQ « changer de format après l'aperçu » et « affiche abîmée » (désactivées) : à activer seulement si ces règles sont appliquées.
 - « Fichier HD offert avec toute impression » : retiré des textes tant que l'offre n'est pas en place.
-- Le badge « Le plus choisi » sur l'affiche A3 : vrai d'après les ventes des 12 derniers mois, à revoir si la répartition change.
+- Fiches portraits : le Displate est présélectionné et recommandé, l'affiche A3 n'a plus de badge. Ne pas écrire « Le plus choisi »
+  sur le Displate tant que les ventes ne le confirment pas.
 - Les dimensions du Displate dans la section Formats (« À préciser »).
 - Les délais (« aperçu sous 24-48 h ouvrées ») et la définition des retouches.
 

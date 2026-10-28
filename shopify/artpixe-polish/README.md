@@ -47,8 +47,9 @@ Chargés par `apx-polish.liquid` sur les mêmes templates. Le script fonctionne 
 
 Sur la page :
 - un encadré « Offre spéciale Displate » remplace le bandeau « livraison offerte » sous le bouton ;
-- son interrupteur, désactivé à l'arrivée (un supplément payant ne doit pas être pré-coché), fait passer le portrait
-  en Displate pour la différence de prix réelle avec le format choisi (« +20,00 € » depuis l'affiche A3) ;
+- son interrupteur fait passer le portrait en Displate pour la différence de prix réelle avec le format choisi
+  (« +20,00 € » depuis l'affiche A3). Sur les fiches portraits, le Displate est le format présélectionné : l'interrupteur
+  est donc activé à l'arrivée, avec le prix du Displate affiché partout ; le désactiver passe à l'affiche A3 ;
 - la liste commence par « Impression sur métal HD » (19,90 € barré ; c'est ce que paie le supplément) ;
 - une fois activé, il débloque trois cadeaux, chacun sur une ligne avec sa valeur barrée : livraison express
   offerte (3,90 €), commande prioritaire offerte (4,90 €), version digitale HD offerte (19,90 €). Les valeurs se

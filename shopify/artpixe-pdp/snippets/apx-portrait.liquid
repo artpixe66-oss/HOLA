@@ -36,7 +36,8 @@
       assign t_c_a3 = 'A3 poster|29.7 × 42 cm, premium paper'
       assign t_c_dp = 'Metal Displate|Magnetic mount, no nails'
       assign t_c_fr = 'Displate + frame|Framed, ready to hang'
-      assign t_popular = 'Most popular'
+      assign t_eco = 'Budget pick'
+      assign t_reco = 'Recommended'
       assign t_step_op = 'Name and bounty'
       assign t_step_custom = 'Personalisation'
       assign t_l_name_op = 'Name on the poster'
@@ -73,7 +74,8 @@
       assign t_c_a3 = 'Póster A3|29,7 × 42 cm, papel premium'
       assign t_c_dp = 'Displate de metal|Fijación magnética, sin clavos'
       assign t_c_fr = 'Displate + marco|Enmarcado, listo para colgar'
-      assign t_popular = 'El más elegido'
+      assign t_eco = 'Opción económica'
+      assign t_reco = 'Recomendado'
       assign t_step_op = 'Nombre y recompensa'
       assign t_step_custom = 'Personalización'
       assign t_l_name_op = 'Nombre en el cartel'
@@ -110,7 +112,8 @@
       assign t_c_a3 = 'A3-Poster|29,7 × 42 cm, Premiumpapier'
       assign t_c_dp = 'Metall-Displate|Magnetbefestigung, ohne Nägel'
       assign t_c_fr = 'Displate + Rahmen|Gerahmt, fertig zum Aufhängen'
-      assign t_popular = 'Am beliebtesten'
+      assign t_eco = 'Spartipp'
+      assign t_reco = 'Empfohlen'
       assign t_step_op = 'Name und Kopfgeld'
       assign t_step_custom = 'Personalisierung'
       assign t_l_name_op = 'Name auf dem Poster'
@@ -147,7 +150,8 @@
       assign t_c_a3 = 'Poster A3|29,7 × 42 cm, carta premium'
       assign t_c_dp = 'Displate in metallo|Fissaggio magnetico, senza chiodi'
       assign t_c_fr = 'Displate + cornice|Incorniciato, pronto da appendere'
-      assign t_popular = 'Il più scelto'
+      assign t_eco = 'Scelta economica'
+      assign t_reco = 'Consigliato'
       assign t_step_op = 'Nome e taglia'
       assign t_step_custom = 'Personalizzazione'
       assign t_l_name_op = 'Nome sul poster'
@@ -184,7 +188,8 @@
       assign t_c_a3 = 'A3-poster|29,7 × 42 cm, premium papier'
       assign t_c_dp = 'Metalen Displate|Magnetische bevestiging, zonder spijkers'
       assign t_c_fr = 'Displate + lijst|Ingelijst, klaar om op te hangen'
-      assign t_popular = 'Meest gekozen'
+      assign t_eco = 'Voordeligste keuze'
+      assign t_reco = 'Aanbevolen'
       assign t_step_op = 'Naam en premie'
       assign t_step_custom = 'Personalisatie'
       assign t_l_name_op = 'Naam op de poster'
@@ -221,7 +226,8 @@
       assign t_c_a3 = 'Affiche A3|29,7 × 42 cm, papier premium'
       assign t_c_dp = 'Displate métal|Fixation magnétique, sans clou'
       assign t_c_fr = 'Displate + cadre|Encadré, prêt à accrocher'
-      assign t_popular = 'Le plus choisi'
+      assign t_eco = 'Choix éco'
+      assign t_reco = 'Recommandé'
       assign t_step_op = 'Nom et prime'
       assign t_step_custom = 'Personnalisation'
       assign t_l_name_op = 'Nom sur l’affiche'
@@ -247,13 +253,13 @@
   assign t_nav = t_nav | split: '|'
 
   comment
-    Variante affichée : celle de l'URL, sinon l'affiche A3, sinon la première disponible
+    Variante affichée : celle de l'URL, sinon le Displate, sinon la première disponible
   endcomment
   assign form_id = 'apx-form-' | append: section.id
   assign current_variant = product.selected_or_first_available_variant
   if product.selected_variant == blank
     for v in product.variants
-      if v.available and v.options contains 'Poster A3'
+      if v.available and v.options contains 'Displate'
         assign current_variant = v
         break
       endif
@@ -462,7 +468,9 @@
             assign label_id = 'apx-' | append: section.id | append: '-l' | append: opt_index
           -%}
           {%- if option.values.size > 1 -%}
-            {%- capture values_html -%}
+            {%- comment -%} Les cartes Displate passent en premier, les autres gardent l'ordre du produit {%- endcomment -%}
+            {%- assign values_first = '' -%}
+            {%- assign values_rest = '' -%}
               {%- for value in option.values -%}
                 {%- liquid
                   assign value_name = value.name | default: value
@@ -493,14 +501,16 @@
                     when 'Digital'
                       assign card = t_c_hd | split: '|'
                       assign card_icon = '💻'
+                      assign card_badge = t_eco
+                      assign card_style = 'green'
                     when 'Poster A3'
                       assign card = t_c_a3 | split: '|'
                       assign card_icon = '🖼️'
-                      assign card_badge = t_popular
-                      assign card_style = 'green'
                     when 'Displate'
                       assign card = t_c_dp | split: '|'
                       assign card_icon = '✨'
+                      assign card_badge = t_reco
+                      assign card_style = 'feat'
                     when 'Displate avec cadre'
                       assign card = t_c_fr | split: '|'
                       assign card_icon = '🏆'
@@ -513,6 +523,7 @@
                     assign cur_label = card_label
                   endif
                 -%}
+                {%- capture value_html -%}
                 <div class="apx-val apx-val--{{ card_style }}">
                   <input type="radio" class="apx-val__input" id="{{ input_id }}" name="apx-{{ section.id }}-o{{ opt_index }}" value="{{ value_name | escape }}" data-apx-value data-label="{{ card_label | escape }}" {% if value_name == cur_val %}checked{% endif %} {% unless match and match.available %}data-unavailable{% endunless %}>
                   <label class="apx-val__label" for="{{ input_id }}">
@@ -526,8 +537,14 @@
                     <span class="apx-val__price" data-apx-value-price>{%- if is_card and match -%}{{ match.price | money }}{%- endif -%}</span>
                   </label>
                 </div>
+                {%- endcapture -%}
+                {%- if is_card and value_name contains 'Displate' -%}
+                  {%- assign values_first = values_first | append: value_html -%}
+                {%- else -%}
+                  {%- assign values_rest = values_rest | append: value_html -%}
+                {%- endif -%}
               {%- endfor -%}
-            {%- endcapture -%}
+            {%- assign values_html = values_first | append: values_rest -%}
             <div class="apx-opt {% if is_card %}apx-opt--cards{% else %}apx-opt--chips{% endif %} apx-opt--step" role="radiogroup" aria-labelledby="{{ label_id }}" data-apx-option="{{ opt_index0 }}">
               <p class="apx-opt__label apx-stephead" id="{{ label_id }}">
                 <span class="apx-stephead__num" aria-hidden="true"></span>
