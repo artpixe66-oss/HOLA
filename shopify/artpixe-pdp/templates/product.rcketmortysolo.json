@@ -1,0 +1,854 @@
+{
+  "sections": {
+    "custom_liquid_84FmBX": {
+      "type": "custom-liquid",
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "{% comment %}\n  artpixe-custom-liquid-bandeau-promo.liquid  v5\n  Bandeau fixe full-width — 1 ligne fixe desktop — défilement marquee mobile\n{% endcomment %}\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n\n{%- if lang == 'en' -%}\n  {%- assign txt_main = '-10% off your order' -%}\n  {%- assign txt_with = 'with code' -%}\n  {%- assign txt_ends = 'Ends in' -%}\n{%- elsif lang == 'es' -%}\n  {%- assign txt_main = '-10% en tu pedido' -%}\n  {%- assign txt_with = 'con el codigo' -%}\n  {%- assign txt_ends = 'Termina en' -%}\n{%- elsif lang == 'de' -%}\n  {%- assign txt_main = '-10% auf deine Bestellung' -%}\n  {%- assign txt_with = 'mit dem Code' -%}\n  {%- assign txt_ends = 'Endet in' -%}\n{%- elsif lang == 'it' -%}\n  {%- assign txt_main = '-10% sul tuo ordine' -%}\n  {%- assign txt_with = 'con il codice' -%}\n  {%- assign txt_ends = 'Scade tra' -%}\n{%- else -%}\n  {%- assign txt_main = '-10% sur votre commande' -%}\n  {%- assign txt_with = 'avec le code' -%}\n  {%- assign txt_ends = 'Expire dans' -%}\n{%- endif -%}\n\n<style>\n.apb-outer{\n  position:relative;\n  left:50%;right:50%;\n  margin-left:-50vw;margin-right:-50vw;\n  width:100vw;\n  overflow:hidden;\n}\n.apb{\n  background:#f5a623;\n  width:100%;\n  display:flex;\n  align-items:center;\n  justify-content:center;\n  padding:9px 16px;\n  font-family:var(--font-body-family,'DM Sans',sans-serif);\n  font-size:13px;\n  color:#fff;\n  white-space:nowrap;\n  border-bottom:1px solid rgba(0,0,0,.1);\n  overflow:hidden;\n}\n\n/* Contenu statique desktop */\n.apb-static{\n  display:flex;\n  align-items:center;\n  gap:6px;\n  white-space:nowrap;\n}\n\n/* Marquee mobile */\n.apb-marquee-wrap{\n  display:none;\n  overflow:hidden;\n  width:100%;\n}\n.apb-marquee-track{\n  display:inline-flex;\n  align-items:center;\n  gap:0;\n  white-space:nowrap;\n  animation:apbScroll 18s linear infinite;\n}\n.apb-marquee-track:hover{animation-play-state:paused;}\n.apb-marquee-item{\n  display:inline-flex;\n  align-items:center;\n  gap:6px;\n  padding-right:48px;\n}\n@keyframes apbScroll{\n  0%{transform:translateX(0);}\n  100%{transform:translateX(-50%);}\n}\n\n.apb-bold{font-weight:700;}\n.apb-sep{opacity:.45;margin:0 4px;}\n.apb-code{\n  background:rgba(0,0,0,.18);\n  border-radius:3px;\n  padding:1px 8px;\n  font-weight:700;\n  letter-spacing:.05em;\n}\n.apb-timer{\n  display:inline-flex;\n  align-items:baseline;\n  gap:3px;\n  font-weight:700;\n  font-variant-numeric:tabular-nums;\n}\n.apb-unit{font-size:10px;font-weight:600;opacity:.7;}\n\n/* Sur mobile : masquer statique, afficher marquee */\n@media(max-width:700px){\n  .apb-static{display:none;}\n  .apb-marquee-wrap{display:block;}\n  .apb{padding:9px 0;justify-content:flex-start;}\n}\n</style>\n\n<div class=\"apb-outer\">\n  <div class=\"apb\" role=\"banner\">\n\n    <!-- Desktop : 1 ligne fixe -->\n    <div class=\"apb-static\">\n      <span>🔥</span>\n      <span><span class=\"apb-bold\">{{ txt_main }}</span> {{ txt_with }}</span>\n      <span class=\"apb-code\">C10</span>\n      <span class=\"apb-sep\">·</span>\n      <span>{{ txt_ends }}</span>\n      <span class=\"apb-timer\">\n        <span><span class=\"apbH\">--</span><span class=\"apb-unit\">h</span></span>\n        <span style=\"opacity:.4\">:</span>\n        <span><span class=\"apbM\">--</span><span class=\"apb-unit\">m</span></span>\n        <span style=\"opacity:.4\">:</span>\n        <span><span class=\"apbS\">--</span><span class=\"apb-unit\">s</span></span>\n      </span>\n    </div>\n\n    <!-- Mobile : marquee défilant (dupliqué x2 pour boucle fluide) -->\n    <div class=\"apb-marquee-wrap\">\n      <div class=\"apb-marquee-track\">\n        <!-- Exemplaire 1 -->\n        <span class=\"apb-marquee-item\">\n          <span>🔥</span>\n          <span><span class=\"apb-bold\">{{ txt_main }}</span> {{ txt_with }}</span>\n          <span class=\"apb-code\">C10</span>\n          <span class=\"apb-sep\">·</span>\n          <span>{{ txt_ends }}</span>\n          <span class=\"apb-timer\">\n            <span><span class=\"apbH\">--</span><span class=\"apb-unit\">h</span></span>\n            <span style=\"opacity:.4\">:</span>\n            <span><span class=\"apbM\">--</span><span class=\"apb-unit\">m</span></span>\n            <span style=\"opacity:.4\">:</span>\n            <span><span class=\"apbS\">--</span><span class=\"apb-unit\">s</span></span>\n          </span>\n        </span>\n        <!-- Exemplaire 2 (clone pour boucle) -->\n        <span class=\"apb-marquee-item\">\n          <span>🔥</span>\n          <span><span class=\"apb-bold\">{{ txt_main }}</span> {{ txt_with }}</span>\n          <span class=\"apb-code\">C10</span>\n          <span class=\"apb-sep\">·</span>\n          <span>{{ txt_ends }}</span>\n          <span class=\"apb-timer\">\n            <span><span class=\"apbH\">--</span><span class=\"apb-unit\">h</span></span>\n            <span style=\"opacity:.4\">:</span>\n            <span><span class=\"apbM\">--</span><span class=\"apb-unit\">m</span></span>\n            <span style=\"opacity:.4\">:</span>\n            <span><span class=\"apbS\">--</span><span class=\"apb-unit\">s</span></span>\n          </span>\n        </span>\n      </div>\n    </div>\n\n  </div>\n</div>\n\n<script>\n(function(){\n  var CYCLE=5*60*60*1000, KEY='ap_promo_v2';\n  function getStart(){\n    try{var t=parseInt(localStorage.getItem(KEY),10);if(t&&Date.now()-t<CYCLE)return t;}catch(e){}\n    var n=Date.now();try{localStorage.setItem(KEY,n);}catch(e){}return n;\n  }\n  var start=getStart();\n  function pad(n){return n<10?'0'+n:''+n;}\n  function tick(){\n    var el=Date.now()-start;\n    if(el>=CYCLE){start=Date.now();try{localStorage.setItem(KEY,start);}catch(e){}el=0;}\n    var rem=Math.floor((CYCLE-el)/1e3);\n    var h=pad(Math.floor(rem/3600));\n    var m=pad(Math.floor((rem%3600)/60));\n    var s=pad(rem%60);\n    document.querySelectorAll('.apbH').forEach(function(e){e.textContent=h;});\n    document.querySelectorAll('.apbM').forEach(function(e){e.textContent=m;});\n    document.querySelectorAll('.apbS').forEach(function(e){e.textContent=s;});\n  }\n  tick();setInterval(tick,1000);\n})();\n</script>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "custom_liquid_Jw36wk": {
+      "type": "custom-liquid",
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Affiche Wanted One Piece personnalisée\",\"image\":\"https://artpixe.com/cdn/shop/files/wanted_personnalis.webp?v=1771349462\",\"offers\":{\"@type\":\"Offer\",\"priceCurrency\":\"EUR\",\"price\":\"19.90\",\"availability\":\"https://schema.org/InStock\"},\"aggregateRating\":{\"@type\":\"AggregateRating\",\"ratingValue\":\"5\",\"reviewCount\":\"222\"}}</script>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "breadcrumb": {
+      "type": "brc-nav-product",
+      "disabled": true,
+      "custom_css": [
+        "@media (max-width: 768px) {.breadcrumb_pr_wrap {display: none !important; }}"
+      ],
+      "settings": {
+        "breadcrumb_pr": true,
+        "back_next_pr": true,
+        "cl_bg": "#141414",
+        "cl_link": "#ffffff"
+      }
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "loox_reviews_loox_rating_M4cTYJ": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-rating/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "disabled": true,
+          "settings": {
+            "contentSize": 15,
+            "pattern": "Excellent [rating] | +200 avis vérifiés",
+            "hideText": false,
+            "alignment": "",
+            "layout": "",
+            "textColor": "",
+            "starColor": "",
+            "showAllReviews": true,
+            "looxOpenFloatingWidget": true,
+            "emptyRatingWidget": false
+          }
+        },
+        "custom_liquid_RrKR7d": {
+          "type": "custom_liquid",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "<div style=\"display:flex;gap:6px;width:100%;padding:4px 0;\">\n  <a href=\"https://fr.trustpilot.com/review/artpixe.com\" target=\"_blank\" rel=\"noopener\" class=\"apx-badge\">\n    <svg width=\"12\" height=\"12\" viewBox=\"0 0 16 16\" fill=\"none\" style=\"flex-shrink:0;\" aria-hidden=\"true\"><path d=\"M8 0L10.163 5.279L16 5.878L11.786 9.721L13.09 15.5L8 12.5L2.91 15.5L4.214 9.721L0 5.878L5.837 5.279L8 0Z\" fill=\"#00B67A\"/></svg>\n    <span class=\"apx-badge__text\">Trustpilot · <strong style=\"color:#00B67A;\">4,4/5</strong> · 31 avis</span>\n  </a>\n  <a href=\"https://loox.app/a/artpixe\" target=\"_blank\" rel=\"noopener\" class=\"apx-badge\">\n    <span class=\"apx-badge__stars\" aria-hidden=\"true\">★★★★★</span>\n    <span class=\"apx-badge__text\">Loox · <strong style=\"color:#f5a623;\">222 avis</strong></span>\n  </a>\n</div>\n<style>\n.apx-badge {\n  flex: 1;\n  min-width: 0;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 6px;\n  text-decoration: none;\n  background: transparent !important;\n  border: 1px solid rgba(255,255,255,.1);\n  border-radius: 99px;\n  padding: 11px 18px;\n  transition: border-color .2s;\n  box-shadow: none !important;\n}\n.apx-badge:hover {\n  border-color: rgba(255,255,255,.25);\n  box-shadow: none !important;\n  background: transparent !important;\n}\n.apx-badge__text {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 13px;\n  font-weight: 500;\n  color: #f0ede8;\n  white-space: nowrap;\n}\n.apx-badge__stars {\n  color: #f5a623;\n  font-size: 13px;\n  line-height: 1;\n  flex-shrink: 0;\n}\n@media (max-width: 480px) {\n  .apx-badge {\n    padding: 9px 10px;\n    gap: 4px;\n  }\n  .apx-badge__text { font-size: 10.5px; }\n  .apx-badge__stars { font-size: 10px; }\n}\n</style>"
+          }
+        },
+        "custom_liquid_Ddwk4T": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% comment %}\n  ARTPIXE — Trust Badges i18n\n  Langues : FR · EN · ES · DE · IT\n{% endcomment %}\n\n{% assign lang = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale %}\n{% case lang %}\n  {% when 'en' %}{% assign tp_avis = '31 reviews' %}{% assign lx_avis = '350 reviews' %}\n  {% when 'es' %}{% assign tp_avis = '31 opiniones' %}{% assign lx_avis = '350 opiniones' %}\n  {% when 'de' %}{% assign tp_avis = '31 Bewertungen' %}{% assign lx_avis = '350 Bewertungen' %}\n  {% when 'it' %}{% assign tp_avis = '31 recensioni' %}{% assign lx_avis = '350 recensioni' %}\n  {% else %}{% assign tp_avis = '31 avis' %}{% assign lx_avis = '350 avis' %}\n{% endcase %}\n\n<style>\n@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');\n\n/* Reset Kalles — seulement sur les liens */\n.apx-tb,\n.apx-tb:hover,\n.apx-tb:focus,\n.apx-tb:active,\n.apx-tb:visited {\n  box-shadow: none !important;\n  outline: none !important;\n  text-decoration: none !important;\n  background-image: none !important;\n}\n\n/* Container */\n.apx-trust-wrap {\n  display: flex;\n  flex-direction: row;\n  align-items: stretch;\n  flex-wrap: nowrap;\n  gap: 8px;\n  margin-bottom: 16px;\n  font-family: 'DM Sans', sans-serif;\n}\n\n/* Badge commun */\n.apx-tb {\n  flex: 1;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 5px;\n  padding: 8px 8px;\n  border-radius: 10px;\n  cursor: pointer;\n  white-space: nowrap;\n  min-width: 0;\n  overflow: hidden;\n  font-size: 11px;\n}\n\n/* Trustpilot — vert */\n.apx-tb--tp {\n  background: rgba(0,182,122,.15);\n  border: 1.5px solid rgba(0,182,122,.4) !important;\n  border-bottom: 1.5px solid rgba(0,182,122,.4) !important;\n}\n\n/* Loox — orange */\n.apx-tb--lx {\n  background: rgba(245,166,35,.12);\n  border: 1.5px solid rgba(245,166,35,.35) !important;\n  border-bottom: 1.5px solid rgba(245,166,35,.35) !important;\n}\n\n/* Étoile icône */\n.apx-tb__star-ico { font-size: 11px; line-height: 1; flex-shrink: 0; }\n.apx-tb--tp .apx-tb__star-ico { color: #00B67A; }\n.apx-tb--lx .apx-tb__star-ico { color: #f5a623; }\n\n/* Nom */\n.apx-tb__name { font-size: 11px; font-weight: 700; line-height: 1; }\n.apx-tb--tp .apx-tb__name { color: #00e89b; }\n.apx-tb--lx .apx-tb__name { color: #f5a623; }\n\n/* Séparateur */\n.apx-tb__dot { font-size: 10px; color: rgba(255,255,255,.25); line-height: 1; }\n\n/* Score */\n.apx-tb__score { font-size: 11px; font-weight: 700; color: #f0ede8; line-height: 1; }\n\n/* Count */\n.apx-tb__count { font-size: 10px; font-weight: 400; color: rgba(255,255,255,.5); line-height: 1; }\n\n/* Étoiles Loox */\n.apx-tb__stars-lx { font-size: 11px; color: #f5a623; letter-spacing: 0; line-height: 1; }\n\n@media (min-width: 768px) {\n  .apx-trust-wrap { gap: 12px; margin-bottom: 20px; }\n  .apx-tb { padding: 11px 18px; gap: 8px; font-size: 14px; border-radius: 12px; }\n  .apx-tb__star-ico { font-size: 16px; }\n  .apx-tb__name { font-size: 14px; }\n  .apx-tb__score { font-size: 14px; }\n  .apx-tb__count { font-size: 13px; }\n  .apx-tb__dot { font-size: 13px; }\n  .apx-tb__stars-lx { font-size: 15px; letter-spacing: 1px; }\n  .apx-tb--tp { background: rgba(0,182,122,.18); border: 1.5px solid rgba(0,182,122,.5) !important; border-bottom: 1.5px solid rgba(0,182,122,.5) !important; }\n  .apx-tb--lx { background: rgba(245,166,35,.16); border: 1.5px solid rgba(245,166,35,.5) !important; border-bottom: 1.5px solid rgba(245,166,35,.5) !important; }\n}\n</style>\n\n<div class=\"apx-trust-wrap\">\n\n  <a href=\"https://fr.trustpilot.com/review/artpixe.com\" target=\"_blank\" rel=\"noopener\" class=\"apx-tb apx-tb--tp\">\n    <span class=\"apx-tb__star-ico\">★</span>\n    <span class=\"apx-tb__name\">Trustpilot</span>\n    <span class=\"apx-tb__dot\">·</span>\n    <span class=\"apx-tb__score\">4,4/5</span>\n    <span class=\"apx-tb__dot\">·</span>\n    <span class=\"apx-tb__count\">{{ tp_avis }}</span>\n  </a>\n\n  <a href=\"https://loox.app/a/artpixe\" target=\"_blank\" rel=\"noopener\" class=\"apx-tb apx-tb--lx\">\n    <span class=\"apx-tb__stars-lx\">★★★★★</span>\n    <span class=\"apx-tb__name\">Loox</span>\n    <span class=\"apx-tb__dot\">·</span>\n    <span class=\"apx-tb__count\">{{ lx_avis }}</span>\n  </a>\n\n</div>"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "txt_tr_pr": "none",
+            "fnt_df_pr": "1",
+            "size_pr": 22,
+            "fw_pr": 700,
+            "lh_pr": 0,
+            "ls_pr": 0,
+            "pr_title_color": "#ffffff"
+          }
+        },
+        "price_review": {
+          "type": "price_review",
+          "settings": {
+            "price": "0",
+            "type_sale": "2",
+            "tax_ship": false,
+            "rating": false,
+            "review_liquid": "",
+            "size_price_pr": 20.5,
+            "fw_price_pr": 800,
+            "price_color": "#ffffff",
+            "price_sale_color": "#ff9900"
+          }
+        },
+        "custom_liquid_HfGhbQ": {
+          "type": "custom_liquid",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "<div class=\"offer-container\">\n    <div class=\"offer-content\">\n        <div class=\"offer-icon\">\n            <svg class=\"animated-clock\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n                <circle cx=\"12\" cy=\"12\" r=\"10\"></circle>\n                <path class=\"clock-hand\" d=\"M12 6v6l4 2\"></path>\n            </svg>\n        </div>\n        <p class=\"offer-text\">Commandez avant le <span class=\"offer-date\" data-order-by></span> pour <span class=\"highlight\">UNE LIVRAISON OFFERTE !</span></p>\n    </div>\n</div>\n\n<style>\n    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');\n\n    .offer-container {\n        padding: 10px 18px;\n        border-radius: 5px !important;\n        display: flex;\n        align-items: center;\n        justify-content: flex-start;\n        max-width: 100%;\n        font-family: 'Poppins', sans-serif;\n        color: white;\n        font-size: 1.2rem;\n        font-weight: 600;\n        text-transform: none;\n        position: relative;\n        overflow: hidden;\n         background: linear-gradient(145deg, #1f1f1f, #0d0d0d);\n        border: 3px dashed transparent;\n        animation: borderMove 4s linear infinite;\n    }\n\n    /* Animation des pointillés */\n    @keyframes borderMove {\n        0% { border: 2px dashed #FF9900; }\n        50% { border: 2px dashed #FFD9A1; }\n        100% { border: 3px dashed #FF9900; }\n    }\n\n    .offer-content {\n        display: flex;\n        align-items: center;\n        justify-content: flex-start;\n        gap: 10px;\n        width: 100%;\n    }\n\n    .offer-icon {\n        display: flex;\n        align-items: center;\n        justify-content: center;\n    }\n\n    /* Animation de l'horloge */\n    .animated-clock {\n        width: 18px;\n        height: 18px;\n        color: #FFB400;\n    }\n\n    .clock-hand {\n        transform-origin: 12px 12px;\n        animation: clockRotation 6s linear infinite; /* Rotation fluide */\n    }\n\n    @keyframes clockRotation {\n        from { transform: rotate(0deg); }\n        to { transform: rotate(360deg); }\n    }\n\n    .offer-text {\n        display: flex;\n        align-items: center;\n        gap: 6px;\n        letter-spacing: 0.5px;\n        margin: 0;\n        padding: 0;\n        flex-wrap: wrap;\n    }\n\n    .offer-date {\n        font-weight: 700;\n        padding: 4px 10px;\n        background: rgba(255, 255, 255, 0.2);\n        border-radius: 5px;\n        color: white;\n        font-size: 1.2rem;\n        display: inline-block;\n    }\n\n    .highlight {\n        color: #FFB400;\n        font-weight: 700;\n    }\n\n    /* Responsive pour mobile */\n    @media screen and (max-width: 768px) {\n        .offer-container {\n            padding: 8px 14px;\n            font-size: 1.2rem;\n            border-radius: 5px !important;\n        }\n\n        .offer-content {\n            gap: 8px;\n        }\n\n        .offer-icon svg {\n            width: 16px;\n            height: 16px;\n        }\n\n        .offer-date {\n            font-size: 1.2rem;\n            padding: 3px 8px;\n        }\n    }\n</style>\n\n<script>\n    function formatDate(date) {\n        date.setDate(date.getDate() + 1);\n        const locale = document.documentElement.lang || navigator.language || \"fr\";\n        const day = date.getDate();\n        const monthShort = date.toLocaleString(locale, { month: 'short' }).toUpperCase();\n\n        return `${day} ${monthShort}`;\n    }\n\n    document.querySelectorAll('[data-order-by]').forEach(element => {\n        element.textContent = formatDate(new Date());\n    });\n</script>"
+          }
+        },
+        "95d4f334-8ea7-4cd2-b609-2373b1e848b8": {
+          "type": "tab_des",
+          "settings": {
+            "title": "Description"
+          }
+        },
+        "custom_liquid_jt8zXP": {
+          "type": "custom_liquid",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "<ul>\n  <li>🎨 Personnalisation Illimitée</li>\n  <li>🎁 Retouches Offertes</li>\n  <li>⏱️ Aperçu sous 24–48 h ouvrées</li>\n</p>"
+          }
+        },
+        "custom_liquid_w7HAUk": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<style>\n@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');\n\n.aliv-wrap { padding: 0; }\n.aliv-inner { width: 100%; }\n.aliv-banner {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 10px;\n  padding: 13px 20px;\n  border: 1.5px dashed rgba(245,166,35,.45);\n  border-radius: 10px;\n  background: rgba(245,166,35,.06);\n}\n.aliv-icon { font-size: 16px; flex-shrink: 0; line-height: 1; }\n.aliv-text {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 13px;\n  font-weight: 500;\n  color: #f0ede8;\n  line-height: 1.3;\n}\n.aliv-text strong { color: #f5a623; font-weight: 700; }\n@media (max-width: 480px) {\n  .aliv-banner { padding: 11px 14px; gap: 8px; }\n  .aliv-text { font-size: 12px; }\n}\n</style>\n\n{% assign lang = localization.language.iso_code | default: request.locale.iso_code | default: 'fr' %}\n\n<div class=\"aliv-wrap\">\n  <div class=\"aliv-inner\">\n    <div class=\"aliv-banner\">\n      <span class=\"aliv-icon\">🎁</span>\n      <span class=\"aliv-text\" id=\"alivText\"></span>\n    </div>\n  </div>\n</div>\n\n<script>\n(function(){\n  var lang = '{{ lang }}';\n  var d = new Date();\n  d.setDate(d.getDate() + 1);\n  var day = d.getDate();\n  var m   = d.getMonth();\n\n  var mois = {\n    fr: ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'],\n    en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],\n    es: ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'],\n    de: ['Jan.','Feb.','März','Apr.','Mai','Juni','Juli','Aug.','Sep.','Okt.','Nov.','Dez.'],\n    it: ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic']\n  };\n\n  var months = mois[lang] || mois['fr'];\n\n  var dateStr = {\n    fr: day + '\\u00a0' + months[m],\n    en: months[m] + '\\u00a0' + day,\n    es: day + '\\u00a0de\\u00a0' + months[m],\n    de: day + '.\\u00a0' + months[m],\n    it: day + '\\u00a0' + months[m]\n  }[lang] || (day + '\\u00a0' + months[m]);\n\n  var templates = {\n    fr: 'Commande avant le <strong>' + dateStr + '</strong> pour la <strong>LIVRAISON OFFERTE\\u00a0!</strong>',\n    en: 'Order before <strong>' + dateStr + '</strong> for <strong>FREE DELIVERY!</strong>',\n    es: 'Pide antes del <strong>' + dateStr + '</strong> para el <strong>ENV\\u00cdO GRATIS!</strong>',\n    de: 'Bestelle vor dem <strong>' + dateStr + '</strong> f\\u00fcr <strong>KOSTENLOSE LIEFERUNG!</strong>',\n    it: 'Ordina entro il <strong>' + dateStr + '</strong> per la <strong>SPEDIZIONE GRATUITA!</strong>'\n  };\n\n  document.getElementById('alivText').innerHTML = templates[lang] || templates['fr'];\n})();\n</script>"
+          }
+        },
+        "custom_liquid_CYWgXp": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{%- comment -%} STEPBOX • Étape 1 (Custom Liquid) {%- endcomment -%}\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_strong = \"Your photos\" -%}\n    {%- assign t_line   = \"You can send <b>multiple photos</b>, separate or in a group.\" -%}\n    {%- assign t_later  = \"📎 You can send your photos later by email after ordering.\" -%}\n  {%- when 'es' -%}\n    {%- assign t_strong = \"Tus fotos\" -%}\n    {%- assign t_line   = \"Puedes enviar <b>varias fotos</b>, por separado o en grupo.\" -%}\n    {%- assign t_later  = \"📎 Puedes enviar tus fotos más tarde por correo después del pedido.\" -%}\n  {%- when 'de' -%}\n    {%- assign t_strong = \"Deine Fotos\" -%}\n    {%- assign t_line   = \"Du kannst <b>mehrere Fotos</b> senden, einzeln oder als Gruppe.\" -%}\n    {%- assign t_later  = \"📎 Du kannst deine Fotos nach der Bestellung per E-Mail senden.\" -%}\n  {%- when 'it' -%}\n    {%- assign t_strong = \"Le tue foto\" -%}\n    {%- assign t_line   = \"Puoi inviare <b>più foto</b>, singole o in gruppo.\" -%}\n    {%- assign t_later  = \"📎 Puoi inviare le tue foto in seguito via e-mail dopo l'ordine.\" -%}\n  {%- else -%}\n    {%- assign t_strong = \"Vos photos\" -%}\n    {%- assign t_line   = \"Vous pouvez envoyer <b>plusieurs photos</b>, séparées ou en groupe.\" -%}\n    {%- assign t_later  = \"📎 Vous pouvez envoyer vos photos plus tard par e-mail après la commande.\" -%}\n{%- endcase -%}\n\n<div class=\"apx-stepbox\">\n  <div class=\"apx-stepbox__inner\">\n    <span class=\"apx-stepbox__num\">1</span>\n    <div class=\"apx-stepbox__body\">\n      <strong class=\"apx-stepbox__title\">{{ t_strong }}</strong>\n      <span class=\"apx-stepbox__desc\">{{ t_line }}</span>\n      <span class=\"apx-stepbox__later\">{{ t_later }}</span>\n    </div>\n  </div>\n</div>\n\n<style>\n@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap');\n\n.apx-stepbox { margin: 8px 0; font-family: 'DM Sans', sans-serif; }\n\n.apx-stepbox__inner {\n  display: flex;\n  align-items: flex-start;\n  gap: 12px;\n  padding: 14px 16px;\n  border-radius: 14px;\n  background: rgba(255,255,255,.04);\n  border: 1px solid rgba(255,255,255,.08) !important;\n  border-bottom: 1px solid rgba(255,255,255,.08) !important;\n}\n\n/* Numéro */\n.apx-stepbox__num {\n  width: 24px;\n  height: 24px;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 12px;\n  font-weight: 800;\n  color: #000;\n  background: #f5a623;\n  flex: 0 0 auto;\n  line-height: 1;\n}\n\n/* Texte */\n.apx-stepbox__body {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n  line-height: 1.4;\n}\n\n.apx-stepbox__title {\n  font-size: 14px;\n  font-weight: 800;\n  color: #f0ede8;\n  line-height: 1.3;\n}\n\n.apx-stepbox__desc {\n  font-size: 12.5px;\n  color: #9a9690;\n  line-height: 1.5;\n}\n\n.apx-stepbox__desc b {\n  color: #f0ede8;\n  font-weight: 700;\n}\n\n/* Mention photos plus tard */\n.apx-stepbox__later {\n  display: inline-block;\n  margin-top: 6px;\n  font-size: 11.5px;\n  font-weight: 500;\n  color: #f5a623;\n  background: rgba(245,166,35,.08);\n  border: 1px solid rgba(245,166,35,.2) !important;\n  border-bottom: 1px solid rgba(245,166,35,.2) !important;\n  border-radius: 6px;\n  padding: 5px 10px;\n  line-height: 1.4;\n}\n</style>"
+          }
+        },
+        "file_uploads_by_uploadkit_app_block_nyfdbm": {
+          "type": "shopify://apps/file-uploads-by-uploadkit/blocks/app-block/d7b05810-6170-4288-808a-df45248c4d28",
+          "settings": {
+            "product": "{{product}}"
+          }
+        },
+        "custom_liquid_UjanpR": {
+          "type": "custom_liquid",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "{% assign lang = request.locale.iso_code %}\n\n{% case lang %}\n  {% when 'en' %}\n    {% assign item_1 = 'Preview within <strong>48 business hours</strong>' %}\n    {% assign item_2 = 'Approval before printing' %}\n    {% assign item_3 = '<strong>Free & fast delivery*</strong>' %}\n    {% assign item_4 = '<strong>Edits included</strong>' %}\n  {% when 'es' %}\n    {% assign item_1 = 'Vista previa en <strong>48 horas laborables</strong>' %}\n    {% assign item_2 = 'Validación antes de la impresión' %}\n    {% assign item_3 = '<strong>Entrega gratuita y rápida*</strong>' %}\n    {% assign item_4 = '<strong>Retoques incluidos</strong>' %}\n  {% when 'de' %}\n    {% assign item_1 = 'Vorschau innerhalb von <strong>48 Werktagen</strong>' %}\n    {% assign item_2 = 'Freigabe vor dem Druck' %}\n    {% assign item_3 = '<strong>Kostenlose & schnelle Lieferung*</strong>' %}\n    {% assign item_4 = '<strong>Überarbeitungen inklusive</strong>' %}\n  {% when 'it' %}\n    {% assign item_1 = 'Anteprima entro <strong>48 ore lavorative</strong>' %}\n    {% assign item_2 = 'Convalida prima della stampa' %}\n    {% assign item_3 = '<strong>Spedizione gratuita e veloce*</strong>' %}\n    {% assign item_4 = '<strong>Modifiche incluse</strong>' %}\n  {% else %}\n    {% assign item_1 = 'Aperçu sous <strong>24–48 h ouvrées</strong>' %}\n    {% assign item_2 = 'Validation avant impression' %}\n    {% assign item_3 = '<strong>Livraison gratuite et rapide*</strong>' %}\n    {% assign item_4 = '<strong>Retouche comprise</strong>' %}\n{% endcase %}\n\n<div class=\"apx-reassure\">\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_1 }}</span>\n  </div>\n\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_2 }}</span>\n  </div>\n\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_3 }}</span>\n  </div>\n\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_4 }}</span>\n  </div>\n</div>\n\n<style>\n.apx-reassure{\n  max-width: 920px;\n  margin: 16px auto;\n  padding: 14px 16px;\n\n  display:grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 10px 14px;\n\n  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));\n  border: 1px solid rgba(255,255,255,0.12);\n  border-radius: 16px;\n  box-shadow: 0 10px 28px rgba(0,0,0,0.35);\n}\n\n.apx-reassure__item{\n  display:flex;\n  align-items:center;\n  gap:10px;\n\n  padding: 10px 12px;\n  border-radius: 12px;\n  background: rgba(255,255,255,0.04);\n  border: 1px solid rgba(255,255,255,0.08);\n}\n\n.apx-reassure__dot{\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: #25D366;\n  flex: 0 0 auto;\n  box-shadow: 0 0 0 4px rgba(37,211,102,0.12);\n}\n\n.apx-reassure__text{\n  color: rgba(255,255,255,0.88);\n  font-size: 13.5px;\n  font-weight: 600;\n  line-height: 1.35;\n}\n\n.apx-reassure__text strong{\n  color: #fff;\n  font-weight: 800;\n}\n\n@media (max-width: 640px){\n  .apx-reassure{\n    grid-template-columns: 1fr;\n    padding: 12px;\n    gap: 8px;\n  }\n\n  .apx-reassure__item{\n    padding: 10px 11px;\n  }\n\n  .apx-reassure__text{\n    font-size: 13px;\n  }\n}\n</style>"
+          }
+        },
+        "custom_liquid_yikeyq": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{%- comment -%} STEPBOX • Étape 2 (Custom Liquid) {%- endcomment -%}\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_strong = \"Choose the options\" -%}\n    {%- assign t_line   = \"Number of people & format\" -%}\n  {%- when 'es' -%}\n    {%- assign t_strong = \"Elige las opciones\" -%}\n    {%- assign t_line   = \"Número de personas y formato\" -%}\n  {%- when 'de' -%}\n    {%- assign t_strong = \"Optionen auswählen\" -%}\n    {%- assign t_line   = \"Anzahl der Personen & Format\" -%}\n  {%- when 'it' -%}\n    {%- assign t_strong = \"Scegli le opzioni\" -%}\n    {%- assign t_line   = \"Numero di persone e formato\" -%}\n  {%- else -%}\n    {%- assign t_strong = \"Choisissez les options\" -%}\n    {%- assign t_line   = \"Nombre de personnes & format\" -%}\n{%- endcase -%}\n\n<div class=\"apx-stepbox\">\n  <div class=\"apx-stepbox__inner\">\n    <span class=\"apx-stepbox__num\">2</span>\n    <div class=\"apx-stepbox__body\">\n      <strong class=\"apx-stepbox__title\">{{ t_strong }}</strong>\n      <span class=\"apx-stepbox__desc\">{{ t_line }}</span>\n    </div>\n  </div>\n</div>\n\n<style>\n@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap');\n\n.apx-stepbox { margin: 8px 0; font-family: 'DM Sans', sans-serif; }\n\n.apx-stepbox__inner {\n  display: flex;\n  align-items: flex-start;\n  gap: 12px;\n  padding: 14px 16px;\n  border-radius: 14px;\n  background: rgba(255,255,255,.04);\n  border: 1px solid rgba(255,255,255,.08) !important;\n  border-bottom: 1px solid rgba(255,255,255,.08) !important;\n}\n\n.apx-stepbox__num {\n  width: 24px;\n  height: 24px;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 12px;\n  font-weight: 800;\n  color: #000;\n  background: #f5a623;\n  flex: 0 0 auto;\n  line-height: 1;\n}\n\n.apx-stepbox__body {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n  line-height: 1.4;\n}\n\n.apx-stepbox__title {\n  font-size: 14px;\n  font-weight: 800;\n  color: #f0ede8;\n  line-height: 1.3;\n}\n\n.apx-stepbox__desc {\n  font-size: 12.5px;\n  color: #9a9690;\n  line-height: 1.5;\n}\n\n.apx-stepbox__desc b {\n  color: #f0ede8;\n  font-weight: 700;\n}\n</style>"
+          }
+        },
+        "custom_liquid_WwxJXm": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% comment %}\n  ARTPIXE — Format Selector Visuel v9 — i18n FR · EN · DE · ES · IT\n  Changelog v9 : data-fmt alignés sur les vraies valeurs variantes Shopify\n                 \"Displate\" et \"Displate avec cadre\"\n  Grille 2×2 (Digital · Poster A3 · Displate · Displate avec cadre)\n{% endcomment %}\n\n{% if localization.language.iso_code == \"en\" %}\n  {% assign apx_label      = \"Version:\" %}\n  {% assign apx_d_name     = \"Digital HD\" %}\n  {% assign apx_d_desc     = \"High-res file by email. Perfect for printing or sharing.\" %}\n  {% assign apx_p_name     = \"Poster A3\" %}\n  {% assign apx_p_desc     = \"29.7x42 cm, premium paper. Printed in France, anti-fold tube.\" %}\n  {% assign apx_c_name     = \"Displate\" %}\n  {% assign apx_c_desc     = \"Metal print, magnetic mount. No nails, 30-sec install.\" %}\n  {% assign apx_dc_name    = \"Displate + Frame\" %}\n  {% assign apx_dc_desc    = \"Metal print + premium photo frame included. Ready to hang.\" %}\n  {% assign apx_bestseller = \"Best Seller\" %}\n  {% assign apx_premium    = \"Premium\" %}\n{% elsif localization.language.iso_code == \"de\" %}\n  {% assign apx_label      = \"Version:\" %}\n  {% assign apx_d_name     = \"Digital HD\" %}\n  {% assign apx_d_desc     = \"Hochauflösende Datei per E-Mail. Ideal zum Drucken oder Teilen.\" %}\n  {% assign apx_p_name     = \"Poster A3\" %}\n  {% assign apx_p_desc     = \"29,7x42 cm, Premium-Papier. In Frankreich gedruckt, Schutzrolle.\" %}\n  {% assign apx_c_name     = \"Displate\" %}\n  {% assign apx_c_desc     = \"Metalldruck, Magnetsystem. Kein Nagel, Montage in 30 Sek.\" %}\n  {% assign apx_dc_name    = \"Displate + Rahmen\" %}\n  {% assign apx_dc_desc    = \"Metalldruck + Bilderrahmen inklusive. Aufhängebereit.\" %}\n  {% assign apx_bestseller = \"Bestseller\" %}\n  {% assign apx_premium    = \"Premium\" %}\n{% elsif localization.language.iso_code == \"es\" %}\n  {% assign apx_label      = \"Version:\" %}\n  {% assign apx_d_name     = \"Digital HD\" %}\n  {% assign apx_d_desc     = \"Archivo HD por email. Perfecto para imprimir o compartir.\" %}\n  {% assign apx_p_name     = \"Poster A3\" %}\n  {% assign apx_p_desc     = \"29,7x42 cm, papel premium. Impreso en Francia, tubo protector.\" %}\n  {% assign apx_c_name     = \"Displate\" %}\n  {% assign apx_c_desc     = \"Impresión metal, sistema magnético. Sin clavos, 30 segundos.\" %}\n  {% assign apx_dc_name    = \"Displate + Marco\" %}\n  {% assign apx_dc_desc    = \"Impresión metal + marco premium incluido. Listo para colgar.\" %}\n  {% assign apx_bestseller = \"Mas vendido\" %}\n  {% assign apx_premium    = \"Premium\" %}\n{% elsif localization.language.iso_code == \"it\" %}\n  {% assign apx_label      = \"Versione:\" %}\n  {% assign apx_d_name     = \"Digital HD\" %}\n  {% assign apx_d_desc     = \"File HD via email. Perfetto per stampare o condividere.\" %}\n  {% assign apx_p_name     = \"Poster A3\" %}\n  {% assign apx_p_desc     = \"29,7x42 cm, carta premium. Stampato in Francia, tubo protettivo.\" %}\n  {% assign apx_c_name     = \"Displate\" %}\n  {% assign apx_c_desc     = \"Stampa metallo, sistema magnetico. Senza chiodi, 30 secondi.\" %}\n  {% assign apx_dc_name    = \"Displate + Cornice\" %}\n  {% assign apx_dc_desc    = \"Stampa metallo + cornice premium inclusa. Pronta da appendere.\" %}\n  {% assign apx_bestseller = \"Piu venduto\" %}\n  {% assign apx_premium    = \"Premium\" %}\n{% else %}\n  {% assign apx_label      = \"Version :\" %}\n  {% assign apx_d_name     = \"Digital HD\" %}\n  {% assign apx_d_desc     = \"Fichier HD par email. Ideal pour imprimer ou partager.\" %}\n  {% assign apx_p_name     = \"Poster A3\" %}\n  {% assign apx_p_desc     = \"29,7x42 cm, papier premium. Imprime en France, tube anti-pli.\" %}\n  {% assign apx_c_name     = \"Displate\" %}\n  {% assign apx_c_desc     = \"Impression metal, systeme magnetique. Sans clou, 30 secondes.\" %}\n  {% assign apx_dc_name    = \"Displate + Cadre\" %}\n  {% assign apx_dc_desc    = \"Impression metal + cadre photo haut de gamme inclus. Pret a accrocher.\" %}\n  {% assign apx_bestseller = \"Best Seller\" %}\n  {% assign apx_premium    = \"Premium\" %}\n{% endif %}\n\n<style>\n@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');\n\n.apx-version-hidden {\n  display: none !important;\n  visibility: hidden !important;\n  height: 0 !important;\n  overflow: hidden !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  pointer-events: none !important;\n}\n\n#apx-fmt {\n  margin: 0 0 14px;\n  font-family: 'DM Sans', sans-serif;\n}\n#apx-fmt .apx-label {\n  font-size: 12px;\n  font-weight: 500;\n  color: #f0ede8;\n  margin-bottom: 8px;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n#apx-fmt .apx-lv { color: #f5a623; }\n\n/* ── Grille 2×2 ── */\n.apx-grid {\n  display: grid;\n  grid-template-columns: repeat(2, 1fr);\n  gap: 7px;\n}\n\n/* ── Wrapper ── */\n.apx-wrap {\n  position: relative;\n  padding-top: 10px;\n}\n\n/* ── Carte ── */\n.apx-card {\n  background: #141416;\n  border: 1.5px solid rgba(255,255,255,.07);\n  border-radius: 10px;\n  padding: 12px 10px 12px;\n  text-align: center;\n  cursor: pointer;\n  position: relative;\n  overflow: hidden;\n  transition: border-color .18s, background .18s, transform .13s;\n  -webkit-user-select: none;\n  user-select: none;\n  box-shadow: none !important;\n  height: 100%;\n}\n.apx-card *, .apx-card *::before, .apx-card *::after {\n  box-shadow: none !important;\n  border-bottom: none !important;\n}\n.apx-card::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(245,166,35,.07), transparent 70%);\n  opacity: 0;\n  transition: opacity .18s;\n  pointer-events: none;\n}\n.apx-card:hover { border-color: rgba(245,166,35,.4); transform: translateY(-1px); }\n.apx-card:hover::before { opacity: 1; }\n.apx-card.apx-on { border-color: #f5a623; background: rgba(245,166,35,.05); }\n.apx-card.apx-on::before { opacity: 1; }\n\n/* ── Carte Displate — contour vert ── */\n.apx-card-bs {\n  border-color: #22c55e;\n  background: rgba(34,197,94,.04);\n}\n.apx-card-bs::before {\n  background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(34,197,94,.08), transparent 70%);\n}\n.apx-card-bs:hover {\n  border-color: #22c55e;\n  background: rgba(34,197,94,.07);\n}\n.apx-card-bs.apx-on {\n  border-color: #22c55e;\n  background: rgba(34,197,94,.07);\n}\n\n/* ── Carte Displate avec cadre — contour orange doré ── */\n.apx-card-premium {\n  border-color: rgba(245,166,35,.35);\n  background: rgba(245,166,35,.03);\n}\n.apx-card-premium::before {\n  background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(245,166,35,.1), transparent 70%);\n}\n.apx-card-premium:hover {\n  border-color: rgba(245,166,35,.6);\n  background: rgba(245,166,35,.06);\n}\n.apx-card-premium.apx-on {\n  border-color: #f5a623;\n  background: rgba(245,166,35,.07);\n}\n\n/* ── Badges ── */\n.apx-bs-tag,\n.apx-premium-tag {\n  position: absolute;\n  top: 0;\n  left: 50%;\n  transform: translateX(-50%);\n  z-index: 10;\n  font-family: 'DM Sans', sans-serif;\n  font-size: 9px;\n  font-weight: 700;\n  letter-spacing: .1em;\n  text-transform: uppercase;\n  color: #000;\n  border-radius: 4px;\n  padding: 2px 8px;\n  white-space: nowrap;\n  pointer-events: none;\n}\n.apx-bs-tag      { background: #22c55e; }\n.apx-premium-tag { background: #f5a623; }\n\n/* ── Check ── */\n.apx-check {\n  position: absolute;\n  top: 7px; right: 7px;\n  width: 15px; height: 15px;\n  border-radius: 50%;\n  background: #f5a623;\n  display: flex; align-items: center; justify-content: center;\n  opacity: 0; transform: scale(.4);\n  transition: opacity .18s, transform .18s;\n  z-index: 2;\n}\n.apx-card-bs .apx-check      { background: #22c55e; }\n.apx-card-premium .apx-check { background: #f5a623; }\n.apx-check svg { width: 8px; height: 8px; fill: none; stroke: #000; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }\n.apx-card.apx-on .apx-check { opacity: 1; transform: scale(1); }\n\n/* ── Contenu ── */\n.apx-ico  { font-size: 22px; display: block; margin-bottom: 5px; line-height: 1; }\n.apx-name { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: .04em; color: #f0ede8; margin-bottom: 5px; line-height: 1.05; }\n.apx-desc { font-size: 10px; color: #7a7870; line-height: 1.45; margin: 0; font-weight: 300; }\n</style>\n\n<div id=\"apx-fmt\">\n  <p class=\"apx-label\">{{ apx_label }} <span class=\"apx-lv\" id=\"apx-lv\">{{ apx_d_name }}</span></p>\n  <div class=\"apx-grid\" role=\"radiogroup\">\n\n    <!-- Digital -->\n    <div class=\"apx-wrap\">\n      <div class=\"apx-card apx-on\" data-fmt=\"Digital\" data-label=\"{{ apx_d_name }}\"\n           role=\"radio\" aria-checked=\"true\" tabindex=\"0\"\n           onclick=\"apxPick(this)\" onkeydown=\"if(event.key==='Enter'||event.key===' ')apxPick(this)\">\n        <div class=\"apx-check\"><svg viewBox=\"0 0 12 12\"><polyline points=\"2,6 5,9 10,3\"/></svg></div>\n        <span class=\"apx-ico\">💻</span>\n        <div class=\"apx-name\">{{ apx_d_name }}</div>\n        <p class=\"apx-desc\">{{ apx_d_desc }}</p>\n      </div>\n    </div>\n\n    <!-- Poster A3 -->\n    <div class=\"apx-wrap\">\n      <div class=\"apx-card\" data-fmt=\"Poster A3\" data-label=\"{{ apx_p_name }}\"\n           role=\"radio\" aria-checked=\"false\" tabindex=\"0\"\n           onclick=\"apxPick(this)\" onkeydown=\"if(event.key==='Enter'||event.key===' ')apxPick(this)\">\n        <div class=\"apx-check\"><svg viewBox=\"0 0 12 12\"><polyline points=\"2,6 5,9 10,3\"/></svg></div>\n        <span class=\"apx-ico\">🖼️</span>\n        <div class=\"apx-name\">{{ apx_p_name }}</div>\n        <p class=\"apx-desc\">{{ apx_p_desc }}</p>\n      </div>\n    </div>\n\n    <!-- Displate (métal seul) — valeur variante Shopify : \"Displate\" -->\n    <div class=\"apx-wrap\">\n      <span class=\"apx-bs-tag\">{{ apx_bestseller }}</span>\n      <div class=\"apx-card apx-card-bs\" data-fmt=\"Displate\" data-label=\"{{ apx_c_name }}\"\n           role=\"radio\" aria-checked=\"false\" tabindex=\"0\"\n           onclick=\"apxPick(this)\" onkeydown=\"if(event.key==='Enter'||event.key===' ')apxPick(this)\">\n        <div class=\"apx-check\"><svg viewBox=\"0 0 12 12\"><polyline points=\"2,6 5,9 10,3\"/></svg></div>\n        <span class=\"apx-ico\">✨</span>\n        <div class=\"apx-name\">{{ apx_c_name }}</div>\n        <p class=\"apx-desc\">{{ apx_c_desc }}</p>\n      </div>\n    </div>\n\n    <!-- Displate avec cadre — valeur variante Shopify : \"Displate avec cadre\" -->\n    <div class=\"apx-wrap\">\n      <span class=\"apx-premium-tag\">{{ apx_premium }}</span>\n      <div class=\"apx-card apx-card-premium\" data-fmt=\"Displate avec cadre\" data-label=\"{{ apx_dc_name }}\"\n           role=\"radio\" aria-checked=\"false\" tabindex=\"0\"\n           onclick=\"apxPick(this)\" onkeydown=\"if(event.key==='Enter'||event.key===' ')apxPick(this)\">\n        <div class=\"apx-check\"><svg viewBox=\"0 0 12 12\"><polyline points=\"2,6 5,9 10,3\"/></svg></div>\n        <span class=\"apx-ico\">🏆</span>\n        <div class=\"apx-name\">{{ apx_dc_name }}</div>\n        <p class=\"apx-desc\">{{ apx_dc_desc }}</p>\n      </div>\n    </div>\n\n  </div>\n</div>\n\n<script>\n(function () {\n\n  window.apxPick = function (card) {\n    var val   = card.getAttribute('data-fmt');\n    var label = card.getAttribute('data-label') || val;\n    document.querySelectorAll('.apx-card').forEach(function (c) {\n      c.classList.remove('apx-on');\n      c.setAttribute('aria-checked', 'false');\n    });\n    card.classList.add('apx-on');\n    card.setAttribute('aria-checked', 'true');\n    var lv = document.getElementById('apx-lv');\n    if (lv) lv.textContent = label;\n    apxSync(val);\n  };\n\n  function apxSync(val) {\n    /* Toutes les variantes utilisent désormais les valeurs exactes :\n       \"Digital\" | \"Poster A3\" | \"Displate\" | \"Displate avec cadre\"\n       On tente la valeur exacte en premier, puis les anciens noms en fallback\n       pour compatibilité avec d'éventuels produits non migrés. */\n    var attempts = [val];\n    if (val === 'Displate')            attempts.push('Cadre Displate');\n    if (val === 'Displate avec cadre') attempts.push('Cadre Displate avec Cadre', 'Cadre Displate + Cadre');\n    if (val === 'Cadre Displate')      attempts.push('Displate');\n\n    for (var ai = 0; ai < attempts.length; ai++) {\n      var v = attempts[ai];\n      var btn = document.querySelector(\n        '[data-value=\"' + v + '\"]:not(#apx-fmt *)'\n      );\n      if (btn) { btn.click(); return; }\n    }\n\n    /* Radios */\n    document.querySelectorAll('input[type=\"radio\"]').forEach(function (r) {\n      if (r.closest('#apx-fmt')) return;\n      for (var ai = 0; ai < attempts.length; ai++) {\n        if (r.value === attempts[ai]) {\n          r.checked = true; r.click();\n          r.dispatchEvent(new Event('change', { bubbles: true }));\n          return;\n        }\n      }\n    });\n\n    /* Selects */\n    document.querySelectorAll('select').forEach(function (s) {\n      if (s.closest('#apx-fmt')) return;\n      Array.prototype.forEach.call(s.options, function (o) {\n        for (var ai = 0; ai < attempts.length; ai++) {\n          if (o.text.trim() === attempts[ai] || o.value === attempts[ai]) {\n            s.value = o.value;\n            s.dispatchEvent(new Event('change', { bubbles: true }));\n          }\n        }\n      });\n    });\n\n    /* Labels / buttons texte */\n    document.querySelectorAll('label, button').forEach(function (el) {\n      if (el.closest('#apx-fmt')) return;\n      for (var ai = 0; ai < attempts.length; ai++) {\n        if (el.textContent.trim() === attempts[ai]) { el.click(); return; }\n      }\n    });\n  }\n\n  function findAndHide() {\n    var found = false;\n    var candidates = document.querySelectorAll('label, button, span, div, li');\n    for (var i = 0; i < candidates.length; i++) {\n      var el = candidates[i];\n      if (el.closest('#apx-fmt')) continue;\n      if (el.textContent.trim() !== 'Digital') continue;\n      var node = el.parentElement, limit = 0;\n      while (node && node !== document.body && limit < 10) {\n        var txt = node.textContent || '';\n        if (txt.indexOf('Poster A3') > -1 &&\n            (txt.indexOf('Displate') > -1) &&\n            !node.closest('#apx-fmt')) {\n          node.classList.add('apx-version-hidden');\n          found = true; break;\n        }\n        node = node.parentElement; limit++;\n      }\n      if (found) break;\n    }\n    if (!found) {\n      var opt1 = document.querySelector('[data-option-index=\"1\"]');\n      if (opt1 && !opt1.closest('#apx-fmt')) {\n        opt1.classList.add('apx-version-hidden'); found = true;\n      }\n    }\n    return found;\n  }\n\n  function init() {\n    var ok = findAndHide();\n    if (!ok && typeof MutationObserver !== 'undefined') {\n      var obs = new MutationObserver(function () { if (findAndHide()) obs.disconnect(); });\n      obs.observe(document.body, { childList: true, subtree: true });\n      setTimeout(function () { obs.disconnect(); }, 5000);\n    }\n    var def = document.querySelector('.apx-card[data-fmt=\"Digital\"]');\n    if (def) apxPick(def);\n  }\n\n  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); }\n  else { setTimeout(init, 180); }\n\n})();\n</script>"
+          }
+        },
+        "form": {
+          "type": "form",
+          "settings": {
+            "selector_mode": "block",
+            "color_mode": "color is-sw-cl__round",
+            "enable_fit_ratio_img": false,
+            "color_size": "medium",
+            "show_qty": false,
+            "enable_wishlist": false,
+            "enable_compare": false,
+            "btn_atc_full": true,
+            "pr_btn_round": 5,
+            "ani": "none",
+            "time": 15,
+            "btn_txt": "0",
+            "btn_icon": false,
+            "button_style": "default",
+            "button_color": "light",
+            "button_effect": "sweep-to-right",
+            "wishlist_color": "#222222",
+            "wishlist_color_hover": "#56cfe1",
+            "wishlist_color_active": "#e81e1e",
+            "compare_color": "#222222",
+            "compare_color_hover": "#56cfe1",
+            "compare_color_active": "#222222",
+            "show_dynamic_checkout": false,
+            "btn_txt2": "3",
+            "button_color_payment": "custom1",
+            "show_gift_card_recipient": true,
+            "product_list": [],
+            "show_product_current": true,
+            "qty_val": "0",
+            "advance_label": "Choose style",
+            "advance_pr_list": []
+          }
+        },
+        "custom_liquid_bazRiE": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% comment %}\n  ARTPIXE — 4 Feature Cards\n  Position : après le titre, avant le prix\n{% endcomment %}\n\n{% assign lang = localization.language.iso_code | default: request.locale.iso_code | default: 'fr' %}\n\n{% case lang %}\n  {% when 'en' %}\n    {% assign t_draw    = 'Digital artist' %}\n    {% assign t_custom  = 'Unlimited customization' %}\n    {% assign t_touch   = 'Unlimited revisions' %}\n    {% assign t_preview = 'Preview in 48H' %}\n  {% when 'de' %}\n    {% assign t_draw    = 'Digitaler Grafiker' %}\n    {% assign t_custom  = 'Unbegrenzte Anpassung' %}\n    {% assign t_touch   = 'Unbegrenzte Korrekturen' %}\n    {% assign t_preview = 'Vorschau in 48H' %}\n  {% when 'es' %}\n    {% assign t_draw    = 'Diseñador digital' %}\n    {% assign t_custom  = 'Personalización ilimitada' %}\n    {% assign t_touch   = 'Retoques ilimitados' %}\n    {% assign t_preview = 'Vista previa en 48H' %}\n  {% when 'it' %}\n    {% assign t_draw    = 'Grafico digitale' %}\n    {% assign t_custom  = 'Personalizzazione illimitata' %}\n    {% assign t_touch   = 'Ritocchi illimitati' %}\n    {% assign t_preview = 'Anteprima in 48H' %}\n  {% else %}\n    {% assign t_draw    = 'Graphiste numérique' %}\n    {% assign t_custom  = 'Personnalisation illimitée' %}\n    {% assign t_touch   = 'Retouches illimitées' %}\n    {% assign t_preview = 'Aperçu sous 24–48 h ouvrées' %}\n{% endcase %}\n\n<style>\n@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');\n.apx-feat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;}\n.apx-feat__card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:14px;text-align:center;transition:border-color .2s,background .2s;}\n.apx-feat__card:hover{background:rgba(255,255,255,.07);border-color:rgba(245,166,35,.25);}\n.apx-feat__icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;}\n.apx-feat__icon--draw{background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.2);color:#f5a623;}\n.apx-feat__icon--custom{background:rgba(99,179,237,.10);border:1px solid rgba(99,179,237,.2);color:#63b3ed;}\n.apx-feat__icon--gift{background:rgba(154,214,117,.10);border:1px solid rgba(154,214,117,.2);color:#9ad675;}\n.apx-feat__label{font-size:11px;font-weight:600;color:#f0ede8;line-height:1.3;font-family:'DM Sans',sans-serif;}\n.apx-feat__card--hl{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.25);}\n.apx-feat__card--hl:hover{background:rgba(245,166,35,.13);}\n.apx-feat__big{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;color:#f5a623;letter-spacing:.02em;}\n.apx-feat__card--hl .apx-feat__label{color:#f5a623;font-weight:700;}\n@media(max-width:480px){\n  .apx-feat{grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;}\n  .apx-feat__card{padding:10px 6px;gap:5px;border-radius:10px;}\n  .apx-feat__icon{width:34px;height:34px;}\n  .apx-feat__icon svg{width:16px;height:16px;}\n  .apx-feat__label{font-size:10px;}\n  .apx-feat__big{font-size:22px;}\n}\n</style>\n\n<div class=\"apx-feat\">\n  <div class=\"apx-feat__card\">\n    <div class=\"apx-feat__icon apx-feat__icon--draw\">\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"22\" height=\"22\"><path d=\"M4 20h4l10.5-10.5a2 2 0 0 0 0-3L16.5 4a2 2 0 0 0-3 0L3 14.5V20Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M12.5 5.5l6 6\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg>\n    </div>\n    <span class=\"apx-feat__label\">{{ t_draw }}</span>\n  </div>\n  <div class=\"apx-feat__card\">\n    <div class=\"apx-feat__icon apx-feat__icon--custom\">\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"22\" height=\"22\"><circle cx=\"12\" cy=\"12\" r=\"3\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg>\n    </div>\n    <span class=\"apx-feat__label\">{{ t_custom }}</span>\n  </div>\n  <div class=\"apx-feat__card\">\n    <div class=\"apx-feat__icon apx-feat__icon--gift\">\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"22\" height=\"22\"><rect x=\"3\" y=\"9\" width=\"18\" height=\"13\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M21 9H3V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2Z\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M12 5v17\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg>\n    </div>\n    <span class=\"apx-feat__label\">{{ t_touch }}</span>\n  </div>\n  <div class=\"apx-feat__card apx-feat__card--hl\">\n    <span class=\"apx-feat__big\">24–48</span>\n    <span class=\"apx-feat__label\">{{ t_preview }}</span>\n  </div>\n</div>"
+          }
+        },
+        "properties_h6wmNd": {
+          "type": "properties",
+          "settings": {
+            "type": "short",
+            "heading": "Prénom(s) ou Pseudo(s) :",
+            "options": "Pseudo(s)",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "all",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": []
+          }
+        },
+        "properties_nDfwmN": {
+          "type": "properties",
+          "settings": {
+            "type": "short",
+            "heading": "Montant de la prime ฿ :",
+            "options": "Montant de la prime ฿",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "portrait-personnalise-one-piece"
+            ]
+          }
+        },
+        "properties_MWBzhp": {
+          "type": "properties",
+          "settings": {
+            "type": "long",
+            "heading": "Demandes particulières :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "all",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": []
+          }
+        },
+        "custom_liquid_bPXp4m": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<style>\n@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');\n\n.avc-section {\n  padding: 40px 16px;\n  background: transparent;\n}\n.avc-inner { max-width: 1100px; margin: 0 auto; }\n\n.avc-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 4px;\n  gap: 10px;\n}\n.avc-title {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 14px;\n  font-weight: 500;\n  color: #9a9690;\n  line-height: 1;\n}\n.avc-arrows { display: flex; gap: 6px; }\n.avc-arrow {\n  width: 28px; height: 28px;\n  border-radius: 50%;\n  border: 1px solid rgba(255,255,255,.12);\n  background: transparent;\n  color: #9a9690;\n  font-size: 13px;\n  cursor: pointer;\n  display: flex; align-items: center; justify-content: center;\n  box-shadow: none;\n  transition: border-color .15s, color .15s;\n}\n.avc-arrow:hover { border-color: #f5a623; color: #f5a623; }\n\n.avc-track-wrap { overflow: hidden; margin-top: 12px; }\n.avc-track {\n  display: flex;\n  gap: 8px;\n  transition: transform .4s cubic-bezier(.25,.46,.45,.94);\n}\n\n/* Desktop: 5 cartes · Tablette: 4 · Mobile: 2.3 */\n.avc-card {\n  flex: 0 0 calc((100% - 32px) / 5);\n  background: #141416;\n  border: 1px solid rgba(255,255,255,.07);\n  border-radius: 10px;\n  overflow: hidden;\n  cursor: pointer;\n  transition: transform .2s, border-color .2s;\n}\n.avc-card:hover {\n  transform: translateY(-2px);\n  border-color: rgba(245,166,35,.22);\n}\n.avc-img-wrap {\n  position: relative;\n  aspect-ratio: 1 / 1;\n  overflow: hidden;\n  background: #1a1a1d;\n}\n.avc-img-wrap img {\n  width: 100%; height: 100%;\n  object-fit: cover;\n  display: block;\n  transition: transform .3s ease;\n}\n.avc-card:hover .avc-img-wrap img { transform: scale(1.04); }\n\n.avc-body { padding: 8px 10px 10px; }\n.avc-stars { color: #f5a623; font-size: 11px; letter-spacing: .5px; margin-bottom: 3px; }\n.avc-name {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 12px; font-weight: 500;\n  color: #f0ede8;\n  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;\n}\n.avc-date {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 10px;\n  color: #5a5855;\n  margin-top: 1px;\n}\n\n.avc-dots {\n  display: flex;\n  justify-content: center;\n  gap: 5px;\n  margin-top: 14px;\n}\n.avc-dot {\n  width: 5px; height: 5px;\n  border-radius: 50%;\n  background: rgba(255,255,255,.15);\n  cursor: pointer;\n  transition: background .2s, transform .2s;\n}\n.avc-dot.active { background: #f5a623; transform: scale(1.35); }\n\n/* Lightbox */\n.avc-lb {\n  display: none;\n  position: fixed; inset: 0; z-index: 9999;\n  background: rgba(0,0,0,.9);\n  align-items: center; justify-content: center;\n  padding: 16px;\n}\n.avc-lb.open { display: flex; }\n.avc-lb-box {\n  background: #141416;\n  border: 1px solid rgba(255,255,255,.1);\n  border-radius: 16px;\n  max-width: 420px; width: 100%;\n  overflow: hidden;\n  position: relative;\n  max-height: 90vh;\n  display: flex; flex-direction: column;\n}\n.avc-lb-img {\n  width: 100%;\n  max-height: 52vh;\n  object-fit: contain;\n  background: #0d0d0f;\n  display: block;\n}\n.avc-lb-content { padding: 16px 18px; overflow-y: auto; }\n.avc-lb-stars { color: #f5a623; font-size: 15px; margin-bottom: 8px; }\n.avc-lb-text {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 13px; color: #f0ede8;\n  line-height: 1.65; margin-bottom: 10px;\n}\n.avc-lb-meta {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 11px; color: #9a9690;\n  display: flex; align-items: center; gap: 5px;\n}\n.avc-lb-meta::before {\n  content: ''; display: inline-block;\n  width: 4px; height: 4px;\n  background: #f5a623; border-radius: 50%; flex-shrink: 0;\n}\n.avc-lb-close {\n  position: absolute; top: 8px; right: 8px;\n  width: 26px; height: 26px;\n  background: rgba(0,0,0,.6); border-radius: 50%;\n  display: flex; align-items: center; justify-content: center;\n  cursor: pointer; font-size: 13px; color: #f0ede8;\n  border: none; box-shadow: none;\n  transition: background .15s;\n}\n.avc-lb-close:hover { background: rgba(245,166,35,.3); }\n\n@media (max-width: 900px) {\n  .avc-card { flex: 0 0 calc((100% - 24px) / 4); }\n}\n@media (max-width: 640px) {\n  .avc-card { flex: 0 0 calc((100% - 16px) / 2.3); }\n  .avc-section { padding: 32px 14px; }\n}\n@media (max-width: 380px) {\n  .avc-card { flex: 0 0 75%; }\n}\n</style>\n\n<div class=\"avc-section\">\n  <div class=\"avc-inner\">\n\n    <div class=\"avc-header\">\n      <div class=\"avc-title\">Ce que disent nos clients :</div>\n      <div class=\"avc-arrows\">\n        <button class=\"avc-arrow\" id=\"avcPrev\" aria-label=\"Précédent\">&#8592;</button>\n        <button class=\"avc-arrow\" id=\"avcNext\" aria-label=\"Suivant\">&#8594;</button>\n      </div>\n    </div>\n\n    <div class=\"avc-track-wrap\">\n      <div class=\"avc-track\" id=\"avcTrack\">\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2026/4/8/ZNjICcfVg.jpg','Rachel S.','Avr 2026','Une expérience magique du début à la fin ! L\\'équipe ultra disponible, réactive. La première proposition était déjà la bonne — mes cousins vont être aux anges !')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2026/4/8/ZNjICcfVg.jpg\" alt=\"Avis portrait personnalisé Rachel S. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Rachel S.</div>\n            <div class=\"avc-date\">Avr 2026</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2026/1/2/yQDGXsUNUk.jpg','Loris M.','Jan 2026','Commande d\\'une affiche format avis de recherche One Piece. Très belle qualité et fidèle aux photos envoyées !')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2026/1/2/yQDGXsUNUk.jpg\" alt=\"Avis portrait personnalisé Loris M. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★</div>\n            <div class=\"avc-name\">Loris M.</div>\n            <div class=\"avc-date\">Jan 2026</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2025/12/20/ogdyDGPoq.jpg','Milja M.','Déc 2025','Ma fille est ravie, très belle qualité.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2025/12/20/ogdyDGPoq.jpg\" alt=\"Avis portrait personnalisé Milja M. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Milja M.</div>\n            <div class=\"avc-date\">Déc 2025</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2025/9/19/dwIOIkFAZ.jpg','Valentine L.','Sep 2025','Magnifique portrait de mes 2 fils jumeaux. J\\'ai vu leurs yeux s\\'illuminer : \\\"c\\'est nous en fait, c\\'est trop génial !\\\" — j\\'étais émue. Félicitations pour votre beau travail !')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2025/9/19/dwIOIkFAZ.jpg\" alt=\"Avis portrait personnalisé Valentine L. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Valentine L.</div>\n            <div class=\"avc-date\">Sep 2025</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2025/6/17/G885TyDfD.jpg','Stellia C.','Juin 2025','MA-GNI-FI-QUE ! Mon chéri a adoré — il pensait recevoir un poster mais c\\'était le portrait de notre fils. Surprise réussie ! Il en a déjà parlé à ses amis.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2025/6/17/G885TyDfD.jpg\" alt=\"Avis portrait personnalisé Stellia C. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Stellia C.</div>\n            <div class=\"avc-date\">Juin 2025</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2025/6/11/01ES5zJdV.jpg','Geoffrey L.','Juin 2025','Envoi soigné, joli rendu.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2025/6/11/01ES5zJdV.jpg\" alt=\"Avis portrait personnalisé Geoffrey L. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Geoffrey L.</div>\n            <div class=\"avc-date\">Juin 2025</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2024/11/17/msZ1swB-d.jpg','Mélissa B.','Nov 2024','Le Displate est magnifique et j\\'ai hâte de pouvoir l\\'offrir à ma meilleure amie pour Noël. Elle va être aux anges.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2024/11/17/msZ1swB-d.jpg\" alt=\"Avis portrait personnalisé Mélissa B. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Mélissa B.</div>\n            <div class=\"avc-date\">Nov 2024</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2024/6/6/J-NJkZ1mkI.jpg','Virginie A.','Juin 2024','Cadeau original, mon fils était ravi. Poster très bien fait.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2024/6/6/J-NJkZ1mkI.jpg\" alt=\"Avis portrait personnalisé Virginie A. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Virginie A.</div>\n            <div class=\"avc-date\">Juin 2024</div>\n          </div>\n        </div>\n\n      </div>\n    </div>\n\n    <div class=\"avc-dots\" id=\"avcDots\"></div>\n\n  </div>\n</div>\n\n<div class=\"avc-lb\" id=\"avcLb\" onclick=\"if(event.target===this)avcClose()\">\n  <div class=\"avc-lb-box\">\n    <button class=\"avc-lb-close\" onclick=\"avcClose()\">✕</button>\n    <img class=\"avc-lb-img\" id=\"avcLbImg\" src=\"\" alt=\"\">\n    <div class=\"avc-lb-content\">\n      <div class=\"avc-lb-stars\">★★★★★</div>\n      <div class=\"avc-lb-text\" id=\"avcLbText\"></div>\n      <div class=\"avc-lb-meta\" id=\"avcLbMeta\"></div>\n    </div>\n  </div>\n</div>\n\n<script>\n(function(){\n  var track = document.getElementById('avcTrack');\n  var dotsEl = document.getElementById('avcDots');\n  var cards  = track.querySelectorAll('.avc-card');\n  var total  = cards.length;\n  var cur    = 0;\n\n  function visibleCount(){\n    var w = track.parentElement.offsetWidth;\n    if(w <= 380) return 1;\n    if(w <= 640) return 2;\n    if(w <= 900) return 4;\n    return 5;\n  }\n  function maxIndex(){ return Math.max(0, total - visibleCount()); }\n  function cardW(){ return cards[0] ? cards[0].offsetWidth + 8 : 0; }\n\n  function goTo(i){\n    cur = Math.min(Math.max(i, 0), maxIndex());\n    track.style.transform = 'translateX(-' + (cur * cardW()) + 'px)';\n    dotsEl.querySelectorAll('.avc-dot').forEach(function(d,j){\n      d.classList.toggle('active', j === cur);\n    });\n  }\n\n  function buildDots(){\n    dotsEl.innerHTML = '';\n    var n = maxIndex() + 1;\n    for(var i = 0; i < n; i++){\n      var d = document.createElement('div');\n      d.className = 'avc-dot' + (i===0?' active':'');\n      d.setAttribute('data-i', i);\n      d.onclick = function(){ goTo(+this.getAttribute('data-i')); };\n      dotsEl.appendChild(d);\n    }\n  }\n\n  document.getElementById('avcPrev').onclick = function(){ goTo(cur-1); };\n  document.getElementById('avcNext').onclick = function(){ goTo(cur+1); };\n\n  buildDots();\n  window.addEventListener('resize', function(){ buildDots(); goTo(0); });\n\n  var sx = 0;\n  track.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; },{passive:true});\n  track.addEventListener('touchend',   function(e){\n    var dx = sx - e.changedTouches[0].clientX;\n    if(Math.abs(dx) > 36) goTo(cur + (dx > 0 ? 1 : -1));\n  },{passive:true});\n})();\n\nfunction avcOpen(img,name,date,text){\n  document.getElementById('avcLbImg').src = img;\n  document.getElementById('avcLbImg').alt = name+' — Artpixe';\n  document.getElementById('avcLbText').textContent = text;\n  document.getElementById('avcLbMeta').textContent = name+' · '+date+' · Achat vérifié';\n  document.getElementById('avcLb').classList.add('open');\n  document.body.style.overflow='hidden';\n}\nfunction avcClose(){\n  document.getElementById('avcLb').classList.remove('open');\n  document.body.style.overflow='';\n}\n</script>"
+          }
+        },
+        "loox_reviews_loox_gallery_carousel_section_gBxrXy": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-gallery-carousel-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "disabled": true,
+          "settings": {
+            "maxWidth": 1100,
+            "borderRadius": 60,
+            "itemsPerView": 5,
+            "mobileItemsPerView": 3,
+            "imageRatio": "1",
+            "reviewerNameColor": "#ffffff",
+            "starsColor": "#ffffff",
+            "arrows_backgroundColor": "#ffffff",
+            "arrows_iconColor": "#9a9a9a",
+            "shadow": "none",
+            "border_active": false,
+            "border_width": 2,
+            "border_color": "#000000",
+            "productIds": ""
+          }
+        },
+        "custom_liquid_iE9wCj": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% comment %} ARTPIXE — Garanties — Rick et Morty {% endcomment %}\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_badge=\"Why Artpixe\" -%}{%- assign t_title=\"Your personalised Rick and Morty portrait — guaranteed quality\" -%}\n    {%- assign t1_top=\"222 verified 5★ reviews\" -%}{%- assign t1_bot=\"2 532 portraits created\" -%}\n    {%- assign t2_top=\"Preview in 48h\" -%}{%- assign t2_bot=\"Guaranteed business hours\" -%}\n    {%- assign t3_top=\"Unlimited revisions\" -%}{%- assign t3_bot=\"Until you are 100% satisfied\" -%}\n    {%- assign t4_top=\"Perfect gift\" -%}{%- assign t4_bot=\"Couple · Family · Friends\" -%}\n    {%- assign t5_top=\"Secure payment\" -%}{%- assign t5_bot=\"Protected transactions\" -%}\n  {%- when 'es' -%}\n    {%- assign t_badge=\"Por que Artpixe\" -%}{%- assign t_title=\"Tu retrato Rick y Morty personalizado — calidad garantizada\" -%}\n    {%- assign t1_top=\"222 resenas 5★ verificadas\" -%}{%- assign t1_bot=\"2 532 retratos creados\" -%}\n    {%- assign t2_top=\"Vista previa en 48 h\" -%}{%- assign t2_bot=\"Garantizado en horas laborables\" -%}\n    {%- assign t3_top=\"Retoques ilimitados\" -%}{%- assign t3_bot=\"Hasta tu aprobacion completa\" -%}\n    {%- assign t4_top=\"Regalo perfecto\" -%}{%- assign t4_bot=\"Pareja · Familia · Amigos\" -%}\n    {%- assign t5_top=\"Pago seguro\" -%}{%- assign t5_bot=\"Transacciones protegidas\" -%}\n  {%- when 'de' -%}\n    {%- assign t_badge=\"Warum Artpixe\" -%}{%- assign t_title=\"Dein personalisiertes Rick und Morty Portrait — garantierte Qualitat\" -%}\n    {%- assign t1_top=\"222 verifizierte 5★ Bewertungen\" -%}{%- assign t1_bot=\"2 532 erstellte Portrats\" -%}\n    {%- assign t2_top=\"Vorschau in 48 Std.\" -%}{%- assign t2_bot=\"Garantiert in Werkstagsstunden\" -%}\n    {%- assign t3_top=\"Unbegrenzte Korrekturen\" -%}{%- assign t3_bot=\"Bis zur vollen Zufriedenheit\" -%}\n    {%- assign t4_top=\"Perfektes Geschenk\" -%}{%- assign t4_bot=\"Paar · Familie · Freunde\" -%}\n    {%- assign t5_top=\"Sichere Zahlung\" -%}{%- assign t5_bot=\"Geschutzte Transaktionen\" -%}\n  {%- when 'it' -%}\n    {%- assign t_badge=\"Perche Artpixe\" -%}{%- assign t_title=\"Il tuo ritratto Rick e Morty personalizzato — qualita garantita\" -%}\n    {%- assign t1_top=\"222 recensioni 5★ verificate\" -%}{%- assign t1_bot=\"2 532 ritratti creati\" -%}\n    {%- assign t2_top=\"Anteprima in 48 ore\" -%}{%- assign t2_bot=\"Garantita in ore lavorative\" -%}\n    {%- assign t3_top=\"Ritocchi illimitati\" -%}{%- assign t3_bot=\"Fino alla tua piena soddisfazione\" -%}\n    {%- assign t4_top=\"Regalo perfetto\" -%}{%- assign t4_bot=\"Coppia · Famiglia · Amici\" -%}\n    {%- assign t5_top=\"Pagamento sicuro\" -%}{%- assign t5_bot=\"Transazioni protette\" -%}\n  {%- else -%}\n    {%- assign t_badge=\"Pourquoi Artpixe\" -%}{%- assign t_title=\"Ton portrait Rick et Morty personnalisé — qualité garantie\" -%}\n    {%- assign t1_top=\"222 avis 5★ vérifiés\" -%}{%- assign t1_bot=\"2 532 portraits créés\" -%}\n    {%- assign t2_top=\"Aperçu sous 24–48 h ouvrées\" -%}{%- assign t2_bot=\"Garanti en heures ouvrées\" -%}\n    {%- assign t3_top=\"Retouches illimitées\" -%}{%- assign t3_bot=\"Jusqu'à ta validation complète\" -%}\n    {%- assign t4_top=\"Cadeau parfait\" -%}{%- assign t4_bot=\"Couple · Famille · Amis\" -%}\n    {%- assign t5_top=\"Paiement sécurisé\" -%}{%- assign t5_bot=\"Transactions protégées\" -%}\n{%- endcase -%}\n<link href=\"https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap\" rel=\"stylesheet\">\n<section class=\"apx-guar\" aria-label=\"{{ t_badge }}\">\n  <div class=\"apx-guar__head\">\n    <span class=\"apx-guar__badge\">{{ t_badge }}</span>\n    <h2 class=\"apx-guar__title\">{{ t_title }}</h2>\n  </div>\n  <ul class=\"apx-guar__grid\">\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--star\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t1_top }}</div><div class=\"apx-guar__bot\">{{ t1_bot }}</div></div></li>\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--clock\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><circle cx=\"12\" cy=\"12\" r=\"9\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M12 7v5l3 3\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t2_top }}</div><div class=\"apx-guar__bot\">{{ t2_bot }}</div></div></li>\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--edit\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><path d=\"M4 20h4l10.5-10.5a2 2 0 0 0 0-2.8l-1.2-1.2a2 2 0 0 0-2.8 0L4 16v4Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M13.5 6.5l4 4\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t3_top }}</div><div class=\"apx-guar__bot\">{{ t3_bot }}</div></div></li>\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--gift\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><rect x=\"3\" y=\"9\" width=\"18\" height=\"13\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M21 9H3V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2Z\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M12 5v17M12 5c0-1.7-2-3-2-3s0 2 2 3ZM12 5c0-1.7 2-3 2-3s0 2-2 3Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t4_top }}</div><div class=\"apx-guar__bot\">{{ t4_bot }}</div></div></li>\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--lock\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><rect x=\"5\" y=\"11\" width=\"14\" height=\"11\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M8 11V7a4 4 0 1 1 8 0v4\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"16\" r=\"1.5\" fill=\"currentColor\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t5_top }}</div><div class=\"apx-guar__bot\">{{ t5_bot }}</div></div></li>\n  </ul>\n</section>\n<style>\n.apx-guar{margin:12px 0;padding:20px;background:#141416;border:1px solid rgba(255,255,255,.07);border-radius:18px;font-family:'DM Sans',sans-serif;}\n.apx-guar__head{margin-bottom:16px;}\n.apx-guar__badge{display:inline-flex;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:#f5a623;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-bottom:8px;}\n.apx-guar__title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.02em;color:#f0ede8;line-height:1.1;}\n.apx-guar__grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;list-style:none;padding:0;margin:0;align-items:stretch;}\n.apx-guar__item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;min-height:62px;}\n.apx-guar__ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}\n.apx-guar__ico--star{background:rgba(245,166,35,.12);color:#f5a623;border:1px solid rgba(245,166,35,.2);}\n.apx-guar__ico--clock{background:rgba(99,179,237,.1);color:#63b3ed;border:1px solid rgba(99,179,237,.2);}\n.apx-guar__ico--edit{background:rgba(154,214,117,.1);color:#9ad675;border:1px solid rgba(154,214,117,.2);}\n.apx-guar__ico--gift{background:rgba(236,107,174,.1);color:#ec6bae;border:1px solid rgba(236,107,174,.2);}\n.apx-guar__ico--lock{background:rgba(169,140,245,.1);color:#a98cf5;border:1px solid rgba(169,140,245,.2);}\n.apx-guar__txt{flex:1;min-width:0;}\n.apx-guar__top{font-size:12px;font-weight:600;color:#f0ede8;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}\n.apx-guar__bot{font-size:11px;font-weight:300;color:#9a9690;margin-top:2px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}\n.apx-guar__item:last-child:nth-child(odd){grid-column:1/-1;}\n.apx-guar__item:last-child:nth-child(odd) .apx-guar__top,.apx-guar__item:last-child:nth-child(odd) .apx-guar__bot{white-space:normal;}\n@media(max-width:560px){.apx-guar__grid{grid-template-columns:1fr;}.apx-guar__item:last-child:nth-child(odd){grid-column:auto;}.apx-guar__top,.apx-guar__bot{white-space:normal;}}\n</style>"
+          }
+        },
+        "instafeed_story_app_block_story_VDChDA": {
+          "type": "shopify://apps/instafeed/blocks/app-block-story/4169bff3-1d6b-44ad-9377-2ebc3d31f01c",
+          "disabled": true,
+          "settings": {}
+        },
+        "tab_liquid_CKf3EQ": {
+          "type": "tab_liquid",
+          "disabled": true,
+          "settings": {
+            "title": "Comment fonctionne Displate ?",
+            "custom_liquid": "<p><strong>Collez la feuille</strong></p>\n<p>Nettoyez le mur en utilisant la lingette incluse. Une fois qu'il est complètement sec, collez la feuille protectrice et appuyez autour pour enlever les bulles d'air.</p>\n<p><img src=\"https://cdn.shopify.com/s/files/1/0782/3494/3826/files/mounting_system-01.gif?v=1723221644\" alt=\"Image - Collez la feuille\"></p><br>\n\n<p><strong>Placez l'aimant</strong></p>\n<p>Retirez le film protecteur et collez l'aimant à l'endroit désigné sur la feuille protectrice. Appuyez fermement pendant au moins 5 secondes pour assurer une bonne fixation.</p>\n<p><img src=\"https://cdn.shopify.com/s/files/1/0782/3494/3826/files/mounting_system-02.gif?v=1723221644\" alt=\"Image - Placez l'aimant\"></p><br>\n\n<p><strong>Accrochez votre Displate</strong></p>\n<p>Positionnez-le comme vous le souhaitez et affichez-vous fièrement ! Vous pouvez le remplacer par un autre Displate en quelques secondes et l'accrocher en utilisant le même aimant.</p>\n<p><img src=\"https://cdn.shopify.com/s/files/1/0782/3494/3826/files/mounting_system-03.gif?v=1723221645\" alt=\"Image - Accrochez votre Displate\"></p>"
+          }
+        },
+        "56e67368-7424-4d73-8f14-dacdda4c59be": {
+          "type": "tab_rivui",
+          "settings": {
+            "title": "Nos avis clients",
+            "review_liquid": ""
+          }
+        },
+        "properties_zKhpHa": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "Choisis ton élément (Pokémon) :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_yqpqCG": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "2 - Attaque n°1 :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_xM3eMJ": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "3 - Description Attaque n°1 :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_44QizW": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "4 - Attaque n°2 :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_HwaVya": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "5 - Description Attaque n°2 :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_d6gUYK": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "6 - Votre histoire :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_kEqygG": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "long",
+            "heading": "Demande particulière aux dessinateurs :",
+            "options": "Demande particulière aux dessinateurs",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "all",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": []
+          }
+        }
+      },
+      "block_order": [
+        "loox_reviews_loox_rating_M4cTYJ",
+        "custom_liquid_RrKR7d",
+        "custom_liquid_Ddwk4T",
+        "title",
+        "price_review",
+        "custom_liquid_HfGhbQ",
+        "95d4f334-8ea7-4cd2-b609-2373b1e848b8",
+        "custom_liquid_jt8zXP",
+        "custom_liquid_w7HAUk",
+        "custom_liquid_CYWgXp",
+        "file_uploads_by_uploadkit_app_block_nyfdbm",
+        "custom_liquid_UjanpR",
+        "custom_liquid_yikeyq",
+        "custom_liquid_WwxJXm",
+        "form",
+        "custom_liquid_bazRiE",
+        "properties_h6wmNd",
+        "properties_nDfwmN",
+        "properties_MWBzhp",
+        "custom_liquid_bPXp4m",
+        "loox_reviews_loox_gallery_carousel_section_gBxrXy",
+        "custom_liquid_iE9wCj",
+        "instafeed_story_app_block_story_VDChDA",
+        "tab_liquid_CKf3EQ",
+        "56e67368-7424-4d73-8f14-dacdda4c59be",
+        "properties_zKhpHa",
+        "properties_yqpqCG",
+        "properties_xM3eMJ",
+        "properties_44QizW",
+        "properties_HwaVya",
+        "properties_d6gUYK",
+        "properties_kEqygG"
+      ],
+      "custom_css": [
+        ".shopify-payment-button__more-options {display: none !important;}",
+        "input[type=\"text\"] {color: #000000 !important; /* ou la couleur que tu veux */}",
+        "textarea {color: #000000 !important; /* ou la couleur que tu veux */}"
+      ],
+      "settings": {
+        "pr_layout": "wide",
+        "enable_sticky_info": true,
+        "media_layout": "thumbnails_bottom",
+        "media_size": "medium",
+        "thumb_lr_size": "medium",
+        "image_ratio": "ratioadapt",
+        "image_size": "cover",
+        "image_position": "8",
+        "main_click": "none",
+        "zoom_tp": "external",
+        "enable_zoom_icon": false,
+        "enable_zoom_click_mb": true,
+        "enable_video_looping": false,
+        "enable_video_muting": true,
+        "enable_video_autoplaying": true,
+        "eff": "slide",
+        "nav_btn": false,
+        "btn_vi": "always",
+        "btn_owl": "outline",
+        "btn_shape": "round",
+        "btn_cl": "dark",
+        "btn_size": "small",
+        "btn_hidden_mobile": true,
+        "nav_dot": false,
+        "dot_owl": "elessi",
+        "dots_cl": "dark",
+        "dots_round": true,
+        "dots_space": 10,
+        "dots_hidden_mobile": false,
+        "tabs_design": "accordion",
+        "tabs_design_mb": "accordion",
+        "tabs_position": "external",
+        "enable_first_tab": false,
+        "tabs_layout_fix": "full",
+        "bg": "#141414",
+        "bg_mb": "#141414",
+        "product_list": [],
+        "sticky_mode": "0",
+        "sticky_show": "2",
+        "sticky_layout_mb": "minimal",
+        "enable_select": true,
+        "ani": "none",
+        "time": 15
+      }
+    },
+    "17700291493732a25d": {
+      "type": "apps",
+      "settings": {}
+    },
+    "recently-viewed-products": {
+      "type": "recently_viewed",
+      "disabled": true,
+      "settings": {
+        "show": true,
+        "design_heading": "8",
+        "heading_align": "t4s-text-start",
+        "top_heading": "Recently viewed products",
+        "icon_heading": "las la-gem",
+        "top_subheading": "",
+        "tophead_mb": 30,
+        "product_des": "1",
+        "show_vendor": false,
+        "use_cdt": false,
+        "limit": 14,
+        "sortby": "1",
+        "unavailable_prs": "show",
+        "image_ratio": "rationt",
+        "image_size": "cover",
+        "image_position": "8",
+        "content_align": "default",
+        "col_dk": "4",
+        "col_tb": "2",
+        "col_mb": "2",
+        "space_h_item": "30",
+        "space_v_item": "30",
+        "space_h_item_mb": "10",
+        "space_v_item_mb": "10",
+        "layout_des": "2",
+        "loop": true,
+        "au_time": 0,
+        "au_hover": true,
+        "nav_btn": true,
+        "btn_vi": "always",
+        "btn_owl": "outline",
+        "btn_shape": "round",
+        "btn_cl": "dark",
+        "btn_size": "small",
+        "btn_hidden_mobile": true,
+        "nav_dot": false,
+        "dot_owl": "default",
+        "dots_cl": "dark",
+        "dots_round": true,
+        "dots_space": 10,
+        "dots_hidden_mobile": false,
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "75px,,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "sidebar": {
+      "type": "sidebar-product",
+      "blocks": {
+        "f01b181b-62ee-4735-8e25-32cb71ccfaba": {
+          "type": "category",
+          "settings": {
+            "title_category": "Product Categories",
+            "cat_source": "1",
+            "cat_link_list": "",
+            "count": true
+          }
+        },
+        "f65f464b-9487-43be-9c91-8688a098bb6f": {
+          "type": "collection",
+          "settings": {
+            "title_fea_pr": "Sale Products",
+            "collection": "frontpage",
+            "limit_pr": 5,
+            "image_ratio": "t4s_ratioadapt",
+            "image_size": "t4s_cover",
+            "image_position": "t4s_position_8"
+          }
+        },
+        "83340bb8-58d2-4148-89e2-a4c7a01cf792": {
+          "type": "instagram",
+          "settings": {
+            "title_ins": "Instagram",
+            "mode": "2",
+            "acc": "",
+            "limit": 12,
+            "open_link": "_blank",
+            "round": 0,
+            "col_dk": "3",
+            "space_item": "6"
+          }
+        },
+        "9ce9ded8-1cef-4e32-b98b-47364ffa328c": {
+          "type": "shipping",
+          "settings": {
+            "title": "Shipping & Delivery",
+            "shipping_1": "las la-truck,FREE SHIPPING,Free shipping for all US order",
+            "shipping_2": "las la-headset,SUPPORT 24/7,We support 24 hours a day",
+            "shipping_3": "las la-exchange-alt,30 DAYS RETURN,You have 30 days to return",
+            "shipping_4": "",
+            "shipping_5": "",
+            "shipping_6": ""
+          }
+        },
+        "4a9c6ae8-f3b4-4192-a6d1-82d01670bce6": {
+          "type": "image",
+          "settings": {
+            "b_link": "",
+            "open_link": "_self",
+            "img_effect": "none",
+            "date": "2022/12/26",
+            "content_align": "center",
+            "cdt_des": "2",
+            "countdown_pos": "2",
+            "cdt_size": "medium",
+            "box_bdr": 0,
+            "bd_width": 0,
+            "space_item": 10,
+            "number_cl": "#ffffff",
+            "text_cl": "#ffffff",
+            "border_cl": "#000000",
+            "bg_cl": "#000000"
+          }
+        }
+      },
+      "block_order": [
+        "f01b181b-62ee-4735-8e25-32cb71ccfaba",
+        "f65f464b-9487-43be-9c91-8688a098bb6f",
+        "83340bb8-58d2-4148-89e2-a4c7a01cf792",
+        "9ce9ded8-1cef-4e32-b98b-47364ffa328c",
+        "4a9c6ae8-f3b4-4192-a6d1-82d01670bce6"
+      ],
+      "disabled": true,
+      "settings": {
+        "enable_drawer": true,
+        "space": 50,
+        "size": "medium",
+        "br_style": "none",
+        "brcolor": "#222222",
+        "sidebar_bdr": 5,
+        "sidebar_pd": 10
+      }
+    },
+    "9af9f87f-4d1f-4610-8b35-051976b34b07": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "{% comment %}\n  ARTPIXE — Comment ça marche — Custom Liquid Block\n  Rick et Morty version\n  i18n : FR · EN · ES · DE · IT\n{% endcomment %}\n\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_badge    = \"Simple process\" -%}\n    {%- assign t_title    = \"How to create your personalised Rick and Morty portrait?\" -%}\n    {%- assign t_sub      = \"4 steps. Preview in 48h, unlimited revisions included.\" -%}\n    {%- assign t_s1_h     = \"1. Choose your style\" -%}\n    {%- assign t_s1_p     = \"Select your Rick and Morty universe: inter-dimensional portal, spaceship, Citadel of Ricks, alien planet backdrop.\" -%}\n    {%- assign t_s2_h     = \"2. Send your photo\" -%}\n    {%- assign t_s2_p     = \"A clear front-facing photo. Alone, as a couple or with friends — up to 3 people on the same custom Rick and Morty portrait.\" -%}\n    {%- assign t_s3_h     = \"3. A designer creates your portrait\" -%}\n    {%- assign t_s3_p     = \"A human digital designer draws your personalised Rick and Morty portrait — no AI, no automatic filter.\" -%}\n    {%- assign t_s4_h     = \"4. Preview & approve\" -%}\n    {%- assign t_s4_p     = \"Preview within 48 business hours. Unlimited revisions until you are 100% satisfied.\" -%}\n    {%- assign t_cta      = \"Order my Rick and Morty portrait →\" -%}\n    {%- assign t_trust1   = \"Unlimited revisions\" -%}\n    {%- assign t_trust2   = \"Support 7 days/week\" -%}\n    {%- assign t_trust3   = \"Preview in 48h\" -%}\n    {%- assign t_schema_name = \"How to create a personalised Rick and Morty portrait\" -%}\n    {%- assign t_schema_desc = \"Order a personalised Rick and Morty portrait from Artpixe in 4 simple steps.\" -%}\n\n  {%- when 'es' -%}\n    {%- assign t_badge    = \"Proceso simple\" -%}\n    {%- assign t_title    = \"Como crear tu retrato Rick y Morty personalizado?\" -%}\n    {%- assign t_sub      = \"4 pasos. Vista previa en 48h, retoques ilimitados incluidos.\" -%}\n    {%- assign t_s1_h     = \"1. Elige tu estilo\" -%}\n    {%- assign t_s1_p     = \"Selecciona tu universo Rick y Morty: portal interdimensional, nave espacial, Ciudadela de los Ricks, planeta alienígena.\" -%}\n    {%- assign t_s2_h     = \"2. Envia tu foto\" -%}\n    {%- assign t_s2_p     = \"Una foto clara de frente. Solo/a, en pareja o con amigos — hasta 3 personas en el mismo retrato.\" -%}\n    {%- assign t_s3_h     = \"3. Un disenador crea tu retrato\" -%}\n    {%- assign t_s3_p     = \"Un disenador grafico digital humano dibuja tu retrato Rick y Morty personalizado. Sin IA ni filtros.\" -%}\n    {%- assign t_s4_h     = \"4. Vista previa y aprobacion\" -%}\n    {%- assign t_s4_p     = \"Vista previa en 48h laborables. Retoques ilimitados hasta tu aprobacion completa.\" -%}\n    {%- assign t_cta      = \"Pedir mi retrato Rick y Morty →\" -%}\n    {%- assign t_trust1   = \"Retoques ilimitados\" -%}\n    {%- assign t_trust2   = \"Soporte 7 dias/7\" -%}\n    {%- assign t_trust3   = \"Vista previa en 48h\" -%}\n    {%- assign t_schema_name = \"Como crear un retrato Rick y Morty personalizado\" -%}\n    {%- assign t_schema_desc = \"Encarga tu retrato Rick y Morty personalizado en Artpixe en 4 pasos.\" -%}\n\n  {%- when 'de' -%}\n    {%- assign t_badge    = \"Einfacher Ablauf\" -%}\n    {%- assign t_title    = \"Wie erstelle ich mein personalisiertes Rick und Morty Portrait?\" -%}\n    {%- assign t_sub      = \"4 Schritte. Vorschau in 48 Std., unbegrenzte Korrekturen inklusive.\" -%}\n    {%- assign t_s1_h     = \"1. Stil waehlen\" -%}\n    {%- assign t_s1_p     = \"Waehle dein Rick und Morty Universum: Dimensionsportal, Raumschiff, Zitadelle der Ricks, Alienplanet.\" -%}\n    {%- assign t_s2_h     = \"2. Foto einsenden\" -%}\n    {%- assign t_s2_p     = \"Ein klares Frontfoto. Allein, als Paar oder mit Freunden — bis zu 3 Personen auf demselben Portrait.\" -%}\n    {%- assign t_s3_h     = \"3. Ein Designer erstellt dein Portrait\" -%}\n    {%- assign t_s3_p     = \"Ein menschlicher digitaler Grafiker zeichnet dein Rick und Morty Portrait. Keine KI, keine Filter.\" -%}\n    {%- assign t_s4_h     = \"4. Vorschau und Freigabe\" -%}\n    {%- assign t_s4_p     = \"Vorschau in 48 Werkstagsstunden. Unbegrenzte Korrekturen bis zur vollen Zufriedenheit.\" -%}\n    {%- assign t_cta      = \"Mein Rick und Morty Portrait bestellen →\" -%}\n    {%- assign t_trust1   = \"Korrekturen inklusive\" -%}\n    {%- assign t_trust2   = \"Support 7 Tage/Woche\" -%}\n    {%- assign t_trust3   = \"Vorschau in 48h\" -%}\n    {%- assign t_schema_name = \"Wie erstelle ich ein personalisiertes Rick und Morty Portrait\" -%}\n    {%- assign t_schema_desc = \"Bestelle dein personalisiertes Rick und Morty Portrait bei Artpixe in 4 Schritten.\" -%}\n\n  {%- when 'it' -%}\n    {%- assign t_badge    = \"Processo semplice\" -%}\n    {%- assign t_title    = \"Come creare il tuo ritratto Rick e Morty personalizzato?\" -%}\n    {%- assign t_sub      = \"4 passaggi. Anteprima in 48 ore, ritocchi illimitati inclusi.\" -%}\n    {%- assign t_s1_h     = \"1. Scegli lo stile\" -%}\n    {%- assign t_s1_p     = \"Seleziona il tuo universo Rick e Morty: portale interdimensionale, astronave, Cittadella dei Rick, pianeta alieno.\" -%}\n    {%- assign t_s2_h     = \"2. Invia la tua foto\" -%}\n    {%- assign t_s2_p     = \"Una foto frontale e nitida. Da solo/a, in coppia o con amici — fino a 3 persone sullo stesso ritratto.\" -%}\n    {%- assign t_s3_h     = \"3. Un designer crea il tuo ritratto\" -%}\n    {%- assign t_s3_p     = \"Un grafico digitale umano disegna il tuo ritratto Rick e Morty personalizzato. Nessuna IA, nessun filtro.\" -%}\n    {%- assign t_s4_h     = \"4. Anteprima e approvazione\" -%}\n    {%- assign t_s4_p     = \"Anteprima entro 48 ore lavorative. Ritocchi illimitati fino alla tua piena soddisfazione.\" -%}\n    {%- assign t_cta      = \"Ordina il mio ritratto Rick e Morty →\" -%}\n    {%- assign t_trust1   = \"Ritocchi illimitati\" -%}\n    {%- assign t_trust2   = \"Supporto 7 giorni su 7\" -%}\n    {%- assign t_trust3   = \"Anteprima in 48h\" -%}\n    {%- assign t_schema_name = \"Come creare un ritratto Rick e Morty personalizzato\" -%}\n    {%- assign t_schema_desc = \"Ordina il tuo ritratto Rick e Morty personalizzato su Artpixe in 4 passaggi.\" -%}\n\n  {%- else -%}\n    {%- assign t_badge    = \"Processus simple\" -%}\n    {%- assign t_title    = \"Comment créer ton portrait Rick et Morty personnalisé ?\" -%}\n    {%- assign t_sub      = \"4 étapes. Aperçu sous 24–48 h ouvrées, retouches illimitées incluses.\" -%}\n    {%- assign t_s1_h     = \"1. Choisis ton style\" -%}\n    {%- assign t_s1_p     = \"Sélectionne ton univers Rick et Morty : portail inter-dimensionnel, vaisseau spatial, Citadelle des Ricks, planète alien ou fond personnalisé.\" -%}\n    {%- assign t_s2_h     = \"2. Envoie ta photo\" -%}\n    {%- assign t_s2_p     = \"Une photo nette de face. Seul(e), en couple ou entre amis — jusqu'à 3 personnes sur le même dessin Rick et Morty personnalisé.\" -%}\n    {%- assign t_s3_h     = \"3. Un graphiste crée ton portrait\" -%}\n    {%- assign t_s3_p     = \"Un graphiste numérique humain dessine ton portrait style Rick et Morty. Zéro IA, zéro filtre automatique.\" -%}\n    {%- assign t_s4_h     = \"4. Aperçu et validation\" -%}\n    {%- assign t_s4_p     = \"Aperçu de ton affiche Rick et Morty personnalisée sous 24–48 h ouvrées. Retouches illimitées jusqu'à ta validation complète.\" -%}\n    {%- assign t_cta      = \"Commander mon portrait Rick et Morty →\" -%}\n    {%- assign t_trust1   = \"Retouches illimitées\" -%}\n    {%- assign t_trust2   = \"Support 7j/7\" -%}\n    {%- assign t_trust3   = \"Aperçu sous 24–48 h ouvrées\" -%}\n    {%- assign t_schema_name = \"Comment créer un portrait Rick et Morty personnalisé\" -%}\n    {%- assign t_schema_desc = \"Commandez votre portrait Rick et Morty personnalisé sur Artpixe en 4 étapes simples. Dessin Rick et Morty personnalisé, poster Rick et Morty, affiche Rick et Morty sur commande.\" -%}\n{%- endcase -%}\n\n<script type=\"application/ld+json\">\n{\"@context\":\"https://schema.org\",\"@type\":\"HowTo\",\"name\":\"{{ t_schema_name }}\",\"description\":\"{{ t_schema_desc }}\",\"totalTime\":\"PT48H\",\"estimatedCost\":{\"@type\":\"MonetaryAmount\",\"currency\":\"EUR\",\"value\":\"19.90\"},\"step\":[{\"@type\":\"HowToStep\",\"position\":1,\"name\":\"{{ t_s1_h }}\",\"text\":\"{{ t_s1_p }}\"},{\"@type\":\"HowToStep\",\"position\":2,\"name\":\"{{ t_s2_h }}\",\"text\":\"{{ t_s2_p }}\"},{\"@type\":\"HowToStep\",\"position\":3,\"name\":\"{{ t_s3_h }}\",\"text\":\"{{ t_s3_p }}\"},{\"@type\":\"HowToStep\",\"position\":4,\"name\":\"{{ t_s4_h }}\",\"text\":\"{{ t_s4_p }}\"}]}\n</script>\n\n<link href=\"https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap\" rel=\"stylesheet\">\n\n<section class=\"apx-how\" id=\"apx-how\">\n  <div class=\"apx-how__inner\">\n    <div class=\"apx-how__head\">\n      <span class=\"apx-how__badge\">{{ t_badge }}</span>\n      <h2 class=\"apx-how__title\">{{ t_title }}</h2>\n      <p class=\"apx-how__sub\">{{ t_sub }}</p>\n    </div>\n    <div class=\"apx-how__track\" id=\"apx-track\" role=\"list\">\n      <div class=\"apx-step apx-reveal\" role=\"listitem\">\n        <div class=\"apx-step__icon apx-step__icon--1\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"36\" height=\"36\"><path d=\"M12 2l1.2 4.2L17.4 8 13.2 9.2 12 13.5 10.8 9.2 6.6 8l4.2-1.8L12 2Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M5 13l.7 2.5L8 16l-2.3 1 .7 2.5L5 18l-1.4 1.5.7-2.5L2 16l2.3-.5L5 13Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M18 12l.8 2.8L22 16l-3.2 1.2.8 2.8L18 18.3 16.6 20l.8-2.8L14 16l3.2-.8L18 12Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/></svg></div>\n        <h3 class=\"apx-step__h\">{{ t_s1_h }}</h3>\n        <p class=\"apx-step__p\">{{ t_s1_p }}</p>\n      </div>\n      <div class=\"apx-step apx-reveal\" role=\"listitem\">\n        <div class=\"apx-step__icon apx-step__icon--2\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"36\" height=\"36\"><path d=\"M7 8h10a2 2 0 0 1 2 2v9H5v-9a2 2 0 0 1 2-2Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M9 8l1-2h4l1 2\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M12 12.2a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2Z\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M16.8 6.7l.9.9\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></div>\n        <h3 class=\"apx-step__h\">{{ t_s2_h }}</h3>\n        <p class=\"apx-step__p\">{{ t_s2_p }}</p>\n      </div>\n      <div class=\"apx-step apx-reveal\" role=\"listitem\">\n        <div class=\"apx-step__icon apx-step__icon--3\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"36\" height=\"36\"><path d=\"M4 20h4l10.5-10.5a2 2 0 0 0 0-3L16.5 4a2 2 0 0 0-3 0L3 14.5V20Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M12.5 5.5l6 6\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><path d=\"M9 19h6\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></div>\n        <h3 class=\"apx-step__h\">{{ t_s3_h }}</h3>\n        <p class=\"apx-step__p\">{{ t_s3_p }}</p>\n      </div>\n      <div class=\"apx-step apx-reveal\" role=\"listitem\">\n        <div class=\"apx-step__icon apx-step__icon--4\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"36\" height=\"36\"><path d=\"M5 4h14v16H5V4Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M8 8h8v8H8V8Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M11 11.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z\" stroke=\"currentColor\" stroke-width=\"1.8\"/></svg></div>\n        <h3 class=\"apx-step__h\">{{ t_s4_h }}</h3>\n        <p class=\"apx-step__p\">{{ t_s4_p }}</p>\n      </div>\n    </div>\n    <div class=\"apx-dots\" id=\"apx-dots\" aria-hidden=\"true\">\n      <button class=\"apx-dot-btn active\" data-idx=\"0\"></button>\n      <button class=\"apx-dot-btn\" data-idx=\"1\"></button>\n      <button class=\"apx-dot-btn\" data-idx=\"2\"></button>\n      <button class=\"apx-dot-btn\" data-idx=\"3\"></button>\n    </div>\n    <div class=\"apx-how__cta apx-reveal\">\n      <a class=\"apx-how__btn\" href=\"/products/portrait-rick-et-morty-personnalise\">{{ t_cta }}</a>\n      <div class=\"apx-how__trust\">\n        <span class=\"apx-trust-dot\"></span>{{ t_trust1 }}\n        <span class=\"apx-trust-dot\"></span>{{ t_trust2 }}\n        <span class=\"apx-trust-dot\"></span>{{ t_trust3 }}\n      </div>\n    </div>\n  </div>\n</section>\n\n<style>\n  .apx-how{ padding:72px 20px; background:transparent; font-family:'DM Sans',sans-serif; overflow:hidden; }\n  .apx-how__inner{ max-width:1100px; margin:0 auto; }\n  .apx-how__head{ text-align:center; margin-bottom:40px; }\n  .apx-how__badge{ display:inline-flex; background:rgba(245,166,35,.1); border:1px solid rgba(245,166,35,.25); color:#f5a623; font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:5px 14px; border-radius:99px; margin-bottom:14px; }\n  .apx-how__title{ font-family:'Bebas Neue',sans-serif; font-size:clamp(26px,3.2vw,44px); letter-spacing:.02em; line-height:1.05; color:#f0ede8; margin:0 0 10px; }\n  .apx-how__sub{ color:#9a9690; font-size:15px; font-weight:300; margin:0; }\n  .apx-how__track{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }\n  .apx-step{ text-align:center; padding:28px 18px 24px; background:#141416; border:1px solid rgba(255,255,255,.07); border-radius:16px; transition:border-color .25s,transform .25s; }\n  .apx-step:hover{ border-color:rgba(245,166,35,.25); transform:translateY(-5px); }\n  .apx-step__icon{ width:80px; height:80px; border-radius:999px; margin:0 auto 16px; display:grid; place-items:center; position:relative; }\n  .apx-step__icon::after{ content:\"\"; position:absolute; inset:-1px; border-radius:999px; background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.15),transparent 55%); pointer-events:none; }\n  .apx-step__icon--1{ background:rgba(245,166,35,.12); border:1px solid rgba(245,166,35,.2); color:#f5a623; }\n  .apx-step__icon--2{ background:rgba(99,179,237,.1); border:1px solid rgba(99,179,237,.2); color:#63b3ed; }\n  .apx-step__icon--3{ background:rgba(154,214,117,.1); border:1px solid rgba(154,214,117,.2); color:#9ad675; }\n  .apx-step__icon--4{ background:rgba(169,140,245,.1); border:1px solid rgba(169,140,245,.2); color:#a98cf5; }\n  .apx-step__h{ font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:.03em; color:#f0ede8; margin:0 0 8px; }\n  .apx-step__p{ font-size:13px; font-weight:300; color:#9a9690; line-height:1.6; margin:0; }\n  .apx-dots{ display:none; }\n  .apx-how__cta{ text-align:center; margin-top:40px; }\n  .apx-how__btn{ display:inline-flex; align-items:center; justify-content:center; padding:15px 36px; border-radius:99px; background:#f5a623; color:#000; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:.06em; text-decoration:none; transition:background .2s,transform .2s; box-shadow:none!important; border:none!important; border-bottom:none!important; }\n  .apx-how__btn:hover{ background:#fff; transform:translateY(-2px); }\n  .apx-how__trust{ margin-top:14px; color:#9a9690; font-size:13px; font-weight:300; }\n  .apx-trust-dot{ display:inline-block; width:4px; height:4px; border-radius:999px; background:rgba(245,166,35,.5); margin:0 10px; transform:translateY(-2px); }\n  .apx-reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease,transform .6s ease; }\n  .apx-reveal.is-visible{ opacity:1; transform:translateY(0); }\n  @media(max-width:760px){\n    .apx-how{ padding:52px 0; }\n    .apx-how__inner{ padding:0; }\n    .apx-how__head{ padding:0 20px; }\n    .apx-how__track{ display:flex; overflow-x:scroll; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; gap:0; padding:4px 0 16px; }\n    .apx-how__track::-webkit-scrollbar{ display:none; }\n    .apx-step{ flex:0 0 calc(100vw - 64px); max-width:300px; scroll-snap-align:center; margin:0 10px; transform:none!important; }\n    .apx-step:first-child{ margin-left:calc((100vw - (100vw - 64px)) / 2); }\n    .apx-step:last-child{ margin-right:calc((100vw - (100vw - 64px)) / 2); }\n    .apx-step.is-active{ border-color:rgba(245,166,35,.3); background:rgba(245,166,35,.04); }\n    .apx-dots{ display:flex; justify-content:center; gap:8px; margin:4px 0 20px; }\n    .apx-dot-btn{ width:8px; height:8px; border-radius:99px; border:none; background:rgba(255,255,255,.2); padding:0; cursor:pointer; transition:background .2s,width .2s; }\n    .apx-dot-btn.active{ background:#f5a623; width:22px; }\n    .apx-how__cta{ padding:0 20px; }\n    .apx-how__btn{ width:auto; font-size:14px; padding:12px 24px; letter-spacing:.04em; background:transparent; color:#f5a623; border:1px solid rgba(245,166,35,.4)!important; box-shadow:none!important; }\n    .apx-how__btn:hover{ background:rgba(245,166,35,.08); color:#f5a623; box-shadow:none!important; }\n  }\n  @media(prefers-reduced-motion:reduce){ .apx-step,.apx-how__btn,.apx-reveal{ transition:none!important; } }\n</style>\n\n<script>\n(function(){\n  var section=document.getElementById('apx-how');\n  if(!section||section.dataset.apxInit==='1')return;\n  section.dataset.apxInit='1';\n  var revealEls=section.querySelectorAll('.apx-reveal');\n  if(revealEls.length){var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('is-visible');io.unobserve(e.target);}});},{threshold:0.15});revealEls.forEach(function(el,i){el.style.transitionDelay=(i*70)+'ms';io.observe(el);});}\n  var track=document.getElementById('apx-track');\n  var dots=document.querySelectorAll('#apx-dots .apx-dot-btn');\n  var cards=track?track.querySelectorAll('.apx-step'):[];\n  if(!track||!dots.length||!cards.length)return;\n  function onScroll(){var idx=Math.round(track.scrollLeft/(track.scrollWidth/cards.length));idx=Math.max(0,Math.min(idx,cards.length-1));dots.forEach(function(d,i){d.classList.toggle('active',i===idx);});cards.forEach(function(c,i){c.classList.toggle('is-active',i===idx);});}\n  dots.forEach(function(dot){dot.addEventListener('click',function(){var card=cards[parseInt(this.dataset.idx,10)];if(card)track.scrollTo({left:card.offsetLeft-(track.offsetWidth-card.offsetWidth)/2,behavior:'smooth'});});});\n  track.addEventListener('scroll',onScroll,{passive:true});\n  onScroll();\n})();\n</script>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "20px,,80px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,70px,",
+        "pd_mb": ""
+      }
+    },
+    "custom_liquid_VXNTDi": {
+      "type": "custom-liquid",
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "{% comment %}\n  ARTPIXE — Produits recommandés — Rick et Morty version\n  Recommande Simpson, Futurama, Tim Burton, Bob's Burgers\n  i18n 5 langues\n{% endcomment %}\n\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_badge      = \"You may also like\" -%}\n    {%- assign t_title      = \"Loved Rick and Morty? You'll love these too\" -%}\n    {%- assign t_sub        = \"Other personalised cartoon portraits — same quality, different universe.\" -%}\n    {%- assign t_from       = \"From\" -%}\n    {%- assign t_cta_simp   = \"Simpsons portrait →\" -%}\n    {%- assign t_cta_fut    = \"Futurama portrait →\" -%}\n    {%- assign t_cta_tb     = \"Tim Burton portrait →\" -%}\n    {%- assign t_collection = \"All personalised cartoon portraits →\" -%}\n  {%- when 'es' -%}\n    {%- assign t_badge      = \"Te puede gustar\" -%}\n    {%- assign t_title      = \"Te encanto Rick y Morty? Tambien te gustaran estos\" -%}\n    {%- assign t_sub        = \"Otros retratos cartoon personalizados — misma calidad, universo diferente.\" -%}\n    {%- assign t_from       = \"Desde\" -%}\n    {%- assign t_cta_simp   = \"Retrato Simpsons →\" -%}\n    {%- assign t_cta_fut    = \"Retrato Futurama →\" -%}\n    {%- assign t_cta_tb     = \"Retrato Tim Burton →\" -%}\n    {%- assign t_collection = \"Todos los retratos cartoon →\" -%}\n  {%- when 'de' -%}\n    {%- assign t_badge      = \"Das konnte dir gefallen\" -%}\n    {%- assign t_title      = \"Rick und Morty geliebt? Diese wirst du auch lieben\" -%}\n    {%- assign t_sub        = \"Weitere personalisierte Cartoon-Portrats — gleiche Qualitat, anderes Universum.\" -%}\n    {%- assign t_from       = \"Ab\" -%}\n    {%- assign t_cta_simp   = \"Simpsons Portrait →\" -%}\n    {%- assign t_cta_fut    = \"Futurama Portrait →\" -%}\n    {%- assign t_cta_tb     = \"Tim Burton Portrait →\" -%}\n    {%- assign t_collection = \"Alle Cartoon-Portraits ansehen →\" -%}\n  {%- when 'it' -%}\n    {%- assign t_badge      = \"Potrebbe piacerti\" -%}\n    {%- assign t_title      = \"Hai amato Rick e Morty? Amerai anche questi\" -%}\n    {%- assign t_sub        = \"Altri ritratti cartoon personalizzati — stessa qualita, universo diverso.\" -%}\n    {%- assign t_from       = \"Da\" -%}\n    {%- assign t_cta_simp   = \"Ritratto Simpsons →\" -%}\n    {%- assign t_cta_fut    = \"Ritratto Futurama →\" -%}\n    {%- assign t_cta_tb     = \"Ritratto Tim Burton →\" -%}\n    {%- assign t_collection = \"Tutti i ritratti cartoon →\" -%}\n  {%- else -%}\n    {%- assign t_badge      = \"Vous aimerez aussi\" -%}\n    {%- assign t_title      = \"Vous aimez Rick et Morty ? Découvrez aussi...\" -%}\n    {%- assign t_sub        = \"D'autres portraits cartoon personnalisés — même qualité, même passion pour le dessin animé.\" -%}\n    {%- assign t_from       = \"Dès\" -%}\n    {%- assign t_cta_simp   = \"Portrait Simpson personnalisé →\" -%}\n    {%- assign t_cta_fut    = \"Portrait Futurama personnalisé →\" -%}\n    {%- assign t_cta_tb     = \"Portrait Tim Burton personnalisé →\" -%}\n    {%- assign t_collection = \"Tous les portraits cartoon personnalisés →\" -%}\n{%- endcase -%}\n\n<link href=\"https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap\" rel=\"stylesheet\">\n\n<section class=\"apx-reco\" id=\"apx-reco\">\n  <div class=\"apx-reco__inner\">\n    <div class=\"apx-reco__head\">\n      <span class=\"apx-reco__badge\">{{ t_badge }}</span>\n      <h2 class=\"apx-reco__title\">{{ t_title }}</h2>\n      <p class=\"apx-reco__sub\">{{ t_sub }}</p>\n    </div>\n    <div class=\"apx-reco__track\" id=\"apx-reco-track\">\n\n      <!-- Simpson -->\n      <a class=\"apx-reco__card\" href=\"/products/portrait-simpson-personnalise\">\n        <div class=\"apx-reco__img-wrap\">\n          <img src=\"https://artpixe.com/cdn/shop/files/portraitpersonalisecartoonLessimpsons.webp?v=1772034376&width=400\" alt=\"Portrait Simpson personnalisé — dessin cartoon style Simpsons sur commande\" width=\"400\" height=\"auto\" loading=\"lazy\">\n        </div>\n        <div class=\"apx-reco__info\">\n          <p class=\"apx-reco__name\">Portrait Simpson personnalisé</p>\n          <p class=\"apx-reco__price\">{%- assign rp = all_products['portrait-simpson-personnalise'] -%}{%- if rp.id -%}{{ t_from }} {{ rp.price_min | money }}{%- endif -%}</p>\n        </div>\n        <span class=\"apx-reco__btn\">{{ t_cta_simp }}</span>\n      </a>\n\n      <!-- Futurama -->\n      <a class=\"apx-reco__card\" href=\"/products/portrait-futurama-personnalise\">\n        <div class=\"apx-reco__img-wrap\">\n          <img src=\"https://cdn.shopify.com/s/files/1/0782/3494/3826/files/portraitpersonalisecartoonfuturama_2.webp?v=1772034637&width=400\" alt=\"Portrait Futurama personnalisé — illustration cartoon sci-fi sur commande\" width=\"400\" height=\"auto\" loading=\"lazy\">\n        </div>\n        <div class=\"apx-reco__info\">\n          <p class=\"apx-reco__name\">Portrait Futurama personnalisé</p>\n          <p class=\"apx-reco__price\">{%- assign rp = all_products['portrait-futurama-personnalise'] -%}{%- if rp.id -%}{{ t_from }} {{ rp.price_min | money }}{%- endif -%}</p>\n        </div>\n        <span class=\"apx-reco__btn\">{{ t_cta_fut }}</span>\n      </a>\n\n      <!-- Tim Burton -->\n      <a class=\"apx-reco__card\" href=\"/products/portrait-tim-burton-personnalise\">\n        <div class=\"apx-reco__img-wrap\">\n          <img src=\"https://cdn.shopify.com/s/files/1/0782/3494/3826/files/portrait_personalise_tim_burton.webp?v=1772034561&width=400\" alt=\"Portrait Tim Burton personnalisé — illustration cartoon gothique sur commande\" width=\"400\" height=\"auto\" loading=\"lazy\">\n        </div>\n        <div class=\"apx-reco__info\">\n          <p class=\"apx-reco__name\">Portrait Tim Burton personnalisé</p>\n          <p class=\"apx-reco__price\">{%- assign rp = all_products['portrait-tim-burton-personnalise'] -%}{%- if rp.id -%}{{ t_from }} {{ rp.price_min | money }}{%- endif -%}</p>\n        </div>\n        <span class=\"apx-reco__btn\">{{ t_cta_tb }}</span>\n      </a>\n\n    </div>\n    <div class=\"apx-reco__dots\" id=\"apx-reco-dots\" aria-hidden=\"true\">\n      <button class=\"apx-reco__dot active\" data-idx=\"0\"></button>\n      <button class=\"apx-reco__dot\" data-idx=\"1\"></button>\n      <button class=\"apx-reco__dot\" data-idx=\"2\"></button>\n    </div>\n    <div class=\"apx-reco__footer\">\n      <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-reco__collection-btn\">{{ t_collection }}</a>\n    </div>\n  </div>\n</section>\n\n<style>\n  .apx-reco{ padding:64px 20px; background:transparent; font-family:'DM Sans',sans-serif; overflow:hidden; }\n  .apx-reco__inner{ max-width:1100px; margin:0 auto; }\n  .apx-reco__head{ text-align:center; margin-bottom:36px; }\n  .apx-reco__badge{ display:inline-flex; background:rgba(245,166,35,.1); border:1px solid rgba(245,166,35,.25); color:#f5a623; font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:5px 14px; border-radius:99px; margin-bottom:12px; }\n  .apx-reco__title{ font-family:'Bebas Neue',sans-serif; font-size:clamp(24px,3vw,40px); letter-spacing:.02em; line-height:1.05; color:#f0ede8; margin:0 0 8px; }\n  .apx-reco__sub{ font-size:14px; font-weight:300; color:#9a9690; margin:0; }\n  .apx-reco__track{ display:flex; gap:14px; }\n  .apx-reco__card{ flex:1; min-width:0; display:flex; flex-direction:column; background:#141416; border-radius:16px; overflow:hidden; text-decoration:none; transition:transform .25s; }\n  .apx-reco__card:hover{ transform:translateY(-4px); }\n  .apx-reco__img-wrap{ position:relative; overflow:hidden; }\n  .apx-reco__img-wrap img{ width:100%; height:auto; display:block; transition:transform .4s ease; }\n  .apx-reco__card:hover .apx-reco__img-wrap img{ transform:scale(1.04); }\n  .apx-reco__info{ padding:12px 14px 4px; flex:1; }\n  .apx-reco__name{ font-size:13px; font-weight:500; color:#f0ede8; margin:0 0 4px; line-height:1.3; }\n  .apx-reco__price{ font-size:12px; font-weight:300; color:#f5a623; margin:0; }\n  .apx-reco__btn{ display:block; margin:10px 14px 14px; padding:8px 0; text-align:center; background:rgba(245,166,35,.1); border:1px solid rgba(245,166,35,.2)!important; color:#f5a623; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:.05em; border-radius:99px; transition:background .2s,border-color .2s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; box-shadow:none!important; }\n  .apx-reco__card:hover .apx-reco__btn{ background:#f5a623; color:#000; border-color:#f5a623!important; }\n  .apx-reco__footer{ text-align:center; margin-top:28px; }\n  .apx-reco__collection-btn{ display:inline-flex; align-items:center; gap:8px; padding:9px 20px; border-radius:99px; border:1px solid rgba(245,166,35,.35)!important; background:transparent; color:#f5a623; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:.06em; text-decoration:none; transition:background .2s,border-color .2s,color .2s; box-shadow:none!important; }\n  .apx-reco__collection-btn:hover{ background:#f5a623; border-color:#f5a623!important; color:#000; }\n  .apx-reco__dots{ display:none; }\n  @media(max-width:760px){\n    .apx-reco{ padding:52px 0; }\n    .apx-reco__inner{ padding:0; }\n    .apx-reco__head{ padding:0 20px; }\n    .apx-reco__track{ overflow-x:scroll; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; gap:0; padding:4px 0 12px; }\n    .apx-reco__track::-webkit-scrollbar{ display:none; }\n    .apx-reco__card{ flex:0 0 calc(100vw - 80px); max-width:260px; scroll-snap-align:center; margin:0 8px; transform:none!important; }\n    .apx-reco__card:first-child{ margin-left:calc((100vw - (100vw - 80px)) / 2); }\n    .apx-reco__card:last-child{ margin-right:calc((100vw - (100vw - 80px)) / 2); }\n    .apx-reco__dots{ display:flex; justify-content:center; gap:8px; margin:8px 0 0; }\n    .apx-reco__dot{ width:8px; height:8px; border-radius:99px; border:none; background:rgba(255,255,255,.2); padding:0; cursor:pointer; transition:background .2s,width .2s; }\n    .apx-reco__dot.active{ background:#f5a623; width:22px; }\n    .apx-reco__collection-btn{ font-size:12px; padding:8px 18px; }\n  }\n  @media(prefers-reduced-motion:reduce){ .apx-reco__card,.apx-reco__img-wrap img{ transition:none!important; } }\n</style>\n\n<script>\n(function(){\n  var section=document.getElementById('apx-reco');\n  if(!section||section.dataset.apxInit==='1')return;\n  section.dataset.apxInit='1';\n  var track=document.getElementById('apx-reco-track');\n  var dots=document.querySelectorAll('#apx-reco-dots .apx-reco__dot');\n  var cards=track?track.querySelectorAll('.apx-reco__card'):[];\n  if(!track||!dots.length||!cards.length)return;\n  function onScroll(){var idx=Math.round(track.scrollLeft/(track.scrollWidth/cards.length));idx=Math.max(0,Math.min(idx,cards.length-1));dots.forEach(function(d,i){d.classList.toggle('active',i===idx);});}\n  dots.forEach(function(dot){dot.addEventListener('click',function(){var card=cards[parseInt(this.dataset.idx,10)];if(card)track.scrollTo({left:card.offsetLeft-(track.offsetWidth-card.offsetWidth)/2,behavior:'smooth'});});});\n  track.addEventListener('scroll',onScroll,{passive:true});\n  onScroll();\n})();\n</script>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "custom_liquid_NAqn6n": {
+      "type": "custom-liquid",
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "{% comment %}\n  artpixe-faq-rick-morty.liquid\n  FAQ 8 questions — Rick et Morty\n  JSON-LD seul — pas de microdata\n{% endcomment %}\n\n{% liquid\n  assign lang = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale\n  case lang\n    when 'de'\n      assign faq_title = 'Alles uber dein personalisiertes Rick und Morty Portrait'\n      assign q1 = 'Kann ich das Universum wahlen (Portal, Raumschiff, Zitadelle der Ricks)?'\n      assign a1 = 'Ja! Gib beim Bestellen das gewunschte Universum an — Dimensionsportal, Raumschiff C-137, Zitadelle der Ricks, Alienplanet — und unser Grafiker passt sich an.'\n      assign q2 = 'Kann ich mehrere Personen auf demselben Rick und Morty Portrait haben?'\n      assign a2 = 'Ja, bis zu 3 Personen auf demselben Portrait. Perfekt fur ein Freundesgruppen-Geschenk oder ein Paar-Portrait im Rick und Morty Stil.'\n      assign q3 = 'Welches Foto soll ich einsenden?'\n      assign a3 = 'Ein klares Foto, auf dem dein Gesicht gut sichtbar ist. Vermeide Sonnenbrillen oder Masken — je klarer das Foto, desto besser die Ahnlichkeit.'\n      assign q4 = 'Kann ich als Rick, Morty oder einen anderen Charakter dargestellt werden?'\n      assign a4 = 'Ja! Gib den Charakter als Vorlage an — Rick, Morty, Beth, Jerry, Summer, Evil Morty — und unser Grafiker integriert den Stil in dein personalisiertes Portrait.'\n      assign q5 = 'Wie lange dauert es, bis ich meine Vorschau erhalte?'\n      assign a5 = 'Die Vorschau wird innerhalb von 48 Arbeitsstunden geliefert. Du siehst das Ergebnis vor der Bestatigung.'\n      assign q6 = 'Wie viele Korrekturen sind inbegriffen?'\n      assign a6 = 'Unbegrenzte Korrekturen sind im Preis inbegriffen. Wir uberarbeiten bis du vollstandig zufrieden bist. Keine Zusatzkosten.'\n      assign q7 = 'Welches Format soll ich wahlen, um das Portrait zu verschenken?'\n      assign a7 = 'Das Displate-Metallrahmen-Format ist unser meistverkauftes Geschenk fur Rick und Morty Fans: Premium-Qualitat, unvergesslicher Eindruck beim Offnen.'\n      assign q8 = 'Wird das Portrait von einem Menschen oder einer KI erstellt?'\n      assign a8 = 'Jedes Rick und Morty Portrait wird von Hand von unserem Grafiker erstellt. Kein KI-Filter — echtes menschliches Talent hinter jeder Bestellung.'\n      assign cta_text = 'Mein Rick und Morty Portrait bestellen →'\n    when 'es'\n      assign faq_title = 'Todo sobre tu retrato Rick y Morty personalizado'\n      assign q1 = 'Puedo elegir el universo (portal, nave espacial, Ciudadela de los Ricks)?'\n      assign a1 = 'Si! Indica el universo que quieres al realizar el pedido — portal interdimensional, nave espacial, Ciudadela de los Ricks — y nuestro disenador se adapta.'\n      assign q2 = 'Puedo poner varias personas en el mismo retrato Rick y Morty?'\n      assign a2 = 'Si, hasta 3 personas en el mismo retrato. Perfecto para un regalo de grupo de amigos o una pareja fan de Rick y Morty.'\n      assign q3 = 'Que foto debo enviar?'\n      assign a3 = 'Una foto clara donde tu cara sea bien visible. Evita gafas de sol o mascaras — cuanto mas clara sea la foto, mejor sera el parecido.'\n      assign q4 = 'Puedo aparecer como Rick, Morty u otro personaje?'\n      assign a4 = 'Si! Indica el personaje de referencia — Rick, Morty, Beth, Jerry, Summer — y nuestro disenador integra su estilo en tu retrato.'\n      assign q5 = 'Cuanto tiempo tarda en llegar la vista previa?'\n      assign a5 = 'La vista previa se entrega en 48 horas laborables. Ves el resultado antes de validar nada.'\n      assign q6 = 'Cuantas correcciones estan incluidas?'\n      assign a6 = 'Las correcciones son ilimitadas e incluidas. Revisamos hasta que estes completamente satisfecho.'\n      assign q7 = 'Que formato elegir para regalar el retrato?'\n      assign a7 = 'El marco Displate metal es el mas regalado para fans de Rick y Morty: calidad premium, efecto sorpresa garantizado.'\n      assign q8 = 'El retrato es realizado por un humano o por una IA?'\n      assign a8 = 'Cada retrato Rick y Morty personalizado es creado a mano por nuestro disenador. Cero IA, cero filtro automatico.'\n      assign cta_text = 'Pedir mi retrato Rick y Morty →'\n    when 'en'\n      assign faq_title = 'Everything about your personalised Rick and Morty portrait'\n      assign q1 = 'Can I choose the universe (portal, spaceship, Citadel of Ricks)?'\n      assign a1 = 'Yes! Tell us the universe you want when ordering — interdimensional portal, spaceship C-137, Citadel of Ricks, alien planet — and our designer adapts.'\n      assign q2 = 'Can I have multiple people on the same Rick and Morty portrait?'\n      assign a2 = 'Yes, up to 3 people on the same portrait. Perfect for a friend group gift or a couple portrait in Rick and Morty style.'\n      assign q3 = 'What photo should I send?'\n      assign a3 = 'A clear photo where your face is clearly visible. Avoid sunglasses or masks — the clearer the photo, the stronger the likeness.'\n      assign q4 = 'Can I appear as Rick, Morty or another character?'\n      assign a4 = 'Yes! Tell us the reference character — Rick, Morty, Beth, Jerry, Summer, Evil Morty — and we integrate their style into your personalised portrait.'\n      assign q5 = 'How long does it take to receive my preview?'\n      assign a5 = 'The preview is delivered within 48 business hours. You see the result before validating anything.'\n      assign q6 = 'How many revisions are included?'\n      assign a6 = 'Revisions are unlimited and included in the price. We revise until you are completely satisfied. No extra cost.'\n      assign q7 = 'Which format should I choose to give the portrait as a gift?'\n      assign a7 = 'The Displate metal frame is our best-selling gift for Rick and Morty fans: premium quality, guaranteed wow effect when unwrapping.'\n      assign q8 = 'Is the portrait made by a human or AI?'\n      assign a8 = 'Each personalised Rick and Morty portrait is created by hand by our designer. Zero AI filter — real human talent behind every order.'\n      assign cta_text = 'Order my Rick and Morty portrait →'\n    else\n      assign faq_title = 'Tout savoir sur ton portrait Rick et Morty personnalisé'\n      assign q1 = 'Puis-je choisir l&apos;univers — portail inter-dimensionnel, vaisseau, Citadelle des Ricks ?'\n      assign a1 = 'Oui ! Indique-nous le décor souhaité dans le champ de personnalisation — portail inter-dimensionnel, vaisseau spatial C-137, Citadelle des Ricks, planète alien — et notre graphiste s&apos;adapte. Tu peux aussi préciser la saison ou l&apos;arc de référence.'\n      assign q2 = 'Puis-je mettre plusieurs personnes sur le même dessin Rick et Morty personnalisé ?'\n      assign a2 = 'Oui, jusqu&apos;à 3 personnes sur le même portrait. Parfait pour un cadeau entre amis fans de Rick et Morty ou un cadeau couple original. Ajoute une photo de chaque personne dans le champ de personnalisation.'\n      assign q3 = 'Quelle photo envoyer pour un meilleur résultat ?'\n      assign a3 = 'Une photo nette où ton visage est bien visible, de face ou de 3/4. Évite les lunettes de soleil, masques ou photos trop loin. Plus la photo est claire, plus la ressemblance sur ton portrait Rick et Morty sera forte.'\n      assign q4 = 'Puis-je apparaître sous les traits de Rick, Morty ou d&apos;un autre personnage ?'\n      assign a4 = 'Oui ! Précise le personnage de référence — Rick, Morty, Beth, Jerry, Summer, Evil Morty — et notre graphiste intègre son style dans ton affiche Rick et Morty personnalisée. Tu peux aussi demander une tenue ou un accessoire spécifique.'\n      assign q5 = 'Combien de temps pour recevoir l&apos;aperçu de mon poster Rick et Morty personnalisé ?'\n      assign a5 = 'L&apos;aperçu est livré sous 24–48 h ouvrées après ta commande. Tu reçois le rendu par e-mail et tu valides — ou demandes des retouches — avant que nous finalisions quoi que ce soit.'\n      assign q6 = 'Combien de retouches sont incluses ?'\n      assign a6 = 'Les retouches sont illimitées et incluses dans le prix. On ne s&apos;arrête pas tant que ton portrait style Rick et Morty ne te ressemble pas parfaitement. Aucun frais supplémentaire, aucune limite.'\n      assign q7 = 'Quel format choisir pour offrir le portrait en cadeau fan de Rick et Morty ?'\n      assign a7 = 'Le format Cadre Displate métal est notre plus offert pour les fans de Rick et Morty : qualité premium, rendu élégant, effet waouh à l&apos;ouverture garanti. Le format Digital HD (dès 19,90€) est idéal pour imprimer soi-même ou envoyer en cadeau numérique.'\n      assign q8 = 'Le portrait est-il réalisé par un humain ou par une IA ?'\n      assign a8 = 'Chaque portrait Rick et Morty personnalisé est créé à la main par notre graphiste spécialisé en dessin animé et pop culture. Aucun filtre IA, aucun générateur automatique — un vrai talent humain derrière chaque commande. C&apos;est pour ça que nos tableaux Rick et Morty ressemblent vraiment.'\n      assign cta_text = 'Commander mon portrait Rick et Morty →'\n  endcase\n%}\n\n<section style=\"padding:52px 20px;background:transparent;\">\n  <div style=\"max-width:760px;margin:0 auto;\">\n    <h2 style=\"font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,4vw,36px);letter-spacing:.02em;color:#f0ede8;margin-bottom:28px;line-height:1.1;\">{{ faq_title }}</h2>\n\n    {% assign all_q = q1 | append: '|||' | append: q2 | append: '|||' | append: q3 | append: '|||' | append: q4 | append: '|||' | append: q5 | append: '|||' | append: q6 | append: '|||' | append: q7 | append: '|||' | append: q8 %}\n    {% assign all_a = a1 | append: '|||' | append: a2 | append: '|||' | append: a3 | append: '|||' | append: a4 | append: '|||' | append: a5 | append: '|||' | append: a6 | append: '|||' | append: a7 | append: '|||' | append: a8 %}\n    {% assign questions = all_q | split: '|||' %}\n    {% assign answers   = all_a | split: '|||' %}\n\n    {%- for question in questions -%}\n      {%- assign answer = answers[forloop.index0] -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ question }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ answer }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endfor -%}\n\n    <div style=\"text-align:center;margin-top:36px;\">\n      <a href=\"/products/portrait-rick-et-morty-personnalise\" class=\"ap-faq-cta\" style=\"display:inline-block;background:#f5a623;color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;padding:15px 44px;border-radius:99px;text-decoration:none;box-shadow:none!important;border:none!important;transition:background .2s;\" onmouseover=\"this.style.background='#e09520'\" onmouseout=\"this.style.background='#f5a623'\">{{ cta_text }}</a>\n    </div>\n  </div>\n</section>\n\n<style>\n  details summary::-webkit-details-marker{display:none;}\n  details[open] .ap-arr{transform:rotate(45deg);}\n  details summary:focus{outline:none;}\n  @media(max-width:600px){.ap-faq-cta{font-size:15px!important;padding:13px 28px!important;letter-spacing:.03em!important;}}\n</style>\n\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"Puis-je choisir l'univers — portail inter-dimensionnel, vaisseau, Citadelle des Ricks ?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"Oui ! Indique le décor souhaité dans le champ de personnalisation — portail inter-dimensionnel, vaisseau spatial C-137, Citadelle des Ricks, planète alien — et notre graphiste s'adapte.\"}},{\"@type\":\"Question\",\"name\":\"Puis-je mettre plusieurs personnes sur le même dessin Rick et Morty personnalisé ?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"Oui, jusqu'à 3 personnes sur le même portrait. Parfait pour un cadeau entre amis fans de Rick et Morty ou un cadeau couple original.\"}},{\"@type\":\"Question\",\"name\":\"Quelle photo envoyer pour un meilleur résultat ?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"Une photo nette où ton visage est bien visible, de face ou de 3/4. Évite les lunettes de soleil, masques ou photos trop loin.\"}},{\"@type\":\"Question\",\"name\":\"Puis-je apparaître sous les traits de Rick, Morty ou d'un autre personnage ?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"Oui ! Précise le personnage de référence — Rick, Morty, Beth, Jerry, Summer, Evil Morty — et notre graphiste intègre son style dans ton affiche Rick et Morty personnalisée.\"}},{\"@type\":\"Question\",\"name\":\"Combien de temps pour recevoir l'aperçu de mon poster Rick et Morty personnalisé ?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"L'aperçu est livré sous 24–48 h ouvrées après ta commande. Tu reçois le rendu par e-mail et tu valides avant que nous finalisions quoi que ce soit.\"}},{\"@type\":\"Question\",\"name\":\"Combien de retouches sont incluses ?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"Les retouches sont illimitées et incluses dans le prix. On ne s'arrête pas tant que ton portrait style Rick et Morty ne te ressemble pas parfaitement.\"}},{\"@type\":\"Question\",\"name\":\"Quel format choisir pour offrir le portrait en cadeau fan de Rick et Morty ?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"Le format Cadre Displate métal est notre plus offert pour les fans de Rick et Morty : qualité premium, rendu élégant, effet waouh à l'ouverture garanti.\"}},{\"@type\":\"Question\",\"name\":\"Le portrait est-il réalisé par un humain ou par une IA ?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"Chaque portrait Rick et Morty personnalisé est créé à la main par notre graphiste spécialisé en dessin animé et pop culture. Aucun filtre IA — un vrai talent humain derrière chaque commande.\"}}]}</script>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "custom_liquid_RHkdeR": {
+      "type": "custom-liquid",
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "{% comment %} artpixe-seo-bloc-rick-morty.liquid — Bloc SEO i18n + maillage interne Rick et Morty {% endcomment %}\n\n{% assign lang = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale %}\n\n<style>\n@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');\n\n.apx-seo-d{max-width:900px;margin:0 auto;padding:40px 20px 24px;font-family:'DM Sans',sans-serif;}\n.apx-seo-d-divider{height:1px;background:rgba(255,255,255,.07);margin-bottom:28px;}\n.apx-seo-d-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,3.5vw,28px);letter-spacing:.02em;line-height:1.1;color:#f0ede8;margin-bottom:16px;}\n.apx-seo-d-h2 em{color:#f5a623;font-style:normal;}\n.apx-seo-d-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;margin-bottom:16px;}\n@media(max-width:560px){.apx-seo-d-grid{grid-template-columns:1fr;}}\n.apx-seo-d-card{background:#141416;padding:16px 18px;}\n.apx-seo-d-card-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#f5a623;margin-bottom:7px;}\n.apx-seo-d-card p{font-size:13px;color:#9a9690;line-height:1.65;margin:0;}\n.apx-seo-d-card p strong{color:#f0ede8;font-weight:500;}\n.apx-seo-d-outro{font-size:13px;color:#9a9690;line-height:1.7;margin-bottom:16px;}\n.apx-seo-d-outro strong{color:#f0ede8;font-weight:500;}\n.apx-seo-d-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}\n.apx-seo-d-tag{font-size:11px;color:#5a5855;border:1px solid rgba(255,255,255,.05);border-radius:99px;padding:2px 10px;}\n.apx-seo-d-link{color:#f5a623;text-decoration:none;border-bottom:1px solid rgba(245,166,35,.25);transition:border-color .15s;}\n.apx-seo-d-link:hover{border-bottom-color:#f5a623;}\n.apx-seo-d-maillage{display:flex;flex-wrap:wrap;gap:8px;padding-top:16px;border-top:1px solid rgba(255,255,255,.07);}\n.apx-seo-d-maillage-link{font-size:12px;color:#9a9690;background:#141416;border:1px solid rgba(255,255,255,.07);border-radius:99px;padding:5px 14px;text-decoration:none;transition:all .15s;white-space:nowrap;}\n.apx-seo-d-maillage-link:hover{color:#f5a623;border-color:rgba(245,166,35,.3);}\n.apx-seo-d-maillage-label{font-size:11px;color:#5a5855;letter-spacing:.06em;text-transform:uppercase;width:100%;margin-bottom:2px;}\n</style>\n\n<div class=\"apx-seo-d\">\n  <div class=\"apx-seo-d-divider\"></div>\n\n  {% if lang == 'fr' %}\n    <h2 class=\"apx-seo-d-h2\"><em>Portrait Rick et Morty personnalisé</em> — tout savoir avant de commander</h2>\n  {% elsif lang == 'en' %}\n    <h2 class=\"apx-seo-d-h2\">Personalized <em>Rick and Morty Portrait</em> — everything to know before ordering</h2>\n  {% elsif lang == 'es' %}\n    <h2 class=\"apx-seo-d-h2\"><em>Retrato Rick y Morty personalizado</em> — todo lo que debes saber antes de pedir</h2>\n  {% elsif lang == 'de' %}\n    <h2 class=\"apx-seo-d-h2\">Personalisiertes <em>Rick und Morty Portrait</em> — alles vor der Bestellung wissen</h2>\n  {% elsif lang == 'it' %}\n    <h2 class=\"apx-seo-d-h2\"><em>Ritratto Rick e Morty personalizzato</em> — tutto da sapere prima di ordinare</h2>\n  {% else %}\n    <h2 class=\"apx-seo-d-h2\"><em>Portrait Rick et Morty personnalisé</em> — tout savoir avant de commander</h2>\n  {% endif %}\n\n  <div class=\"apx-seo-d-grid\">\n\n    <div class=\"apx-seo-d-card\">\n      {% if lang == 'fr' %}\n        <div class=\"apx-seo-d-card-title\">🎁 Cadeau fan de Rick et Morty</div>\n        <p>Anniversaire, Noël, Saint-Valentin — ce <strong>cadeau Rick et Morty personnalisé</strong> est l'idée originale par excellence pour les fans de la série. Le Cadre Displate métal est le plus offert. Pour un <strong>cadeau anniversaire fan de Rick et Morty</strong>, commande au moins 5 jours ouvrés à l'avance. Voir aussi notre <a href=\"/pages/cadeau-manga-personnalise\" class=\"apx-seo-d-link\">guide idées cadeaux pop culture</a>.</p>\n      {% elsif lang == 'en' %}\n        <div class=\"apx-seo-d-card-title\">🎁 Gift for Rick and Morty fans</div>\n        <p>Birthday, Christmas, Valentine's Day — this <strong>personalized Rick and Morty gift</strong> is the ultimate original idea for fans of the show. The Metal Displate Frame is our most gifted format. Order at least 5 business days in advance. Browse our <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">cartoon portrait collection</a>.</p>\n      {% elsif lang == 'es' %}\n        <div class=\"apx-seo-d-card-title\">🎁 Regalo fan de Rick y Morty</div>\n        <p>Cumpleaños, Navidad, San Valentín — este <strong>regalo Rick y Morty personalizado</strong> es la idea original para cualquier fan. El Marco Displate es el más regalado. Haz tu pedido con 5 días hábiles de antelación. Descubre nuestra <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">colección cartoon</a>.</p>\n      {% elsif lang == 'de' %}\n        <div class=\"apx-seo-d-card-title\">🎁 Geschenk fur Rick und Morty Fans</div>\n        <p>Geburtstag, Weihnachten, Valentinstag — dieses <strong>Rick und Morty Geschenk</strong> ist die originelle Idee fur jeden Fan. Der Displate Metallrahmen ist unser meistgekauftes Format. Mindestens 5 Werktage im Voraus bestellen. Entdecke unsere <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">Cartoon-Kollektion</a>.</p>\n      {% elsif lang == 'it' %}\n        <div class=\"apx-seo-d-card-title\">🎁 Regalo per fan di Rick e Morty</div>\n        <p>Compleanno, Natale, San Valentino — questo <strong>regalo Rick e Morty personalizzato</strong> è l'idea originale per ogni fan. La Cornice Displate in metallo è il formato più regalato. Ordina almeno 5 giorni lavorativi prima. Scopri la nostra <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">collezione cartoon</a>.</p>\n      {% else %}\n        <div class=\"apx-seo-d-card-title\">🎁 Cadeau fan de Rick et Morty</div>\n        <p>Anniversaire, Noël — ce <strong>cadeau Rick et Morty personnalisé</strong> fonctionne pour toutes les occasions. <a href=\"/pages/cadeau-manga-personnalise\" class=\"apx-seo-d-link\">Guide idées cadeaux pop culture →</a></p>\n      {% endif %}\n    </div>\n\n    <div class=\"apx-seo-d-card\">\n      {% if lang == 'fr' %}\n        <div class=\"apx-seo-d-card-title\">🕐 Aperçu poster Rick et Morty en 24–48 h ouvrées</div>\n        <p>L'<strong>aperçu de ton affiche Rick et Morty personnalisée</strong> est envoyé sous 24–48 h ouvrées. Tu valides — ou demandes des <strong>retouches illimitées</strong> sans frais — avant la livraison du fichier final. Consulte <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-link\">comment ça marche</a> pour voir toutes les étapes.</p>\n      {% elsif lang == 'en' %}\n        <div class=\"apx-seo-d-card-title\">🕐 Rick and Morty poster preview in 48–72h</div>\n        <p>Your <strong>personalised Rick and Morty portrait preview</strong> is sent within 48–72 business hours. You approve — or request <strong>unlimited revisions</strong> at no extra cost. See <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-link\">how it works</a>.</p>\n      {% elsif lang == 'es' %}\n        <div class=\"apx-seo-d-card-title\">🕐 Vista previa poster Rick y Morty en 48–72h</div>\n        <p>Tu <strong>vista previa del retrato Rick y Morty personalizado</strong> se envía en 48–72 horas hábiles. Lo apruebas — o solicitas <strong>retoques ilimitados</strong>. Consulta <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-link\">cómo funciona</a>.</p>\n      {% elsif lang == 'de' %}\n        <div class=\"apx-seo-d-card-title\">🕐 Rick und Morty Portrait-Vorschau in 48–72h</div>\n        <p>Deine <strong>Rick und Morty Portrait-Vorschau</strong> wird innerhalb von 48–72 Werktunden gesendet. Du genehmigst — oder verlangst <strong>unbegrenzte Korrekturen</strong>. Sieh <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-link\">wie es funktioniert</a>.</p>\n      {% elsif lang == 'it' %}\n        <div class=\"apx-seo-d-card-title\">🕐 Anteprima poster Rick e Morty in 48–72h</div>\n        <p>La tua <strong>anteprima del ritratto Rick e Morty personalizzato</strong> viene inviata entro 48–72 ore lavorative. Approvi — o richiedi <strong>ritocchi illimitati</strong>. Scopri <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-link\">come funziona</a>.</p>\n      {% else %}\n        <div class=\"apx-seo-d-card-title\">🕐 Aperçu poster Rick et Morty en 24–48 h ouvrées</div>\n        <p>L'<strong>aperçu de ton affiche Rick et Morty personnalisée</strong> est envoyé sous 24–48 h ouvrées. <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-link\">Comment ça marche →</a></p>\n      {% endif %}\n    </div>\n\n    <div class=\"apx-seo-d-card\">\n      {% if lang == 'fr' %}\n        <div class=\"apx-seo-d-card-title\">⚡ Quel décor Rick et Morty choisir ?</div>\n        <p>Notre graphiste numérique maîtrise tout l'univers de la série : <strong>portail inter-dimensionnel vert, vaisseau spatial C-137, Citadelle des Ricks, planète alien, garage de Rick</strong>. Indique le décor, les personnages de référence et les accessoires dans tes instructions. Découvre aussi notre <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">collection portraits cartoon personnalisés</a>.</p>\n      {% elsif lang == 'en' %}\n        <div class=\"apx-seo-d-card-title\">⚡ Which Rick and Morty backdrop?</div>\n        <p>Our digital artist masters the whole universe: <strong>green interdimensional portal, spaceship C-137, Citadel of Ricks, alien planet, Rick's garage</strong>. Specify the backdrop, reference characters and accessories. Check our <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">cartoon portrait collection</a>.</p>\n      {% elsif lang == 'es' %}\n        <div class=\"apx-seo-d-card-title\">⚡ Que decorado Rick y Morty elegir?</div>\n        <p>Nuestro disenador domina todo el universo: <strong>portal interdimensional verde, nave C-137, Ciudadela de los Ricks, planeta alienígena</strong>. Consulta nuestra <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">coleccion cartoon</a>.</p>\n      {% elsif lang == 'de' %}\n        <div class=\"apx-seo-d-card-title\">⚡ Welchen Rick und Morty Hintergrund?</div>\n        <p>Unser Grafiker beherrscht das gesamte Universum: <strong>gruenes Dimensionsportal, Raumschiff C-137, Zitadelle der Ricks, Alienplanet</strong>. Entdecke unsere <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">Cartoon-Kollektion</a>.</p>\n      {% elsif lang == 'it' %}\n        <div class=\"apx-seo-d-card-title\">⚡ Quale sfondo Rick e Morty scegliere?</div>\n        <p>Il nostro grafico padroneggia tutto l'universo: <strong>portale interdimensionale verde, astronave C-137, Cittadella dei Rick, pianeta alieno</strong>. Scopri la nostra <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">collezione cartoon</a>.</p>\n      {% else %}\n        <div class=\"apx-seo-d-card-title\">⚡ Quel décor Rick et Morty choisir ?</div>\n        <p>Portail vert, vaisseau C-137, Citadelle des Ricks — notre graphiste s'adapte à tout l'univers. <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">Collection cartoon →</a></p>\n      {% endif %}\n    </div>\n\n    <div class=\"apx-seo-d-card\">\n      {% if lang == 'fr' %}\n        <div class=\"apx-seo-d-card-title\">👥 Solo, couple ou groupe d'amis</div>\n        <p>Tu veux un <strong>tableau Rick et Morty personnalisé</strong> pour toi seul, ou un <strong>cadeau couple Rick et Morty</strong> original ? Jusqu'à 3 personnes sur le même dessin de Rick et Morty. Explore aussi tous nos <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">portraits cartoon personnalisés</a> — Simpson, Futurama, Tim Burton.</p>\n      {% elsif lang == 'en' %}\n        <div class=\"apx-seo-d-card-title\">👥 Solo, couple or friend group</div>\n        <p>Want a <strong>custom Rick and Morty poster</strong> just for you, or an original <strong>Rick and Morty couple gift</strong>? Up to 3 people on the same portrait. Explore all our <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">personalized cartoon portraits</a>.</p>\n      {% elsif lang == 'es' %}\n        <div class=\"apx-seo-d-card-title\">👥 Solo, pareja o grupo de amigos</div>\n        <p>¿Quieres un <strong>poster Rick y Morty personalizado</strong> o un <strong>regalo pareja Rick y Morty</strong>? Hasta 3 personas en el mismo retrato. Explora todos nuestros <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">retratos cartoon</a>.</p>\n      {% elsif lang == 'de' %}\n        <div class=\"apx-seo-d-card-title\">👥 Solo, Paar oder Freundesgruppe</div>\n        <p>Mochtest du ein <strong>personalisiertes Rick und Morty Poster</strong> oder ein originelles <strong>Rick und Morty Parchen-Geschenk</strong>? Bis zu 3 Personen auf demselben Portrait. Entdecke alle unsere <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">Cartoon-Portraits</a>.</p>\n      {% elsif lang == 'it' %}\n        <div class=\"apx-seo-d-card-title\">👥 Solo, coppia o gruppo di amici</div>\n        <p>Vuoi un <strong>poster Rick e Morty personalizzato</strong> o un originale <strong>regalo coppia Rick e Morty</strong>? Fino a 3 persone sullo stesso ritratto. Scopri tutti i nostri <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">ritratti cartoon</a>.</p>\n      {% else %}\n        <div class=\"apx-seo-d-card-title\">👥 Solo, couple ou groupe</div>\n        <p>Tu veux un <strong>tableau Rick et Morty personnalisé</strong> ou un <strong>cadeau couple Rick et Morty</strong> ? <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-link\">Voir la collection cartoon →</a></p>\n      {% endif %}\n    </div>\n\n  </div>\n\n  {% if lang == 'fr' %}\n    <p class=\"apx-seo-d-outro\"><strong>350 avis 5★ Loox · 4,4/5 Trustpilot · 2 532 portraits créés.</strong> Chaque <strong>portrait Rick et Morty personnalisé</strong> est réalisé par notre graphiste numérique, avec <strong>retouches illimitées</strong> et <strong>aperçu sous 24–48 h ouvrées</strong> garanti. Transforme ta photo en <strong>affiche Rick et Morty personnalisée</strong> ou en <strong>poster Rick et Morty</strong> — format Digital HD, Poster A3 ou Displate métal. Parmi nos autres <strong>portraits cartoon personnalisés</strong> : <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-link\">portrait Simpson</a>, <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-link\">portrait Futurama</a>, <a href=\"/products/portrait-tim-burton-personnalise\" class=\"apx-seo-d-link\">portrait Tim Burton</a>.</p>\n  {% elsif lang == 'en' %}\n    <p class=\"apx-seo-d-outro\"><strong>350 5★ Loox reviews · 4.4/5 Trustpilot · 2,532 portraits created.</strong> Every <strong>personalized Rick and Morty portrait</strong> is created by our digital artist, with <strong>unlimited revisions</strong> and a <strong>48h preview</strong> guaranteed. Other cartoon portraits: <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-link\">Simpsons portrait</a>, <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-link\">Futurama portrait</a>, <a href=\"/products/portrait-tim-burton-personnalise\" class=\"apx-seo-d-link\">Tim Burton portrait</a>.</p>\n  {% elsif lang == 'es' %}\n    <p class=\"apx-seo-d-outro\"><strong>350 valoraciones 5★ Loox · 4,4/5 Trustpilot · 2.532 retratos creados.</strong> Cada <strong>retrato Rick y Morty personalizado</strong> realizado por nuestro diseñador, con <strong>retoques ilimitados</strong> y <strong>vista previa en 48h</strong>. Otros retratos: <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-link\">Simpsons</a>, <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-link\">Futurama</a>, <a href=\"/products/portrait-tim-burton-personnalise\" class=\"apx-seo-d-link\">Tim Burton</a>.</p>\n  {% elsif lang == 'de' %}\n    <p class=\"apx-seo-d-outro\"><strong>350 5★ Loox Bewertungen · 4,4/5 Trustpilot · 2.532 erstellte Portraits.</strong> Jedes <strong>personalisierte Rick und Morty Portrait</strong> von unserem Grafiker, mit <strong>unbegrenzten Korrekturen</strong> und <strong>48h-Vorschau</strong>. Weitere Portraits: <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-link\">Simpsons</a>, <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-link\">Futurama</a>, <a href=\"/products/portrait-tim-burton-personnalise\" class=\"apx-seo-d-link\">Tim Burton</a>.</p>\n  {% elsif lang == 'it' %}\n    <p class=\"apx-seo-d-outro\"><strong>350 recensioni 5★ Loox · 4,4/5 Trustpilot · 2.532 ritratti creati.</strong> Ogni <strong>ritratto Rick e Morty personalizzato</strong> realizzato dal nostro grafico, con <strong>ritocchi illimitati</strong> e <strong>anteprima in 48h</strong>. Altri ritratti: <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-link\">Simpsons</a>, <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-link\">Futurama</a>, <a href=\"/products/portrait-tim-burton-personnalise\" class=\"apx-seo-d-link\">Tim Burton</a>.</p>\n  {% else %}\n    <p class=\"apx-seo-d-outro\"><strong>350 avis 5★ Loox · 4,4/5 Trustpilot · 2 532 portraits créés.</strong> Chaque <strong>portrait Rick et Morty personnalisé</strong> réalisé par notre graphiste. Autres portraits cartoon : <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-link\">Simpson</a>, <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-link\">Futurama</a>, <a href=\"/products/portrait-tim-burton-personnalise\" class=\"apx-seo-d-link\">Tim Burton</a>.</p>\n  {% endif %}\n\n  <div class=\"apx-seo-d-tags\">\n    {% if lang == 'fr' %}\n      <span class=\"apx-seo-d-tag\">portrait rick et morty personnalisé</span>\n      <span class=\"apx-seo-d-tag\">affiche rick et morty personnalisée</span>\n      <span class=\"apx-seo-d-tag\">poster rick et morty personnalisé</span>\n      <span class=\"apx-seo-d-tag\">tableau rick et morty personnalisé</span>\n      <span class=\"apx-seo-d-tag\">dessin rick et morty personnalisé</span>\n      <span class=\"apx-seo-d-tag\">cadeau rick et morty personnalisé</span>\n      <span class=\"apx-seo-d-tag\">rick et morty dessin style</span>\n      <span class=\"apx-seo-d-tag\">cadeau couple rick et morty</span>\n      <span class=\"apx-seo-d-tag\">portrait cartoon personnalisé</span>\n    {% elsif lang == 'en' %}\n      <span class=\"apx-seo-d-tag\">personalized rick and morty portrait</span>\n      <span class=\"apx-seo-d-tag\">custom rick and morty poster</span>\n      <span class=\"apx-seo-d-tag\">rick and morty art custom</span>\n      <span class=\"apx-seo-d-tag\">rick and morty gift</span>\n      <span class=\"apx-seo-d-tag\">rick and morty drawing custom</span>\n    {% elsif lang == 'es' %}\n      <span class=\"apx-seo-d-tag\">retrato rick y morty personalizado</span>\n      <span class=\"apx-seo-d-tag\">poster rick y morty personalizado</span>\n      <span class=\"apx-seo-d-tag\">regalo rick y morty</span>\n    {% elsif lang == 'de' %}\n      <span class=\"apx-seo-d-tag\">personalisiertes rick und morty portrait</span>\n      <span class=\"apx-seo-d-tag\">rick und morty poster personalisiert</span>\n      <span class=\"apx-seo-d-tag\">rick und morty geschenk</span>\n    {% elsif lang == 'it' %}\n      <span class=\"apx-seo-d-tag\">ritratto rick e morty personalizzato</span>\n      <span class=\"apx-seo-d-tag\">poster rick e morty personalizzato</span>\n      <span class=\"apx-seo-d-tag\">regalo rick e morty</span>\n    {% else %}\n      <span class=\"apx-seo-d-tag\">portrait rick et morty personnalisé</span>\n      <span class=\"apx-seo-d-tag\">affiche rick et morty</span>\n      <span class=\"apx-seo-d-tag\">poster rick et morty</span>\n    {% endif %}\n  </div>\n\n  <div class=\"apx-seo-d-maillage\">\n    {% if lang == 'fr' %}\n      <span class=\"apx-seo-d-maillage-label\">Voir aussi</span>\n      <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-maillage-link\">Collection cartoon complète</a>\n      <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-maillage-link\">Comment ça marche</a>\n      <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-maillage-link\">Portrait Simpson personnalisé</a>\n      <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-maillage-link\">Portrait Futurama personnalisé</a>\n      <a href=\"/products/portrait-tim-burton-personnalise\" class=\"apx-seo-d-maillage-link\">Portrait Tim Burton personnalisé</a>\n      <a href=\"/pages/cadeau-manga-personnalise\" class=\"apx-seo-d-maillage-link\">Idées cadeaux pop culture</a>\n    {% elsif lang == 'en' %}\n      <span class=\"apx-seo-d-maillage-label\">See also</span>\n      <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-maillage-link\">Full cartoon collection</a>\n      <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-maillage-link\">How it works</a>\n      <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-maillage-link\">Simpsons portrait</a>\n      <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-maillage-link\">Futurama portrait</a>\n      <a href=\"/products/portrait-tim-burton-personnalise\" class=\"apx-seo-d-maillage-link\">Tim Burton portrait</a>\n    {% elsif lang == 'es' %}\n      <span class=\"apx-seo-d-maillage-label\">Ver también</span>\n      <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-maillage-link\">Colección cartoon completa</a>\n      <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-maillage-link\">Cómo funciona</a>\n      <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-maillage-link\">Retrato Simpsons</a>\n      <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-maillage-link\">Retrato Futurama</a>\n    {% elsif lang == 'de' %}\n      <span class=\"apx-seo-d-maillage-label\">Siehe auch</span>\n      <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-maillage-link\">Komplette Cartoon-Kollektion</a>\n      <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-maillage-link\">So funktioniert es</a>\n      <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-maillage-link\">Simpsons Portrait</a>\n      <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-maillage-link\">Futurama Portrait</a>\n    {% elsif lang == 'it' %}\n      <span class=\"apx-seo-d-maillage-label\">Vedi anche</span>\n      <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-maillage-link\">Collezione cartoon completa</a>\n      <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-maillage-link\">Come funziona</a>\n      <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-maillage-link\">Ritratto Simpsons</a>\n      <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-maillage-link\">Ritratto Futurama</a>\n    {% else %}\n      <span class=\"apx-seo-d-maillage-label\">Voir aussi</span>\n      <a href=\"/collections/portrait-personnalise-catoon\" class=\"apx-seo-d-maillage-link\">Collection cartoon</a>\n      <a href=\"/pages/comment-ca-marche\" class=\"apx-seo-d-maillage-link\">Comment ça marche</a>\n      <a href=\"/products/portrait-simpson-personnalise\" class=\"apx-seo-d-maillage-link\">Portrait Simpson</a>\n      <a href=\"/products/portrait-futurama-personnalise\" class=\"apx-seo-d-maillage-link\">Portrait Futurama</a>\n      <a href=\"/products/portrait-tim-burton-personnalise\" class=\"apx-seo-d-maillage-link\">Portrait Tim Burton</a>\n    {% endif %}\n  </div>\n\n</div>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "disabled": true,
+      "settings": {
+        "show": true,
+        "design_heading": "7",
+        "heading_align": "t4s-text-center",
+        "top_heading": "Nos meilleures ventes",
+        "icon_heading": "las la-gem",
+        "top_subheading": "",
+        "tophead_mb": 30,
+        "product_des": "1",
+        "show_vendor": false,
+        "use_cdt": false,
+        "limit": 12,
+        "display_type": "3",
+        "image_ratio": "rationt",
+        "image_size": "nt_cover",
+        "image_position": "8",
+        "content_align": "default",
+        "col_dk": "4",
+        "col_tb": "2",
+        "col_mb": "2",
+        "space_h_item": "30",
+        "space_v_item": "30",
+        "space_h_item_mb": "10",
+        "space_v_item_mb": "10",
+        "layout_des": "2",
+        "loop": true,
+        "au_time": 0,
+        "au_hover": true,
+        "nav_btn": true,
+        "btn_vi": "1",
+        "btn_owl": "outline",
+        "btn_shape": "round",
+        "btn_cl": "dark",
+        "btn_size": "small",
+        "btn_hidden_mobile": true,
+        "nav_dot": false,
+        "dot_owl": "1",
+        "dots_cl": "dark",
+        "dots_round": true,
+        "dots_space": 10,
+        "dots_hidden_mobile": false,
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "91de1d03-6a4a-4c6a-90f6-0eec82e2bd0d": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<h4 style=\"display:none;\">Affiche style rick et morty personnalisée avec ta photo — aperçu sous 24–48 h ouvrées garanti</h4>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": "",
+        "pd_mb": ""
+      }
+    },
+    "fa8e7952-39e2-4339-bcd2-d5ac6708d371": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<h4 style=\"display:none;\">Est-il possible de demander des modifications à mon portrait manga personnalisé ?</h4>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": "",
+        "pd_mb": ""
+      }
+    },
+    "1738951722e69c8e7d": {
+      "type": "apps",
+      "blocks": {
+        "instafeed_app_block_ph3bwV": {
+          "type": "shopify://apps/instafeed/blocks/app-block/c447db20-095d-4a10-9725-b5977662c9d5",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "title_size_v2": 0,
+            "alignment": "center",
+            "instafeed_margin_top": 0,
+            "instafeed_margin_bottom": 0,
+            "instafeed_margin_sides": 0,
+            "show_instagram_link": false,
+            "link_alignment": "left",
+            "link_color": "#000000",
+            "background_color": "",
+            "feed_id": "",
+            "html_area": ""
+          }
+        }
+      },
+      "block_order": [
+        "instafeed_app_block_ph3bwV"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "custom_liquid_84FmBX",
+    "custom_liquid_Jw36wk",
+    "breadcrumb",
+    "main",
+    "17700291493732a25d",
+    "recently-viewed-products",
+    "sidebar",
+    "9af9f87f-4d1f-4610-8b35-051976b34b07",
+    "custom_liquid_VXNTDi",
+    "custom_liquid_NAqn6n",
+    "custom_liquid_RHkdeR",
+    "product-recommendations",
+    "91de1d03-6a4a-4c6a-90f6-0eec82e2bd0d",
+    "fa8e7952-39e2-4339-bcd2-d5ac6708d371",
+    "1738951722e69c8e7d"
+  ]
+}

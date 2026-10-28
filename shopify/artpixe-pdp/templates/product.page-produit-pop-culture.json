@@ -1,0 +1,1420 @@
+{
+  "sections": {
+    "breadcrumb": {
+      "type": "brc-nav-product",
+      "custom_css": [
+        "@media (max-width: 768px) {.breadcrumb_pr_wrap {display: none !important; }}"
+      ],
+      "settings": {
+        "breadcrumb_pr": true,
+        "back_next_pr": true,
+        "cl_bg": "#141414",
+        "cl_link": "#ffffff"
+      },
+      "disabled": true
+    },
+    "custom_liquid_VzWXW6": {
+      "type": "custom-liquid",
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "{% comment %}\n  artpixe-custom-liquid-bandeau-promo.liquid  v5\n  Bandeau fixe full-width — 1 ligne fixe desktop — défilement marquee mobile\n{% endcomment %}\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n\n{%- if lang == 'en' -%}\n  {%- assign txt_main = '-10% off your order' -%}\n  {%- assign txt_with = 'with code' -%}\n  {%- assign txt_ends = 'Ends in' -%}\n{%- elsif lang == 'es' -%}\n  {%- assign txt_main = '-10% en tu pedido' -%}\n  {%- assign txt_with = 'con el codigo' -%}\n  {%- assign txt_ends = 'Termina en' -%}\n{%- elsif lang == 'de' -%}\n  {%- assign txt_main = '-10% auf deine Bestellung' -%}\n  {%- assign txt_with = 'mit dem Code' -%}\n  {%- assign txt_ends = 'Endet in' -%}\n{%- elsif lang == 'it' -%}\n  {%- assign txt_main = '-10% sul tuo ordine' -%}\n  {%- assign txt_with = 'con il codice' -%}\n  {%- assign txt_ends = 'Scade tra' -%}\n{%- else -%}\n  {%- assign txt_main = '-10% sur votre commande' -%}\n  {%- assign txt_with = 'avec le code' -%}\n  {%- assign txt_ends = 'Expire dans' -%}\n{%- endif -%}\n\n<style>\n.apb-outer{\n  position:relative;\n  left:50%;right:50%;\n  margin-left:-50vw;margin-right:-50vw;\n  width:100vw;\n  overflow:hidden;\n}\n.apb{\n  background:#f5a623;\n  width:100%;\n  display:flex;\n  align-items:center;\n  justify-content:center;\n  padding:9px 16px;\n  font-family:var(--font-body-family,'DM Sans',sans-serif);\n  font-size:13px;\n  color:#fff;\n  white-space:nowrap;\n  border-bottom:1px solid rgba(0,0,0,.1);\n  overflow:hidden;\n}\n\n/* Contenu statique desktop */\n.apb-static{\n  display:flex;\n  align-items:center;\n  gap:6px;\n  white-space:nowrap;\n}\n\n/* Marquee mobile */\n.apb-marquee-wrap{\n  display:none;\n  overflow:hidden;\n  width:100%;\n}\n.apb-marquee-track{\n  display:inline-flex;\n  align-items:center;\n  gap:0;\n  white-space:nowrap;\n  animation:apbScroll 18s linear infinite;\n}\n.apb-marquee-track:hover{animation-play-state:paused;}\n.apb-marquee-item{\n  display:inline-flex;\n  align-items:center;\n  gap:6px;\n  padding-right:48px;\n}\n@keyframes apbScroll{\n  0%{transform:translateX(0);}\n  100%{transform:translateX(-50%);}\n}\n\n.apb-bold{font-weight:700;}\n.apb-sep{opacity:.45;margin:0 4px;}\n.apb-code{\n  background:rgba(0,0,0,.18);\n  border-radius:3px;\n  padding:1px 8px;\n  font-weight:700;\n  letter-spacing:.05em;\n}\n.apb-timer{\n  display:inline-flex;\n  align-items:baseline;\n  gap:3px;\n  font-weight:700;\n  font-variant-numeric:tabular-nums;\n}\n.apb-unit{font-size:10px;font-weight:600;opacity:.7;}\n\n/* Sur mobile : masquer statique, afficher marquee */\n@media(max-width:700px){\n  .apb-static{display:none;}\n  .apb-marquee-wrap{display:block;}\n  .apb{padding:9px 0;justify-content:flex-start;}\n}\n</style>\n\n<div class=\"apb-outer\">\n  <div class=\"apb\" role=\"banner\">\n\n    <!-- Desktop : 1 ligne fixe -->\n    <div class=\"apb-static\">\n      <span>🔥</span>\n      <span><span class=\"apb-bold\">{{ txt_main }}</span> {{ txt_with }}</span>\n      <span class=\"apb-code\">C10</span>\n      <span class=\"apb-sep\">·</span>\n      <span>{{ txt_ends }}</span>\n      <span class=\"apb-timer\">\n        <span><span class=\"apbH\">--</span><span class=\"apb-unit\">h</span></span>\n        <span style=\"opacity:.4\">:</span>\n        <span><span class=\"apbM\">--</span><span class=\"apb-unit\">m</span></span>\n        <span style=\"opacity:.4\">:</span>\n        <span><span class=\"apbS\">--</span><span class=\"apb-unit\">s</span></span>\n      </span>\n    </div>\n\n    <!-- Mobile : marquee défilant (dupliqué x2 pour boucle fluide) -->\n    <div class=\"apb-marquee-wrap\">\n      <div class=\"apb-marquee-track\">\n        <!-- Exemplaire 1 -->\n        <span class=\"apb-marquee-item\">\n          <span>🔥</span>\n          <span><span class=\"apb-bold\">{{ txt_main }}</span> {{ txt_with }}</span>\n          <span class=\"apb-code\">C10</span>\n          <span class=\"apb-sep\">·</span>\n          <span>{{ txt_ends }}</span>\n          <span class=\"apb-timer\">\n            <span><span class=\"apbH\">--</span><span class=\"apb-unit\">h</span></span>\n            <span style=\"opacity:.4\">:</span>\n            <span><span class=\"apbM\">--</span><span class=\"apb-unit\">m</span></span>\n            <span style=\"opacity:.4\">:</span>\n            <span><span class=\"apbS\">--</span><span class=\"apb-unit\">s</span></span>\n          </span>\n        </span>\n        <!-- Exemplaire 2 (clone pour boucle) -->\n        <span class=\"apb-marquee-item\">\n          <span>🔥</span>\n          <span><span class=\"apb-bold\">{{ txt_main }}</span> {{ txt_with }}</span>\n          <span class=\"apb-code\">C10</span>\n          <span class=\"apb-sep\">·</span>\n          <span>{{ txt_ends }}</span>\n          <span class=\"apb-timer\">\n            <span><span class=\"apbH\">--</span><span class=\"apb-unit\">h</span></span>\n            <span style=\"opacity:.4\">:</span>\n            <span><span class=\"apbM\">--</span><span class=\"apb-unit\">m</span></span>\n            <span style=\"opacity:.4\">:</span>\n            <span><span class=\"apbS\">--</span><span class=\"apb-unit\">s</span></span>\n          </span>\n        </span>\n      </div>\n    </div>\n\n  </div>\n</div>\n\n<script>\n(function(){\n  var CYCLE=5*60*60*1000, KEY='ap_promo_v2';\n  function getStart(){\n    try{var t=parseInt(localStorage.getItem(KEY),10);if(t&&Date.now()-t<CYCLE)return t;}catch(e){}\n    var n=Date.now();try{localStorage.setItem(KEY,n);}catch(e){}return n;\n  }\n  var start=getStart();\n  function pad(n){return n<10?'0'+n:''+n;}\n  function tick(){\n    var el=Date.now()-start;\n    if(el>=CYCLE){start=Date.now();try{localStorage.setItem(KEY,start);}catch(e){}el=0;}\n    var rem=Math.floor((CYCLE-el)/1e3);\n    var h=pad(Math.floor(rem/3600));\n    var m=pad(Math.floor((rem%3600)/60));\n    var s=pad(rem%60);\n    document.querySelectorAll('.apbH').forEach(function(e){e.textContent=h;});\n    document.querySelectorAll('.apbM').forEach(function(e){e.textContent=m;});\n    document.querySelectorAll('.apbS').forEach(function(e){e.textContent=s;});\n  }\n  tick();setInterval(tick,1000);\n})();\n</script>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "loox_reviews_loox_rating_M4cTYJ": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-rating/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "contentSize": 15,
+            "pattern": "Excellent [rating] | +200 avis vérifiés",
+            "hideText": false,
+            "alignment": "",
+            "layout": "",
+            "textColor": "",
+            "starColor": "",
+            "showAllReviews": true,
+            "looxOpenFloatingWidget": true,
+            "emptyRatingWidget": false
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "txt_tr_pr": "none",
+            "fnt_df_pr": "1",
+            "size_pr": 22,
+            "fw_pr": 700,
+            "lh_pr": 0,
+            "ls_pr": 0,
+            "pr_title_color": "#ffffff"
+          }
+        },
+        "price_review": {
+          "type": "price_review",
+          "settings": {
+            "price": "0",
+            "type_sale": "2",
+            "tax_ship": false,
+            "rating": false,
+            "review_liquid": "",
+            "size_price_pr": 18,
+            "fw_price_pr": 600,
+            "price_color": "#ffffff",
+            "price_sale_color": "#ff9900"
+          }
+        },
+        "custom_liquid_HfGhbQ": {
+          "type": "custom_liquid",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "<div class=\"offer-container\">\n    <div class=\"offer-content\">\n        <div class=\"offer-icon\">\n            <svg class=\"animated-clock\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n                <circle cx=\"12\" cy=\"12\" r=\"10\"></circle>\n                <path class=\"clock-hand\" d=\"M12 6v6l4 2\"></path>\n            </svg>\n        </div>\n        <p class=\"offer-text\">Commandez avant le <span class=\"offer-date\" data-order-by></span> pour <span class=\"highlight\">UNE LIVRAISON OFFERTE !</span></p>\n    </div>\n</div>\n\n<style>\n    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');\n\n    .offer-container {\n        padding: 10px 18px;\n        border-radius: 5px !important;\n        display: flex;\n        align-items: center;\n        justify-content: flex-start;\n        max-width: 100%;\n        font-family: 'Poppins', sans-serif;\n        color: white;\n        font-size: 1.2rem;\n        font-weight: 600;\n        text-transform: none;\n        position: relative;\n        overflow: hidden;\n         background: linear-gradient(145deg, #1f1f1f, #0d0d0d);\n        border: 3px dashed transparent;\n        animation: borderMove 4s linear infinite;\n    }\n\n    /* Animation des pointillés */\n    @keyframes borderMove {\n        0% { border: 2px dashed #FF9900; }\n        50% { border: 2px dashed #FFD9A1; }\n        100% { border: 3px dashed #FF9900; }\n    }\n\n    .offer-content {\n        display: flex;\n        align-items: center;\n        justify-content: flex-start;\n        gap: 10px;\n        width: 100%;\n    }\n\n    .offer-icon {\n        display: flex;\n        align-items: center;\n        justify-content: center;\n    }\n\n    /* Animation de l'horloge */\n    .animated-clock {\n        width: 18px;\n        height: 18px;\n        color: #FFB400;\n    }\n\n    .clock-hand {\n        transform-origin: 12px 12px;\n        animation: clockRotation 6s linear infinite; /* Rotation fluide */\n    }\n\n    @keyframes clockRotation {\n        from { transform: rotate(0deg); }\n        to { transform: rotate(360deg); }\n    }\n\n    .offer-text {\n        display: flex;\n        align-items: center;\n        gap: 6px;\n        letter-spacing: 0.5px;\n        margin: 0;\n        padding: 0;\n        flex-wrap: wrap;\n    }\n\n    .offer-date {\n        font-weight: 700;\n        padding: 4px 10px;\n        background: rgba(255, 255, 255, 0.2);\n        border-radius: 5px;\n        color: white;\n        font-size: 1.2rem;\n        display: inline-block;\n    }\n\n    .highlight {\n        color: #FFB400;\n        font-weight: 700;\n    }\n\n    /* Responsive pour mobile */\n    @media screen and (max-width: 768px) {\n        .offer-container {\n            padding: 8px 14px;\n            font-size: 1.2rem;\n            border-radius: 5px !important;\n        }\n\n        .offer-content {\n            gap: 8px;\n        }\n\n        .offer-icon svg {\n            width: 16px;\n            height: 16px;\n        }\n\n        .offer-date {\n            font-size: 1.2rem;\n            padding: 3px 8px;\n        }\n    }\n</style>\n\n<script>\n    function formatDate(date) {\n        date.setDate(date.getDate() + 1);\n        const locale = document.documentElement.lang || navigator.language || \"fr\";\n        const day = date.getDate();\n        const monthShort = date.toLocaleString(locale, { month: 'short' }).toUpperCase();\n\n        return `${day} ${monthShort}`;\n    }\n\n    document.querySelectorAll('[data-order-by]').forEach(element => {\n        element.textContent = formatDate(new Date());\n    });\n</script>"
+          }
+        },
+        "custom_liquid_BtXWnY": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% assign lang = request.locale.iso_code %}\n\n{% case lang %}\n  {% when 'en' %}\n    {% assign item_1 = '<strong>Preview within 48 business hours</strong>' %}\n    {% assign item_2 = '<strong>Approval before printing</strong>' %}\n    {% assign item_3 = '<strong>Free & fast delivery</strong>' %}\n    {% assign item_4 = '<strong>Edits included</strong>' %}\n  {% when 'es' %}\n    {% assign item_1 = '<strong>Vista previa en 48 horas laborables</strong>' %}\n    {% assign item_2 = '<strong>Validación antes de la impresión</strong>' %}\n    {% assign item_3 = '<strong>Entrega gratuita y rápida</strong>' %}\n    {% assign item_4 = '<strong>Retoques incluidos</strong>' %}\n  {% when 'de' %}\n    {% assign item_1 = '<strong>Vorschau innerhalb von 48 Werktagen</strong>' %}\n    {% assign item_2 = '<strong>Freigabe vor dem Druck</strong>' %}\n    {% assign item_3 = '<strong>Kostenlose & schnelle Lieferung</strong>' %}\n    {% assign item_4 = '<strong>Überarbeitungen inklusive</strong>' %}\n  {% when 'it' %}\n    {% assign item_1 = '<strong>Anteprima entro 48 ore lavorative</strong>' %}\n    {% assign item_2 = '<strong>Convalida prima della stampa</strong>' %}\n    {% assign item_3 = '<strong>Spedizione gratuita e veloce</strong>' %}\n    {% assign item_4 = '<strong>Modifiche incluse</strong>' %}\n  {% else %}\n    {% assign item_1 = '<strong>Aperçu sous 24–48 h ouvrées</strong>' %}\n    {% assign item_2 = '<strong>Validation avant impression</strong>' %}\n    {% assign item_3 = '<strong>Livraison gratuite et rapide</strong>' %}\n    {% assign item_4 = '<strong>Retouche comprise</strong>' %}\n{% endcase %}\n\n<div class=\"apx-reassure\">\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_1 }}</span>\n  </div>\n\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_2 }}</span>\n  </div>\n\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_3 }}</span>\n  </div>\n\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_4 }}</span>\n  </div>\n</div>\n\n<style>\n.apx-reassure{\n  max-width: 920px;\n  margin: 16px auto;\n  padding: 14px 16px;\n\n  display:grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 10px 14px;\n\n  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));\n  border: 1px solid rgba(255,255,255,0.12);\n  border-radius: 16px;\n  box-shadow: 0 10px 28px rgba(0,0,0,0.35);\n}\n\n.apx-reassure__item{\n  display:flex;\n  align-items:center;\n  gap:10px;\n\n  padding: 10px 12px;\n  border-radius: 12px;\n  background: rgba(255,255,255,0.04);\n  border: 1px solid rgba(255,255,255,0.08);\n}\n\n.apx-reassure__dot{\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: #25D366;\n  flex: 0 0 auto;\n  box-shadow: 0 0 0 4px rgba(37,211,102,0.12);\n}\n\n.apx-reassure__text{\n  color: #fff;\n  font-size: 13.5px;\n  font-weight: 800;\n  line-height: 1.35;\n}\n\n.apx-reassure__text strong{\n  color: #fff;\n  font-weight: 800;\n}\n\n@media (max-width: 640px){\n  .apx-reassure{\n    grid-template-columns: 1fr;\n    padding: 12px;\n    gap: 8px;\n  }\n\n  .apx-reassure__item{\n    padding: 10px 11px;\n  }\n\n  .apx-reassure__text{\n    font-size: 13px;\n  }\n}\n</style>"
+          }
+        },
+        "95d4f334-8ea7-4cd2-b609-2373b1e848b8": {
+          "type": "tab_des",
+          "settings": {
+            "title": "Description"
+          }
+        },
+        "735c09e6-ca3e-4943-b282-9a654e0f4532": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<style>\n  .simple-divider{\n    width: 100%;\n    height: 1px;\n    background: rgba(255,255,255,0.15);\n    border: none;\n    margin: 20px 0;\n  }\n</style>\n\n<div class=\"simple-divider\"></div>"
+          }
+        },
+        "custom_liquid_jt8zXP": {
+          "type": "custom_liquid",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "<ul>\n  <li>🎨 Personnalisation Illimitée</li>\n  <li>🎁 Retouches Offertes</li>\n  <li>⏱️ Aperçu sous 24–48 h ouvrées</li>\n</p>"
+          }
+        },
+        "custom_liquid_CYWgXp": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{%- comment -%} STEPBOX • Étape 1 (Custom Liquid) {%- endcomment -%}\n\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_strong = \"Your photos\" -%}\n    {%- assign t_line   = \"You can send <b>multiple photos</b>, separate or in a group.\" -%}\n\n  {%- when 'es' -%}\n    {%- assign t_strong = \"Tus fotos\" -%}\n    {%- assign t_line   = \"Puedes enviar <b>varias fotos</b>, por separado o en grupo.\" -%}\n\n  {%- when 'de' -%}\n    {%- assign t_strong = \"Deine Fotos\" -%}\n    {%- assign t_line   = \"Du kannst <b>mehrere Fotos</b> senden, einzeln oder als Gruppe.\" -%}\n\n  {%- when 'it' -%}\n    {%- assign t_strong = \"Le tue foto\" -%}\n    {%- assign t_line   = \"Puoi inviare <b>più foto</b>, singole o in gruppo.\" -%}\n\n  {%- else -%}\n    {%- assign t_strong = \"Vos photos\" -%}\n    {%- assign t_line   = \"Vous pouvez envoyer <b>plusieurs photos</b>, séparées ou en groupe.\" -%}\n{%- endcase -%}\n\n<div class=\"stepbox\">\n  <div class=\"stepbox-inner\">\n    <span class=\"stepbox-num\">1</span>\n    <div class=\"stepbox-text\">\n      <strong>{{ t_strong }}</strong>\n      <span>{{ t_line }}</span>\n    </div>\n  </div>\n</div>\n\n<style>\n.stepbox{ margin:10px 0; }\n\n.stepbox-inner{\n  display:flex;\n  align-items:flex-start;\n  gap:10px;\n  padding:12px 14px;\n  border-radius:14px;\n  background:rgba(255,255,255,0.04);\n  border:1px solid rgba(255,255,255,0.10);\n}\n\n.stepbox-num{\n  width:22px;\n  height:22px;\n  border-radius:50%;\n  display:flex;\n  align-items:center;\n  justify-content:center;\n  font-size:12px;\n  font-weight:900;\n  color:#fff;\n  background:linear-gradient(135deg,#9b59ff,#ff9933);\n  flex:0 0 auto;\n}\n\n.stepbox-text{ display:flex; flex-direction:column; line-height:1.3; }\n.stepbox-text strong{ font-size:14px; font-weight:800; color:#fff; }\n.stepbox-text span{ font-size:12.5px; color:rgba(255,255,255,.75); }\n.stepbox-text b{ color:#fff; font-weight:800; }\n</style>"
+          }
+        },
+        "file_uploads_by_uploadkit_app_block_nyfdbm": {
+          "type": "shopify://apps/file-uploads-by-uploadkit/blocks/app-block/d7b05810-6170-4288-808a-df45248c4d28",
+          "settings": {
+            "product": "{{product}}"
+          }
+        },
+        "custom_liquid_UjanpR": {
+          "type": "custom_liquid",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "{% assign lang = request.locale.iso_code %}\n\n{% case lang %}\n  {% when 'en' %}\n    {% assign item_1 = 'Preview within <strong>48 business hours</strong>' %}\n    {% assign item_2 = 'Approval before printing' %}\n    {% assign item_3 = '<strong>Free & fast delivery*</strong>' %}\n    {% assign item_4 = '<strong>Edits included</strong>' %}\n  {% when 'es' %}\n    {% assign item_1 = 'Vista previa en <strong>48 horas laborables</strong>' %}\n    {% assign item_2 = 'Validación antes de la impresión' %}\n    {% assign item_3 = '<strong>Entrega gratuita y rápida*</strong>' %}\n    {% assign item_4 = '<strong>Retoques incluidos</strong>' %}\n  {% when 'de' %}\n    {% assign item_1 = 'Vorschau innerhalb von <strong>48 Werktagen</strong>' %}\n    {% assign item_2 = 'Freigabe vor dem Druck' %}\n    {% assign item_3 = '<strong>Kostenlose & schnelle Lieferung*</strong>' %}\n    {% assign item_4 = '<strong>Überarbeitungen inklusive</strong>' %}\n  {% when 'it' %}\n    {% assign item_1 = 'Anteprima entro <strong>48 ore lavorative</strong>' %}\n    {% assign item_2 = 'Convalida prima della stampa' %}\n    {% assign item_3 = '<strong>Spedizione gratuita e veloce*</strong>' %}\n    {% assign item_4 = '<strong>Modifiche incluse</strong>' %}\n  {% else %}\n    {% assign item_1 = 'Aperçu sous <strong>24–48 h ouvrées</strong>' %}\n    {% assign item_2 = 'Validation avant impression' %}\n    {% assign item_3 = '<strong>Livraison gratuite et rapide*</strong>' %}\n    {% assign item_4 = '<strong>Retouche comprise</strong>' %}\n{% endcase %}\n\n<div class=\"apx-reassure\">\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_1 }}</span>\n  </div>\n\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_2 }}</span>\n  </div>\n\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_3 }}</span>\n  </div>\n\n  <div class=\"apx-reassure__item\">\n    <span class=\"apx-reassure__dot\"></span>\n    <span class=\"apx-reassure__text\">{{ item_4 }}</span>\n  </div>\n</div>\n\n<style>\n.apx-reassure{\n  max-width: 920px;\n  margin: 16px auto;\n  padding: 14px 16px;\n\n  display:grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 10px 14px;\n\n  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));\n  border: 1px solid rgba(255,255,255,0.12);\n  border-radius: 16px;\n  box-shadow: 0 10px 28px rgba(0,0,0,0.35);\n}\n\n.apx-reassure__item{\n  display:flex;\n  align-items:center;\n  gap:10px;\n\n  padding: 10px 12px;\n  border-radius: 12px;\n  background: rgba(255,255,255,0.04);\n  border: 1px solid rgba(255,255,255,0.08);\n}\n\n.apx-reassure__dot{\n  width: 8px;\n  height: 8px;\n  border-radius: 999px;\n  background: #25D366;\n  flex: 0 0 auto;\n  box-shadow: 0 0 0 4px rgba(37,211,102,0.12);\n}\n\n.apx-reassure__text{\n  color: rgba(255,255,255,0.88);\n  font-size: 13.5px;\n  font-weight: 600;\n  line-height: 1.35;\n}\n\n.apx-reassure__text strong{\n  color: #fff;\n  font-weight: 800;\n}\n\n@media (max-width: 640px){\n  .apx-reassure{\n    grid-template-columns: 1fr;\n    padding: 12px;\n    gap: 8px;\n  }\n\n  .apx-reassure__item{\n    padding: 10px 11px;\n  }\n\n  .apx-reassure__text{\n    font-size: 13px;\n  }\n}\n</style>"
+          }
+        },
+        "custom_liquid_yikeyq": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{%- comment -%} STEPBOX • Étape 2 (Custom Liquid) {%- endcomment -%}\n\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_strong = \"Choose the options\" -%}\n    {%- assign t_line   = \"Number of people & format\" -%}\n\n  {%- when 'es' -%}\n    {%- assign t_strong = \"Elige las opciones\" -%}\n    {%- assign t_line   = \"Número de personas y formato\" -%}\n\n  {%- when 'de' -%}\n    {%- assign t_strong = \"Optionen auswählen\" -%}\n    {%- assign t_line   = \"Anzahl der Personen & Format\" -%}\n\n  {%- when 'it' -%}\n    {%- assign t_strong = \"Scegli le opzioni\" -%}\n    {%- assign t_line   = \"Numero di persone e formato\" -%}\n\n  {%- else -%}\n    {%- assign t_strong = \"Choisissez les options\" -%}\n    {%- assign t_line   = \"Nombre de personnes & format\" -%}\n{%- endcase -%}\n\n<div class=\"stepbox\">\n  <div class=\"stepbox-inner\">\n    <span class=\"stepbox-num\">2</span>\n    <div class=\"stepbox-text\">\n      <strong>{{ t_strong }}</strong>\n      <span>{{ t_line }}</span>\n    </div>\n  </div>\n</div>\n\n<style>\n.stepbox{ margin:10px 0; }\n\n.stepbox-inner{\n  display:flex;\n  align-items:flex-start;\n  gap:10px;\n  padding:12px 14px;\n  border-radius:14px;\n  background:rgba(255,255,255,0.04);\n  border:1px solid rgba(255,255,255,0.10);\n}\n\n.stepbox-num{\n  width:22px;\n  height:22px;\n  border-radius:50%;\n  display:flex;\n  align-items:center;\n  justify-content:center;\n  font-size:12px;\n  font-weight:900;\n  color:#fff;\n  background:linear-gradient(135deg,#9b59ff,#ff9933);\n  flex:0 0 auto;\n}\n\n.stepbox-text{ display:flex; flex-direction:column; line-height:1.3; }\n.stepbox-text strong{ font-size:14px; font-weight:800; color:#fff; }\n.stepbox-text span{ font-size:12.5px; color:rgba(255,255,255,.75); }\n</style>"
+          }
+        },
+        "form": {
+          "type": "form",
+          "settings": {
+            "selector_mode": "block",
+            "color_mode": "color is-sw-cl__round",
+            "enable_fit_ratio_img": false,
+            "color_size": "medium",
+            "show_qty": false,
+            "enable_wishlist": false,
+            "enable_compare": false,
+            "btn_atc_full": true,
+            "pr_btn_round": 5,
+            "ani": "none",
+            "time": 15,
+            "btn_txt": "0",
+            "btn_icon": false,
+            "button_style": "default",
+            "button_color": "custom1",
+            "button_effect": "sweep-to-right",
+            "wishlist_color": "#222222",
+            "wishlist_color_hover": "#56cfe1",
+            "wishlist_color_active": "#e81e1e",
+            "compare_color": "#222222",
+            "compare_color_hover": "#56cfe1",
+            "compare_color_active": "#222222",
+            "show_dynamic_checkout": false,
+            "btn_txt2": "3",
+            "button_color_payment": "custom1",
+            "show_gift_card_recipient": true,
+            "product_list": [],
+            "show_product_current": true,
+            "qty_val": "0",
+            "advance_label": "Choose style",
+            "advance_pr_list": []
+          }
+        },
+        "properties_h6wmNd": {
+          "type": "properties",
+          "settings": {
+            "type": "short",
+            "heading": "Prénom(s) ou Pseudo(s) :",
+            "options": "Pseudo(s)",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "all",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": []
+          }
+        },
+        "properties_nDfwmN": {
+          "type": "properties",
+          "settings": {
+            "type": "short",
+            "heading": "Montant de la prime ฿ :",
+            "options": "Montant de la prime ฿",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "portrait-personnalise-one-piece"
+            ]
+          }
+        },
+        "properties_MWBzhp": {
+          "type": "properties",
+          "settings": {
+            "type": "long",
+            "heading": "Demandes particulières :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "all",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": []
+          }
+        },
+        "loox_reviews_loox_gallery_carousel_section_gBxrXy": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-gallery-carousel-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "maxWidth": 1100,
+            "borderRadius": 60,
+            "itemsPerView": 5,
+            "mobileItemsPerView": 3,
+            "imageRatio": "1",
+            "reviewerNameColor": "#ffffff",
+            "starsColor": "#ffffff",
+            "arrows_backgroundColor": "#ffffff",
+            "arrows_iconColor": "#9a9a9a",
+            "shadow": "none",
+            "border_active": false,
+            "border_width": 2,
+            "border_color": "#000000",
+            "productIds": ""
+          },
+          "disabled": true
+        },
+        "custom_liquid_iE9wCj": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{%- comment -%} PXU • Garanties & avantages (Custom Liquid) {%- endcomment -%}\n\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_region = \"Guarantees & benefits\" -%}\n    {%- assign t_title  = \"Guarantees\" -%}\n    {%- assign t_sub    = \"Everything included — zero stress\" -%}\n\n    {%- assign t1_top = \"<strong>+500</strong> happy customers\" -%}\n    {%- assign t1_bot = \"Verified 5★ reviews\" -%}\n\n    {%- assign t2_top = \"Preview guaranteed in <strong>48h</strong>\" -%}\n    {%- assign t2_bot = \"Fast & efficient\" -%}\n\n    {%- assign t3_top = \"<strong>Revisions included</strong>\" -%}\n    {%- assign t3_bot = \"We adjust if needed\" -%}\n\n    {%- assign t4_top = \"Perfect gift\" -%}\n    {%- assign t4_bot = \"<strong>Couple · Family · Friends</strong>\" -%}\n\n    {%- assign t5_top = \"<strong>Secure payment</strong>\" -%}\n    {%- assign t5_bot = \"Protected transactions\" -%}\n\n  {%- when 'es' -%}\n    {%- assign t_region = \"Garantías y ventajas\" -%}\n    {%- assign t_title  = \"Garantías\" -%}\n    {%- assign t_sub    = \"Todo incluido — cero estrés\" -%}\n\n    {%- assign t1_top = \"<strong>+500</strong> clientes satisfechos\" -%}\n    {%- assign t1_bot = \"Reseñas 5★ verificadas\" -%}\n\n    {%- assign t2_top = \"Vista previa garantizada en <strong>48 h</strong>\" -%}\n    {%- assign t2_bot = \"Rápido y eficaz\" -%}\n\n    {%- assign t3_top = \"<strong>Retoques incluidos</strong>\" -%}\n    {%- assign t3_bot = \"Ajustamos si hace falta\" -%}\n\n    {%- assign t4_top = \"Regalo perfecto\" -%}\n    {%- assign t4_bot = \"<strong>Pareja · Familia · Amigos</strong>\" -%}\n\n    {%- assign t5_top = \"<strong>Pago seguro</strong>\" -%}\n    {%- assign t5_bot = \"Transacciones protegidas\" -%}\n\n  {%- when 'de' -%}\n    {%- assign t_region = \"Garantien & Vorteile\" -%}\n    {%- assign t_title  = \"Garantien\" -%}\n    {%- assign t_sub    = \"Alles inklusive — kein Stress\" -%}\n\n    {%- assign t1_top = \"<strong>+500</strong> zufriedene Kunden\" -%}\n    {%- assign t1_bot = \"Verifizierte 5★ Bewertungen\" -%}\n\n    {%- assign t2_top = \"Vorschau garantiert in <strong>48 Std.</strong>\" -%}\n    {%- assign t2_bot = \"Schnell & effizient\" -%}\n\n    {%- assign t3_top = \"<strong>Korrekturen inklusive</strong>\" -%}\n    {%- assign t3_bot = \"Wir passen bei Bedarf an\" -%}\n\n    {%- assign t4_top = \"Perfektes Geschenk\" -%}\n    {%- assign t4_bot = \"<strong>Paar · Familie · Freunde</strong>\" -%}\n\n    {%- assign t5_top = \"<strong>Sichere Zahlung</strong>\" -%}\n    {%- assign t5_bot = \"Geschützte Transaktionen\" -%}\n\n  {%- when 'it' -%}\n    {%- assign t_region = \"Garanzie e vantaggi\" -%}\n    {%- assign t_title  = \"Garanzie\" -%}\n    {%- assign t_sub    = \"Tutto incluso — zero stress\" -%}\n\n    {%- assign t1_top = \"<strong>+500</strong> clienti soddisfatti\" -%}\n    {%- assign t1_bot = \"Recensioni 5★ verificate\" -%}\n\n    {%- assign t2_top = \"Anteprima garantita entro <strong>48 ore</strong>\" -%}\n    {%- assign t2_bot = \"Veloce ed efficace\" -%}\n\n    {%- assign t3_top = \"<strong>Ritocchi inclusi</strong>\" -%}\n    {%- assign t3_bot = \"Modifichiamo se necessario\" -%}\n\n    {%- assign t4_top = \"Regalo perfetto\" -%}\n    {%- assign t4_bot = \"<strong>Coppia · Famiglia · Amici</strong>\" -%}\n\n    {%- assign t5_top = \"<strong>Pagamento sicuro</strong>\" -%}\n    {%- assign t5_bot = \"Transazioni protette\" -%}\n\n  {%- else -%}\n    {%- assign t_region = \"Garanties & avantages\" -%}\n    {%- assign t_title  = \"Garanties\" -%}\n    {%- assign t_sub    = \"Tout est inclus — zéro stress\" -%}\n\n    {%- assign t1_top = \"<strong>+500</strong> clients satisfaits\" -%}\n    {%- assign t1_bot = \"Avis 5★ vérifiés\" -%}\n\n    {%- assign t2_top = \"Aperçu garanti <strong>24–48 h ouvrées</strong>\" -%}\n    {%- assign t2_bot = \"Rapide & efficace\" -%}\n\n    {%- assign t3_top = \"<strong>Retouches incluses</strong>\" -%}\n    {%- assign t3_bot = \"On ajuste si besoin\" -%}\n\n    {%- assign t4_top = \"Cadeau parfait\" -%}\n    {%- assign t4_bot = \"<strong>Couple · Famille · Amis</strong>\" -%}\n\n    {%- assign t5_top = \"<strong>Paiement sécurisé</strong>\" -%}\n    {%- assign t5_bot = \"Transactions protégées\" -%}\n{%- endcase -%}\n\n<div class=\"pxu-wrap\" aria-label=\"{{ t_region }}\">\n  <div class=\"pxu-box\">\n\n    <div class=\"pxu-head\">\n      <div class=\"pxu-title\">{{ t_title }}</div>\n      <div class=\"pxu-sub\">{{ t_sub }}</div>\n    </div>\n\n    <div class=\"pxu-grid\">\n      <div class=\"pxu-item\">\n        <span class=\"pxu-ico\">⭐</span>\n        <div class=\"pxu-txt\">\n          <div class=\"pxu-top\">{{ t1_top }}</div>\n          <div class=\"pxu-bot\">{{ t1_bot }}</div>\n        </div>\n      </div>\n\n      <div class=\"pxu-item\">\n        <span class=\"pxu-ico\">⏱</span>\n        <div class=\"pxu-txt\">\n          <div class=\"pxu-top\">{{ t2_top }}</div>\n          <div class=\"pxu-bot\">{{ t2_bot }}</div>\n        </div>\n      </div>\n\n      <div class=\"pxu-item\">\n        <span class=\"pxu-ico\">✏️</span>\n        <div class=\"pxu-txt\">\n          <div class=\"pxu-top\">{{ t3_top }}</div>\n          <div class=\"pxu-bot\">{{ t3_bot }}</div>\n        </div>\n      </div>\n\n      <div class=\"pxu-item\">\n        <span class=\"pxu-ico\">🎁</span>\n        <div class=\"pxu-txt\">\n          <div class=\"pxu-top\">{{ t4_top }}</div>\n          <div class=\"pxu-bot\">{{ t4_bot }}</div>\n        </div>\n      </div>\n\n      <div class=\"pxu-item\">\n        <span class=\"pxu-ico\">🔒</span>\n        <div class=\"pxu-txt\">\n          <div class=\"pxu-top\">{{ t5_top }}</div>\n          <div class=\"pxu-bot\">{{ t5_bot }}</div>\n        </div>\n      </div>\n    </div>\n\n  </div>\n</div>\n\n<style>\n  /* ton CSS inchangé */\n  .pxu-wrap{ margin: 12px 0; }\n\n  .pxu-box{\n    position:relative;\n    border-radius: 18px;\n    padding: 14px 14px 12px;\n    background: rgba(255,255,255,0.045);\n    border: 1px solid rgba(255,255,255,0.10);\n    backdrop-filter: blur(12px);\n    -webkit-backdrop-filter: blur(12px);\n    box-shadow: 0 14px 40px rgba(0,0,0,0.38);\n    overflow:hidden;\n  }\n\n  .pxu-box::before{\n    content:\"\";\n    position:absolute;\n    inset:-2px;\n    background:\n      radial-gradient(520px 240px at 18% 0%, rgba(155,89,255,.28), rgba(0,0,0,0) 60%),\n      radial-gradient(520px 240px at 82% 0%, rgba(255,153,51,.30), rgba(0,0,0,0) 60%);\n    pointer-events:none;\n  }\n\n  .pxu-head{\n    position:relative;\n    display:flex;\n    align-items:baseline;\n    justify-content:space-between;\n    gap:10px;\n    margin-bottom: 10px;\n  }\n  .pxu-title{ color:#fff; font-weight: 980; letter-spacing: .2px; font-size: 14px; }\n  .pxu-sub{ color: rgba(255,255,255,.62); font-weight: 750; font-size: 12px; }\n\n  .pxu-grid{\n    position:relative;\n    display:grid;\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n    gap: 8px;\n  }\n\n  .pxu-item{\n    display:flex;\n    gap: 10px;\n    align-items:center;\n    padding: 10px 10px;\n    border-radius: 14px;\n    background: rgba(0,0,0,0.14);\n    border: 1px solid rgba(255,255,255,0.08);\n  }\n\n  .pxu-ico{\n    width: 30px;\n    height: 30px;\n    display:flex;\n    align-items:center;\n    justify-content:center;\n    border-radius: 12px;\n    background: rgba(255,255,255,0.06);\n    border: 1px solid rgba(255,255,255,0.10);\n    flex: 0 0 auto;\n    font-size: 14px;\n  }\n\n  .pxu-top{ color: rgba(255,255,255,.88); font-weight: 800; font-size: 13px; line-height: 1.15; }\n  .pxu-bot{ margin-top: 3px; color: rgba(255,255,255,.62); font-weight: 700; font-size: 12px; line-height: 1.15; }\n\n  .pxu-top strong, .pxu-bot strong{ color:#fff; font-weight: 980; }\n\n  @media (max-width: 560px){\n    .pxu-box{ padding: 12px 12px 10px; }\n    .pxu-grid{ grid-template-columns: 1fr; }\n  }\n</style>"
+          },
+          "disabled": true
+        },
+        "instafeed_story_app_block_story_VDChDA": {
+          "type": "shopify://apps/instafeed/blocks/app-block-story/4169bff3-1d6b-44ad-9377-2ebc3d31f01c",
+          "settings": {},
+          "disabled": true
+        },
+        "tab_liquid_CKf3EQ": {
+          "type": "tab_liquid",
+          "settings": {
+            "title": "Comment fonctionne Displate ?",
+            "custom_liquid": "<p><strong>Collez la feuille</strong></p>\n<p>Nettoyez le mur en utilisant la lingette incluse. Une fois qu'il est complètement sec, collez la feuille protectrice et appuyez autour pour enlever les bulles d'air.</p>\n<p><img src=\"https://cdn.shopify.com/s/files/1/0782/3494/3826/files/mounting_system-01.gif?v=1723221644\" alt=\"Image - Collez la feuille\"></p><br>\n\n<p><strong>Placez l'aimant</strong></p>\n<p>Retirez le film protecteur et collez l'aimant à l'endroit désigné sur la feuille protectrice. Appuyez fermement pendant au moins 5 secondes pour assurer une bonne fixation.</p>\n<p><img src=\"https://cdn.shopify.com/s/files/1/0782/3494/3826/files/mounting_system-02.gif?v=1723221644\" alt=\"Image - Placez l'aimant\"></p><br>\n\n<p><strong>Accrochez votre Displate</strong></p>\n<p>Positionnez-le comme vous le souhaitez et affichez-vous fièrement ! Vous pouvez le remplacer par un autre Displate en quelques secondes et l'accrocher en utilisant le même aimant.</p>\n<p><img src=\"https://cdn.shopify.com/s/files/1/0782/3494/3826/files/mounting_system-03.gif?v=1723221645\" alt=\"Image - Accrochez votre Displate\"></p>"
+          }
+        },
+        "56e67368-7424-4d73-8f14-dacdda4c59be": {
+          "type": "tab_rivui",
+          "settings": {
+            "title": "Nos avis clients",
+            "review_liquid": ""
+          }
+        },
+        "properties_zKhpHa": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "Choisis ton élément (Pokémon) :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_yqpqCG": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "2 - Attaque n°1 :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_xM3eMJ": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "3 - Description Attaque n°1 :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_44QizW": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "4 - Attaque n°2 :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_HwaVya": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "5 - Description Attaque n°2 :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_d6gUYK": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "short",
+            "heading": "6 - Votre histoire :",
+            "options": "option1, option2",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "product",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": [
+              "carte-pokemon-personnalisee"
+            ]
+          }
+        },
+        "properties_kEqygG": {
+          "type": "properties",
+          "disabled": true,
+          "settings": {
+            "type": "long",
+            "heading": "Demande particulière aux dessinateurs :",
+            "options": "Demande particulière aux dessinateurs",
+            "required": false,
+            "show_at_checkout": true,
+            "visibility": "all",
+            "collection_based": [],
+            "type_based": "",
+            "tag_based": "",
+            "product_based": []
+          }
+        },
+        "custom_liquid_apxAvc": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<style>\n@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');\n\n.avc-section {\n  padding: 40px 16px;\n  background: transparent;\n}\n.avc-inner { max-width: 1100px; margin: 0 auto; }\n\n.avc-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 4px;\n  gap: 10px;\n}\n.avc-title {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 14px;\n  font-weight: 500;\n  color: #9a9690;\n  line-height: 1;\n}\n.avc-arrows { display: flex; gap: 6px; }\n.avc-arrow {\n  width: 28px; height: 28px;\n  border-radius: 50%;\n  border: 1px solid rgba(255,255,255,.12);\n  background: transparent;\n  color: #9a9690;\n  font-size: 13px;\n  cursor: pointer;\n  display: flex; align-items: center; justify-content: center;\n  box-shadow: none;\n  transition: border-color .15s, color .15s;\n}\n.avc-arrow:hover { border-color: #f5a623; color: #f5a623; }\n\n.avc-track-wrap { overflow: hidden; margin-top: 12px; }\n.avc-track {\n  display: flex;\n  gap: 8px;\n  transition: transform .4s cubic-bezier(.25,.46,.45,.94);\n}\n\n/* Desktop: 5 cartes · Tablette: 4 · Mobile: 2.3 */\n.avc-card {\n  flex: 0 0 calc((100% - 32px) / 5);\n  background: #141416;\n  border: 1px solid rgba(255,255,255,.07);\n  border-radius: 10px;\n  overflow: hidden;\n  cursor: pointer;\n  transition: transform .2s, border-color .2s;\n}\n.avc-card:hover {\n  transform: translateY(-2px);\n  border-color: rgba(245,166,35,.22);\n}\n.avc-img-wrap {\n  position: relative;\n  aspect-ratio: 1 / 1;\n  overflow: hidden;\n  background: #1a1a1d;\n}\n.avc-img-wrap img {\n  width: 100%; height: 100%;\n  object-fit: cover;\n  display: block;\n  transition: transform .3s ease;\n}\n.avc-card:hover .avc-img-wrap img { transform: scale(1.04); }\n\n.avc-body { padding: 8px 10px 10px; }\n.avc-stars { color: #f5a623; font-size: 11px; letter-spacing: .5px; margin-bottom: 3px; }\n.avc-name {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 12px; font-weight: 500;\n  color: #f0ede8;\n  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;\n}\n.avc-date {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 10px;\n  color: #5a5855;\n  margin-top: 1px;\n}\n\n.avc-dots {\n  display: flex;\n  justify-content: center;\n  gap: 5px;\n  margin-top: 14px;\n}\n.avc-dot {\n  width: 5px; height: 5px;\n  border-radius: 50%;\n  background: rgba(255,255,255,.15);\n  cursor: pointer;\n  transition: background .2s, transform .2s;\n}\n.avc-dot.active { background: #f5a623; transform: scale(1.35); }\n\n/* Lightbox */\n.avc-lb {\n  display: none;\n  position: fixed; inset: 0; z-index: 9999;\n  background: rgba(0,0,0,.9);\n  align-items: center; justify-content: center;\n  padding: 16px;\n}\n.avc-lb.open { display: flex; }\n.avc-lb-box {\n  background: #141416;\n  border: 1px solid rgba(255,255,255,.1);\n  border-radius: 16px;\n  max-width: 420px; width: 100%;\n  overflow: hidden;\n  position: relative;\n  max-height: 90vh;\n  display: flex; flex-direction: column;\n}\n.avc-lb-img {\n  width: 100%;\n  max-height: 52vh;\n  object-fit: contain;\n  background: #0d0d0f;\n  display: block;\n}\n.avc-lb-content { padding: 16px 18px; overflow-y: auto; }\n.avc-lb-stars { color: #f5a623; font-size: 15px; margin-bottom: 8px; }\n.avc-lb-text {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 13px; color: #f0ede8;\n  line-height: 1.65; margin-bottom: 10px;\n}\n.avc-lb-meta {\n  font-family: 'DM Sans', sans-serif;\n  font-size: 11px; color: #9a9690;\n  display: flex; align-items: center; gap: 5px;\n}\n.avc-lb-meta::before {\n  content: ''; display: inline-block;\n  width: 4px; height: 4px;\n  background: #f5a623; border-radius: 50%; flex-shrink: 0;\n}\n.avc-lb-close {\n  position: absolute; top: 8px; right: 8px;\n  width: 26px; height: 26px;\n  background: rgba(0,0,0,.6); border-radius: 50%;\n  display: flex; align-items: center; justify-content: center;\n  cursor: pointer; font-size: 13px; color: #f0ede8;\n  border: none; box-shadow: none;\n  transition: background .15s;\n}\n.avc-lb-close:hover { background: rgba(245,166,35,.3); }\n\n@media (max-width: 900px) {\n  .avc-card { flex: 0 0 calc((100% - 24px) / 4); }\n}\n@media (max-width: 640px) {\n  .avc-card { flex: 0 0 calc((100% - 16px) / 2.3); }\n  .avc-section { padding: 32px 14px; }\n}\n@media (max-width: 380px) {\n  .avc-card { flex: 0 0 75%; }\n}\n</style>\n\n<div class=\"avc-section\">\n  <div class=\"avc-inner\">\n\n    <div class=\"avc-header\">\n      <div class=\"avc-title\">Ce que disent nos clients :</div>\n      <div class=\"avc-arrows\">\n        <button class=\"avc-arrow\" id=\"avcPrev\" aria-label=\"Précédent\">&#8592;</button>\n        <button class=\"avc-arrow\" id=\"avcNext\" aria-label=\"Suivant\">&#8594;</button>\n      </div>\n    </div>\n\n    <div class=\"avc-track-wrap\">\n      <div class=\"avc-track\" id=\"avcTrack\">\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2026/4/8/ZNjICcfVg.jpg','Rachel S.','Avr 2026','Une expérience magique du début à la fin ! L\\'équipe ultra disponible, réactive. La première proposition était déjà la bonne — mes cousins vont être aux anges !')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2026/4/8/ZNjICcfVg.jpg\" alt=\"Avis portrait personnalisé Rachel S. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Rachel S.</div>\n            <div class=\"avc-date\">Avr 2026</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2026/1/2/yQDGXsUNUk.jpg','Loris M.','Jan 2026','Commande d\\'une affiche format avis de recherche One Piece. Très belle qualité et fidèle aux photos envoyées !')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2026/1/2/yQDGXsUNUk.jpg\" alt=\"Avis portrait personnalisé Loris M. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★</div>\n            <div class=\"avc-name\">Loris M.</div>\n            <div class=\"avc-date\">Jan 2026</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2025/12/20/ogdyDGPoq.jpg','Milja M.','Déc 2025','Ma fille est ravie, très belle qualité.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2025/12/20/ogdyDGPoq.jpg\" alt=\"Avis portrait personnalisé Milja M. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Milja M.</div>\n            <div class=\"avc-date\">Déc 2025</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2025/9/19/dwIOIkFAZ.jpg','Valentine L.','Sep 2025','Magnifique portrait de mes 2 fils jumeaux. J\\'ai vu leurs yeux s\\'illuminer : \\\"c\\'est nous en fait, c\\'est trop génial !\\\" — j\\'étais émue. Félicitations pour votre beau travail !')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2025/9/19/dwIOIkFAZ.jpg\" alt=\"Avis portrait personnalisé Valentine L. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Valentine L.</div>\n            <div class=\"avc-date\">Sep 2025</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2025/6/17/G885TyDfD.jpg','Stellia C.','Juin 2025','MA-GNI-FI-QUE ! Mon chéri a adoré — il pensait recevoir un poster mais c\\'était le portrait de notre fils. Surprise réussie ! Il en a déjà parlé à ses amis.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2025/6/17/G885TyDfD.jpg\" alt=\"Avis portrait personnalisé Stellia C. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Stellia C.</div>\n            <div class=\"avc-date\">Juin 2025</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2025/6/11/01ES5zJdV.jpg','Geoffrey L.','Juin 2025','Envoi soigné, joli rendu.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2025/6/11/01ES5zJdV.jpg\" alt=\"Avis portrait personnalisé Geoffrey L. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Geoffrey L.</div>\n            <div class=\"avc-date\">Juin 2025</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2024/11/17/msZ1swB-d.jpg','Mélissa B.','Nov 2024','Le Displate est magnifique et j\\'ai hâte de pouvoir l\\'offrir à ma meilleure amie pour Noël. Elle va être aux anges.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2024/11/17/msZ1swB-d.jpg\" alt=\"Avis portrait personnalisé Mélissa B. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Mélissa B.</div>\n            <div class=\"avc-date\">Nov 2024</div>\n          </div>\n        </div>\n\n        <div class=\"avc-card\" onclick=\"avcOpen('https://images.loox.io/uploads/2024/6/6/J-NJkZ1mkI.jpg','Virginie A.','Juin 2024','Cadeau original, mon fils était ravi. Poster très bien fait.')\">\n          <div class=\"avc-img-wrap\"><img src=\"https://images.loox.io/uploads/2024/6/6/J-NJkZ1mkI.jpg\" alt=\"Avis portrait personnalisé Virginie A. Artpixe\" loading=\"lazy\"></div>\n          <div class=\"avc-body\">\n            <div class=\"avc-stars\">★★★★★</div>\n            <div class=\"avc-name\">Virginie A.</div>\n            <div class=\"avc-date\">Juin 2024</div>\n          </div>\n        </div>\n\n      </div>\n    </div>\n\n    <div class=\"avc-dots\" id=\"avcDots\"></div>\n\n  </div>\n</div>\n\n<div class=\"avc-lb\" id=\"avcLb\" onclick=\"if(event.target===this)avcClose()\">\n  <div class=\"avc-lb-box\">\n    <button class=\"avc-lb-close\" onclick=\"avcClose()\">✕</button>\n    <img class=\"avc-lb-img\" id=\"avcLbImg\" src=\"\" alt=\"\">\n    <div class=\"avc-lb-content\">\n      <div class=\"avc-lb-stars\">★★★★★</div>\n      <div class=\"avc-lb-text\" id=\"avcLbText\"></div>\n      <div class=\"avc-lb-meta\" id=\"avcLbMeta\"></div>\n    </div>\n  </div>\n</div>\n\n<script>\n(function(){\n  var track = document.getElementById('avcTrack');\n  var dotsEl = document.getElementById('avcDots');\n  var cards  = track.querySelectorAll('.avc-card');\n  var total  = cards.length;\n  var cur    = 0;\n\n  function visibleCount(){\n    var w = track.parentElement.offsetWidth;\n    if(w <= 380) return 1;\n    if(w <= 640) return 2;\n    if(w <= 900) return 4;\n    return 5;\n  }\n  function maxIndex(){ return Math.max(0, total - visibleCount()); }\n  function cardW(){ return cards[0] ? cards[0].offsetWidth + 8 : 0; }\n\n  function goTo(i){\n    cur = Math.min(Math.max(i, 0), maxIndex());\n    track.style.transform = 'translateX(-' + (cur * cardW()) + 'px)';\n    dotsEl.querySelectorAll('.avc-dot').forEach(function(d,j){\n      d.classList.toggle('active', j === cur);\n    });\n  }\n\n  function buildDots(){\n    dotsEl.innerHTML = '';\n    var n = maxIndex() + 1;\n    for(var i = 0; i < n; i++){\n      var d = document.createElement('div');\n      d.className = 'avc-dot' + (i===0?' active':'');\n      d.setAttribute('data-i', i);\n      d.onclick = function(){ goTo(+this.getAttribute('data-i')); };\n      dotsEl.appendChild(d);\n    }\n  }\n\n  document.getElementById('avcPrev').onclick = function(){ goTo(cur-1); };\n  document.getElementById('avcNext').onclick = function(){ goTo(cur+1); };\n\n  buildDots();\n  window.addEventListener('resize', function(){ buildDots(); goTo(0); });\n\n  var sx = 0;\n  track.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; },{passive:true});\n  track.addEventListener('touchend',   function(e){\n    var dx = sx - e.changedTouches[0].clientX;\n    if(Math.abs(dx) > 36) goTo(cur + (dx > 0 ? 1 : -1));\n  },{passive:true});\n})();\n\nfunction avcOpen(img,name,date,text){\n  document.getElementById('avcLbImg').src = img;\n  document.getElementById('avcLbImg').alt = name+' — Artpixe';\n  document.getElementById('avcLbText').textContent = text;\n  document.getElementById('avcLbMeta').textContent = name+' · '+date+' · Achat vérifié';\n  document.getElementById('avcLb').classList.add('open');\n  document.body.style.overflow='hidden';\n}\nfunction avcClose(){\n  document.getElementById('avcLb').classList.remove('open');\n  document.body.style.overflow='';\n}\n</script>"
+          }
+        },
+        "custom_liquid_apxGuar": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% comment %} ARTPIXE — Garanties — portraits pop (modèle partagé) {% endcomment %}\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n{%- comment -%} Nombre d'avis et note : lus dans Loox (métachamp de la boutique), jamais écrits à la main {%- endcomment -%}\n{%- assign lx_stats = shop.metafields.loox.global_stats.value | default: shop.metafields.loox.global_stats | split: ',' -%}\n{%- assign lx_avg = lx_stats[0] | plus: 0 | round: 1 -%}\n{%- assign lx_count = lx_stats[1] | plus: 0 -%}\n{%- assign lx_avg_txt = lx_avg | append: '' -%}\n{%- assign lx_avg_c = lx_avg_txt | replace: '.', ',' -%}\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_badge = \"Why Artpixe\" -%}{%- assign t_title = \"Your personalised pop culture portrait — guaranteed quality\" -%}\n    {%- if lx_count > 0 -%}\n      {%- capture t1_top -%}{{ lx_count }} verified reviews{%- endcapture -%}{%- capture t1_bot -%}Loox rating {{ lx_avg_txt }}/5{%- endcapture -%}\n    {%- else -%}\n      {%- assign t1_top = \"Verified customer reviews\" -%}{%- assign t1_bot = \"On Loox\" -%}\n    {%- endif -%}\n    {%- assign t2_top = \"Preview in 48h\" -%}{%- assign t2_bot = \"Guaranteed business hours\" -%}\n    {%- assign t3_top = \"Unlimited revisions\" -%}{%- assign t3_bot = \"Until you are 100% satisfied\" -%}\n    {%- assign t4_top = \"Perfect gift\" -%}{%- assign t4_bot = \"Couple · Family · Friends\" -%}\n    {%- assign t5_top = \"Secure payment\" -%}{%- assign t5_bot = \"Protected transactions\" -%}\n  {%- when 'es' -%}\n    {%- assign t_badge = \"Por qué Artpixe\" -%}{%- assign t_title = \"Tu retrato pop culture personalizado — calidad garantizada\" -%}\n    {%- if lx_count > 0 -%}\n      {%- capture t1_top -%}{{ lx_count }} reseñas verificadas{%- endcapture -%}{%- capture t1_bot -%}Nota Loox {{ lx_avg_c }}/5{%- endcapture -%}\n    {%- else -%}\n      {%- assign t1_top = \"Reseñas de clientes verificadas\" -%}{%- assign t1_bot = \"En Loox\" -%}\n    {%- endif -%}\n    {%- assign t2_top = \"Vista previa en 48 h\" -%}{%- assign t2_bot = \"Garantizado en horas laborables\" -%}\n    {%- assign t3_top = \"Retoques ilimitados\" -%}{%- assign t3_bot = \"Hasta tu aprobación completa\" -%}\n    {%- assign t4_top = \"Regalo perfecto\" -%}{%- assign t4_bot = \"Pareja · Familia · Amigos\" -%}\n    {%- assign t5_top = \"Pago seguro\" -%}{%- assign t5_bot = \"Transacciones protegidas\" -%}\n  {%- when 'de' -%}\n    {%- assign t_badge = \"Warum Artpixe\" -%}{%- assign t_title = \"Dein personalisiertes Popkultur-Porträt — garantierte Qualität\" -%}\n    {%- if lx_count > 0 -%}\n      {%- capture t1_top -%}{{ lx_count }} verifizierte Bewertungen{%- endcapture -%}{%- capture t1_bot -%}Loox-Bewertung {{ lx_avg_c }}/5{%- endcapture -%}\n    {%- else -%}\n      {%- assign t1_top = \"Verifizierte Kundenbewertungen\" -%}{%- assign t1_bot = \"Auf Loox\" -%}\n    {%- endif -%}\n    {%- assign t2_top = \"Vorschau in 48 Std.\" -%}{%- assign t2_bot = \"Garantiert in Werktagsstunden\" -%}\n    {%- assign t3_top = \"Unbegrenzte Korrekturen\" -%}{%- assign t3_bot = \"Bis zur vollen Zufriedenheit\" -%}\n    {%- assign t4_top = \"Perfektes Geschenk\" -%}{%- assign t4_bot = \"Paar · Familie · Freunde\" -%}\n    {%- assign t5_top = \"Sichere Zahlung\" -%}{%- assign t5_bot = \"Geschützte Transaktionen\" -%}\n  {%- when 'it' -%}\n    {%- assign t_badge = \"Perché Artpixe\" -%}{%- assign t_title = \"Il tuo ritratto pop culture personalizzato — qualità garantita\" -%}\n    {%- if lx_count > 0 -%}\n      {%- capture t1_top -%}{{ lx_count }} recensioni verificate{%- endcapture -%}{%- capture t1_bot -%}Voto Loox {{ lx_avg_c }}/5{%- endcapture -%}\n    {%- else -%}\n      {%- assign t1_top = \"Recensioni clienti verificate\" -%}{%- assign t1_bot = \"Su Loox\" -%}\n    {%- endif -%}\n    {%- assign t2_top = \"Anteprima in 48 ore\" -%}{%- assign t2_bot = \"Garantita in ore lavorative\" -%}\n    {%- assign t3_top = \"Ritocchi illimitati\" -%}{%- assign t3_bot = \"Fino alla tua piena soddisfazione\" -%}\n    {%- assign t4_top = \"Regalo perfetto\" -%}{%- assign t4_bot = \"Coppia · Famiglia · Amici\" -%}\n    {%- assign t5_top = \"Pagamento sicuro\" -%}{%- assign t5_bot = \"Transazioni protette\" -%}\n  {%- else -%}\n    {%- assign t_badge = \"Pourquoi Artpixe\" -%}{%- assign t_title = \"Ton portrait pop culture personnalisé — qualité garantie\" -%}\n    {%- if lx_count > 0 -%}\n      {%- capture t1_top -%}{{ lx_count }} avis vérifiés{%- endcapture -%}{%- capture t1_bot -%}Note Loox {{ lx_avg_c }}/5{%- endcapture -%}\n    {%- else -%}\n      {%- assign t1_top = \"Avis clients vérifiés\" -%}{%- assign t1_bot = \"Sur Loox\" -%}\n    {%- endif -%}\n    {%- assign t2_top = \"Aperçu sous 24–48 h ouvrées\" -%}{%- assign t2_bot = \"Garanti en heures ouvrées\" -%}\n    {%- assign t3_top = \"Retouches illimitées\" -%}{%- assign t3_bot = \"Jusqu'à ta validation complète\" -%}\n    {%- assign t4_top = \"Cadeau parfait\" -%}{%- assign t4_bot = \"Couple · Famille · Amis\" -%}\n    {%- assign t5_top = \"Paiement sécurisé\" -%}{%- assign t5_bot = \"Transactions protégées\" -%}\n{%- endcase -%}\n<link href=\"https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap\" rel=\"stylesheet\">\n<section class=\"apx-guar\" aria-label=\"{{ t_badge }}\">\n  <div class=\"apx-guar__head\">\n    <span class=\"apx-guar__badge\">{{ t_badge }}</span>\n    <h2 class=\"apx-guar__title\">{{ t_title }}</h2>\n  </div>\n  <ul class=\"apx-guar__grid\">\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--star\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t1_top }}</div><div class=\"apx-guar__bot\">{{ t1_bot }}</div></div></li>\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--clock\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><circle cx=\"12\" cy=\"12\" r=\"9\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M12 7v5l3 3\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t2_top }}</div><div class=\"apx-guar__bot\">{{ t2_bot }}</div></div></li>\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--edit\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><path d=\"M4 20h4l10.5-10.5a2 2 0 0 0 0-2.8l-1.2-1.2a2 2 0 0 0-2.8 0L4 16v4Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/><path d=\"M13.5 6.5l4 4\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t3_top }}</div><div class=\"apx-guar__bot\">{{ t3_bot }}</div></div></li>\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--gift\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><rect x=\"3\" y=\"9\" width=\"18\" height=\"13\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M21 9H3V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2Z\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M12 5v17M12 5c0-1.7-2-3-2-3s0 2 2 3ZM12 5c0-1.7 2-3 2-3s0 2-2 3Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t4_top }}</div><div class=\"apx-guar__bot\">{{ t4_bot }}</div></div></li>\n    <li class=\"apx-guar__item\"><span class=\"apx-guar__ico apx-guar__ico--lock\"><svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"18\" height=\"18\"><rect x=\"5\" y=\"11\" width=\"14\" height=\"11\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M8 11V7a4 4 0 1 1 8 0v4\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"16\" r=\"1.5\" fill=\"currentColor\"/></svg></span><div class=\"apx-guar__txt\"><div class=\"apx-guar__top\">{{ t5_top }}</div><div class=\"apx-guar__bot\">{{ t5_bot }}</div></div></li>\n  </ul>\n</section>\n<style>\n.apx-guar{margin:12px 0;padding:20px;background:#141416;border:1px solid rgba(255,255,255,.07);border-radius:18px;font-family:'DM Sans',sans-serif;}\n.apx-guar__head{margin-bottom:16px;}\n.apx-guar__badge{display:inline-flex;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:#f5a623;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-bottom:8px;}\n.apx-guar__title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.02em;color:#f0ede8;line-height:1.1;}\n.apx-guar__grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;list-style:none;padding:0;margin:0;align-items:stretch;}\n.apx-guar__item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;min-height:62px;}\n.apx-guar__ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}\n.apx-guar__ico--star{background:rgba(245,166,35,.12);color:#f5a623;border:1px solid rgba(245,166,35,.2);}\n.apx-guar__ico--clock{background:rgba(99,179,237,.1);color:#63b3ed;border:1px solid rgba(99,179,237,.2);}\n.apx-guar__ico--edit{background:rgba(154,214,117,.1);color:#9ad675;border:1px solid rgba(154,214,117,.2);}\n.apx-guar__ico--gift{background:rgba(236,107,174,.1);color:#ec6bae;border:1px solid rgba(236,107,174,.2);}\n.apx-guar__ico--lock{background:rgba(169,140,245,.1);color:#a98cf5;border:1px solid rgba(169,140,245,.2);}\n.apx-guar__txt{flex:1;min-width:0;}\n.apx-guar__top{font-size:12px;font-weight:600;color:#f0ede8;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}\n.apx-guar__bot{font-size:11px;font-weight:300;color:#9a9690;margin-top:2px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}\n.apx-guar__item:last-child:nth-child(odd){grid-column:1/-1;}\n.apx-guar__item:last-child:nth-child(odd) .apx-guar__top,.apx-guar__item:last-child:nth-child(odd) .apx-guar__bot{white-space:normal;}\n@media(max-width:560px){.apx-guar__grid{grid-template-columns:1fr;}.apx-guar__item:last-child:nth-child(odd){grid-column:auto;}.apx-guar__top,.apx-guar__bot{white-space:normal;}}\n</style>"
+          }
+        }
+      },
+      "block_order": [
+        "loox_reviews_loox_rating_M4cTYJ",
+        "title",
+        "price_review",
+        "custom_liquid_HfGhbQ",
+        "custom_liquid_BtXWnY",
+        "95d4f334-8ea7-4cd2-b609-2373b1e848b8",
+        "735c09e6-ca3e-4943-b282-9a654e0f4532",
+        "custom_liquid_jt8zXP",
+        "custom_liquid_CYWgXp",
+        "file_uploads_by_uploadkit_app_block_nyfdbm",
+        "custom_liquid_UjanpR",
+        "custom_liquid_yikeyq",
+        "form",
+        "properties_h6wmNd",
+        "properties_nDfwmN",
+        "properties_MWBzhp",
+        "custom_liquid_apxAvc",
+        "custom_liquid_apxGuar",
+        "loox_reviews_loox_gallery_carousel_section_gBxrXy",
+        "custom_liquid_iE9wCj",
+        "instafeed_story_app_block_story_VDChDA",
+        "tab_liquid_CKf3EQ",
+        "56e67368-7424-4d73-8f14-dacdda4c59be",
+        "properties_zKhpHa",
+        "properties_yqpqCG",
+        "properties_xM3eMJ",
+        "properties_44QizW",
+        "properties_HwaVya",
+        "properties_d6gUYK",
+        "properties_kEqygG"
+      ],
+      "custom_css": [
+        ".shopify-payment-button__more-options {display: none !important;}",
+        "input[type=\"text\"] {color: #000000 !important; /* ou la couleur que tu veux */}",
+        "textarea {color: #000000 !important; /* ou la couleur que tu veux */}"
+      ],
+      "settings": {
+        "pr_layout": "wide",
+        "enable_sticky_info": true,
+        "media_layout": "thumbnails_bottom",
+        "media_size": "medium",
+        "thumb_lr_size": "medium",
+        "image_ratio": "ratioadapt",
+        "image_size": "cover",
+        "image_position": "8",
+        "main_click": "none",
+        "zoom_tp": "external",
+        "enable_zoom_icon": false,
+        "enable_zoom_click_mb": true,
+        "enable_video_looping": false,
+        "enable_video_muting": true,
+        "enable_video_autoplaying": true,
+        "eff": "slide",
+        "nav_btn": false,
+        "btn_vi": "always",
+        "btn_owl": "outline",
+        "btn_shape": "round",
+        "btn_cl": "dark",
+        "btn_size": "small",
+        "btn_hidden_mobile": true,
+        "nav_dot": false,
+        "dot_owl": "elessi",
+        "dots_cl": "dark",
+        "dots_round": true,
+        "dots_space": 10,
+        "dots_hidden_mobile": false,
+        "tabs_design": "accordion",
+        "tabs_design_mb": "accordion",
+        "tabs_position": "external",
+        "enable_first_tab": false,
+        "tabs_layout_fix": "full",
+        "bg": "#141414",
+        "bg_mb": "#141414",
+        "product_list": [],
+        "sticky_mode": "0",
+        "sticky_show": "2",
+        "sticky_layout_mb": "minimal",
+        "enable_select": true,
+        "ani": "none",
+        "time": 15
+      }
+    },
+    "17700291493732a25d": {
+      "type": "apps",
+      "settings": {}
+    },
+    "6b0f2b31-1a7a-402a-9f9a-8d9498d1c8d8": {
+      "type": "shipping",
+      "blocks": {
+        "template--20139737055555__4f14c1a9-4ca0-4f22-823f-fa622c56b1de-shipping-1": {
+          "type": "shipping",
+          "settings": {
+            "icon_themes": "refesh",
+            "image_icon": "shopify://shop_images/Portrait_manga_personnalise_5.webp",
+            "icon": "las la-shipping-fast",
+            "title": "Paiement 4x sans frais",
+            "text": "<p>avec Paypal</p>",
+            "html": ""
+          }
+        },
+        "template--20139737055555__4f14c1a9-4ca0-4f22-823f-fa622c56b1de-shipping-2": {
+          "type": "shipping",
+          "settings": {
+            "icon_themes": "help",
+            "image_icon": "shopify://shop_images/Portrait_manga_personnalise_4_62d0820a-3711-456e-a5fc-41d9e1a44bad.webp",
+            "icon": "las la-life-ring",
+            "title": "Cadeau 100% personnalisable",
+            "text": "<p>unique & original</p>",
+            "html": ""
+          }
+        },
+        "template--20139737055555__4f14c1a9-4ca0-4f22-823f-fa622c56b1de-shipping-3": {
+          "type": "shipping",
+          "settings": {
+            "icon_themes": "refesh",
+            "image_icon": "shopify://shop_images/Portrait_manga_personnalise_ce8c09c5-a15b-4350-ba00-6f7c16b4f948.webp",
+            "icon": "las la-undo-alt",
+            "title": "Le cadeau parfait à offrir",
+            "text": "<p>à vos amis ou à vous même</p>",
+            "html": ""
+          }
+        }
+      },
+      "block_order": [
+        "template--20139737055555__4f14c1a9-4ca0-4f22-823f-fa622c56b1de-shipping-1",
+        "template--20139737055555__4f14c1a9-4ca0-4f22-823f-fa622c56b1de-shipping-2",
+        "template--20139737055555__4f14c1a9-4ca0-4f22-823f-fa622c56b1de-shipping-3"
+      ],
+      "settings": {
+        "design_heading": "1",
+        "heading_align": "t4s-text-center",
+        "top_heading": "",
+        "icon_heading": "las la-gem",
+        "top_subheading": "",
+        "tophead_mb": 30,
+        "content_align": "text-start",
+        "align_vertical": true,
+        "design_padding": "1",
+        "source": "get_image",
+        "icon_des": "default",
+        "icon_size": "medium",
+        "col_dk": "3",
+        "col_tb": "1",
+        "col_mb": "1",
+        "border": true,
+        "cl_bd": "#141414",
+        "cl_ic": "#ff9900",
+        "cl_hd": "#ff9900",
+        "cl_cot": "#ffffff",
+        "bg_item": "#141414",
+        "hd_fs": 15,
+        "hd_fw": 500,
+        "txt_fs": 14,
+        "space_h_item": "30",
+        "space_v_item": "10",
+        "space_h_item_mb": "10",
+        "space_v_item_mb": "20",
+        "carousel_mobile": false,
+        "dots_cl": "dark",
+        "dots_round": true,
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "25px,,60px,",
+        "pd": "",
+        "mg_tb": "25px,,60px,",
+        "pd_tb": "",
+        "mg_mb": "15px,,60px,",
+        "pd_mb": "",
+        "use_cus_css": false,
+        "code_cus_css": ""
+      },
+      "disabled": true
+    },
+    "hero_image_KBmtq6": {
+      "type": "hero_image",
+      "disabled": true,
+      "settings": {
+        "se_height": "t4s_ratio_cuspx",
+        "custom_dk": true,
+        "height_dk": 800,
+        "custom_tb": true,
+        "height_tb": 400,
+        "custom_mb": true,
+        "height_mb": 200,
+        "image": "shopify://shop_images/Portrait_personnalise_manga_bc1921f4-fa00-4873-b1f3-0a803c844278.webp",
+        "parallax": false,
+        "image_position": "0",
+        "link_img1": "",
+        "open_link": "_blank",
+        "text_align": "center",
+        "text_align_mb": "center",
+        "content_width": "auto",
+        "cv_pos": 49,
+        "ch_pos": 50,
+        "cv_pos_mb": 50,
+        "ch_pos_mb": 50,
+        "bg_overlay": "#141414",
+        "bg_opacity": 0,
+        "bg_content_cl": "#ffffff",
+        "bg_content_op": 0,
+        "content_pd_tb": 0,
+        "content_pd_lr": 10,
+        "content_pd_tb_mb": 10,
+        "content_pd_lr_mb": 10,
+        "border_bl": false,
+        "br_color": "#222222",
+        "br_bg": "#ffffff",
+        "br_opacity": 50,
+        "br_style": "solid",
+        "br_pd": 4,
+        "br_pd_mb": 10,
+        "time_animation": 1,
+        "animation_delay": 40,
+        "layout": "t4s-container-fluid",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,0px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": "-50px",
+        "pd_mb": "",
+        "use_cus_css": false,
+        "code_cus_css": ""
+      }
+    },
+    "recently-viewed-products": {
+      "type": "recently_viewed",
+      "disabled": true,
+      "settings": {
+        "show": true,
+        "design_heading": "8",
+        "heading_align": "t4s-text-start",
+        "top_heading": "Recently viewed products",
+        "icon_heading": "las la-gem",
+        "top_subheading": "",
+        "tophead_mb": 30,
+        "product_des": "1",
+        "show_vendor": false,
+        "use_cdt": false,
+        "limit": 14,
+        "sortby": "1",
+        "unavailable_prs": "show",
+        "image_ratio": "rationt",
+        "image_size": "cover",
+        "image_position": "8",
+        "content_align": "default",
+        "col_dk": "4",
+        "col_tb": "2",
+        "col_mb": "2",
+        "space_h_item": "30",
+        "space_v_item": "30",
+        "space_h_item_mb": "10",
+        "space_v_item_mb": "10",
+        "layout_des": "2",
+        "loop": true,
+        "au_time": 0,
+        "au_hover": true,
+        "nav_btn": true,
+        "btn_vi": "always",
+        "btn_owl": "outline",
+        "btn_shape": "round",
+        "btn_cl": "dark",
+        "btn_size": "small",
+        "btn_hidden_mobile": true,
+        "nav_dot": false,
+        "dot_owl": "default",
+        "dots_cl": "dark",
+        "dots_round": true,
+        "dots_space": 10,
+        "dots_hidden_mobile": false,
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "75px,,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "sidebar": {
+      "type": "sidebar-product",
+      "blocks": {
+        "f01b181b-62ee-4735-8e25-32cb71ccfaba": {
+          "type": "category",
+          "settings": {
+            "title_category": "Product Categories",
+            "cat_source": "1",
+            "cat_link_list": "",
+            "count": true
+          }
+        },
+        "f65f464b-9487-43be-9c91-8688a098bb6f": {
+          "type": "collection",
+          "settings": {
+            "title_fea_pr": "Sale Products",
+            "collection": "frontpage",
+            "limit_pr": 5,
+            "image_ratio": "t4s_ratioadapt",
+            "image_size": "t4s_cover",
+            "image_position": "t4s_position_8"
+          }
+        },
+        "83340bb8-58d2-4148-89e2-a4c7a01cf792": {
+          "type": "instagram",
+          "settings": {
+            "title_ins": "Instagram",
+            "mode": "2",
+            "acc": "",
+            "limit": 12,
+            "open_link": "_blank",
+            "round": 0,
+            "col_dk": "3",
+            "space_item": "6"
+          }
+        },
+        "9ce9ded8-1cef-4e32-b98b-47364ffa328c": {
+          "type": "shipping",
+          "settings": {
+            "title": "Shipping & Delivery",
+            "shipping_1": "las la-truck,FREE SHIPPING,Free shipping for all US order",
+            "shipping_2": "las la-headset,SUPPORT 24/7,We support 24 hours a day",
+            "shipping_3": "las la-exchange-alt,30 DAYS RETURN,You have 30 days to return",
+            "shipping_4": "",
+            "shipping_5": "",
+            "shipping_6": ""
+          }
+        },
+        "4a9c6ae8-f3b4-4192-a6d1-82d01670bce6": {
+          "type": "image",
+          "settings": {
+            "b_link": "",
+            "open_link": "_self",
+            "img_effect": "none",
+            "date": "2022/12/26",
+            "content_align": "center",
+            "cdt_des": "2",
+            "countdown_pos": "2",
+            "cdt_size": "medium",
+            "box_bdr": 0,
+            "bd_width": 0,
+            "space_item": 10,
+            "number_cl": "#ffffff",
+            "text_cl": "#ffffff",
+            "border_cl": "#000000",
+            "bg_cl": "#000000"
+          }
+        }
+      },
+      "block_order": [
+        "f01b181b-62ee-4735-8e25-32cb71ccfaba",
+        "f65f464b-9487-43be-9c91-8688a098bb6f",
+        "83340bb8-58d2-4148-89e2-a4c7a01cf792",
+        "9ce9ded8-1cef-4e32-b98b-47364ffa328c",
+        "4a9c6ae8-f3b4-4192-a6d1-82d01670bce6"
+      ],
+      "disabled": true,
+      "settings": {
+        "enable_drawer": true,
+        "space": 50,
+        "size": "medium",
+        "br_style": "none",
+        "brcolor": "#222222",
+        "sidebar_bdr": 5,
+        "sidebar_pd": 10
+      }
+    },
+    "f6a2f27e-553f-4ea0-a978-ab616e1727df": {
+      "type": "custom-html",
+      "disabled": true,
+      "custom_css": [],
+      "settings": {
+        "code": "<div style=\"text-align: center;\"><a href=\"https://hopjoy.fr/pages/box-biere-mensuelle\" class=\"next-step t4s-btn t4s-btn-base t4s-btn-style-default t4s-btn-size-large t4s-btn-icon-true t4s-btn-color-primary t4s-btn-effect-sweep-to-right\">Je me lance dans l'aventure <svg class=\"t4s-btn-icon\"><use xlink:href=\"#t4s-icon-btn\"></use></svg></a></div>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "#141414",
+        "cl_bg_gradient": "",
+        "mg": "-15px,,80px,",
+        "pd": "",
+        "mg_tb": "-15px,,80px,",
+        "pd_tb": "",
+        "mg_mb": "-30px,,60px,",
+        "pd_mb": "",
+        "use_cus_css": false,
+        "code_cus_css": ""
+      }
+    },
+    "line_XbWYNe": {
+      "type": "line",
+      "settings": {
+        "line_style": "solid",
+        "line_width": 100,
+        "line_height": 1,
+        "line_cl": "#141414",
+        "line_pos": "t4s-text-start",
+        "layout": "t4s-container-wrap",
+        "mg": ",,50px,",
+        "mg_tb": "",
+        "mg_mb": ",,30px,",
+        "use_cus_css": false,
+        "code_cus_css": ""
+      },
+      "disabled": true
+    },
+    "9af9f87f-4d1f-4610-8b35-051976b34b07": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "{% comment %}\n  ARTPIXE — Comment ça marche — mise en page du modèle One Piece, textes de l'ancien bloc « How it works »\n  i18n : FR · EN · ES · DE · IT\n{% endcomment %}\n\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_badge = \"Simple process\" -%}\n    {%- assign t_title = \"How does it work?\" -%}\n    {%- assign t_sub = \"4 quick steps, and your portrait will be ready in just a few days.\" -%}\n    {%- assign t_s1_h = \"1. The Style\" -%}\n    {%- assign t_s1_p = \"Choose your style, characters, and background.\" -%}\n    {%- assign t_s2_h = \"2. Photos\" -%}\n    {%- assign t_s2_p = \"Send us your photos, alone or with someone.\" -%}\n    {%- assign t_s3_h = \"3. Artwork\" -%}\n    {%- assign t_s3_p = \"Our artists create your portrait with care.\" -%}\n    {%- assign t_s4_h = \"4. Preview\" -%}\n    {%- assign t_s4_p = \"Preview within 48 hours, with revisions included.\" -%}\n    {%- assign t_cta = \"Create my portrait\" -%}\n    {%- assign t_trust1 = \"Revisions included\" -%}\n    {%- assign t_trust2 = \"Support 7 days/week\" -%}\n    {%- assign t_trust3 = \"Fast delivery\" -%}\n  {%- when 'es' -%}\n    {%- assign t_badge = \"Proceso simple\" -%}\n    {%- assign t_title = \"¿Cómo funciona?\" -%}\n    {%- assign t_sub = \"4 pasos rápidos y tu retrato estará listo en pocos días.\" -%}\n    {%- assign t_s1_h = \"1. El estilo\" -%}\n    {%- assign t_s1_p = \"Elige tu estilo, tus personajes y tu fondo.\" -%}\n    {%- assign t_s2_h = \"2. Las fotos\" -%}\n    {%- assign t_s2_p = \"Envíanos tus fotos, solo/a o con alguien.\" -%}\n    {%- assign t_s3_h = \"3. El dibujo\" -%}\n    {%- assign t_s3_p = \"Nuestros artistas realizan tu retrato con cuidado.\" -%}\n    {%- assign t_s4_h = \"4. El retrato\" -%}\n    {%- assign t_s4_p = \"Vista previa en 48 h, con retoques incluidos.\" -%}\n    {%- assign t_cta = \"Crear mi retrato\" -%}\n    {%- assign t_trust1 = \"Retoques incluidos\" -%}\n    {%- assign t_trust2 = \"Soporte 7 días/7\" -%}\n    {%- assign t_trust3 = \"Entrega rápida\" -%}\n  {%- when 'de' -%}\n    {%- assign t_badge = \"Einfacher Ablauf\" -%}\n    {%- assign t_title = \"Wie funktioniert’s?\" -%}\n    {%- assign t_sub = \"4 schnelle Schritte – und dein Porträt ist in wenigen Tagen fertig.\" -%}\n    {%- assign t_s1_h = \"1. Der Stil\" -%}\n    {%- assign t_s1_p = \"Wähle deinen Stil, deine Figuren und deinen Hintergrund.\" -%}\n    {%- assign t_s2_h = \"2. Die Fotos\" -%}\n    {%- assign t_s2_p = \"Sende uns deine Fotos – allein oder mit jemandem.\" -%}\n    {%- assign t_s3_h = \"3. Die Zeichnung\" -%}\n    {%- assign t_s3_p = \"Unsere Künstler erstellen dein Porträt mit Sorgfalt.\" -%}\n    {%- assign t_s4_h = \"4. Das Porträt\" -%}\n    {%- assign t_s4_p = \"Vorschau innerhalb von 48 Std., inklusive Korrekturen.\" -%}\n    {%- assign t_cta = \"Mein Porträt erstellen\" -%}\n    {%- assign t_trust1 = \"Korrekturen inklusive\" -%}\n    {%- assign t_trust2 = \"Support 7 Tage/Woche\" -%}\n    {%- assign t_trust3 = \"Schnelle Lieferung\" -%}\n  {%- when 'it' -%}\n    {%- assign t_badge = \"Processo semplice\" -%}\n    {%- assign t_title = \"Come funziona?\" -%}\n    {%- assign t_sub = \"4 passaggi rapidi e il tuo ritratto è pronto in pochi giorni.\" -%}\n    {%- assign t_s1_h = \"1. Lo stile\" -%}\n    {%- assign t_s1_p = \"Scegli lo stile, i personaggi e lo sfondo.\" -%}\n    {%- assign t_s2_h = \"2. Le foto\" -%}\n    {%- assign t_s2_p = \"Inviaci le tue foto, da solo/a o con qualcuno.\" -%}\n    {%- assign t_s3_h = \"3. Il disegno\" -%}\n    {%- assign t_s3_p = \"I nostri artisti realizzano il tuo ritratto con cura.\" -%}\n    {%- assign t_s4_h = \"4. Il ritratto\" -%}\n    {%- assign t_s4_p = \"Anteprima entro 48 ore, con ritocchi inclusi.\" -%}\n    {%- assign t_cta = \"Crea il mio ritratto\" -%}\n    {%- assign t_trust1 = \"Ritocchi inclusi\" -%}\n    {%- assign t_trust2 = \"Supporto 7 giorni su 7\" -%}\n    {%- assign t_trust3 = \"Consegna rapida\" -%}\n  {%- else -%}\n    {%- assign t_badge = \"Processus simple\" -%}\n    {%- assign t_title = \"Comment faire ?\" -%}\n    {%- assign t_sub = \"4 étapes rapides, et ton portrait est prêt en quelques jours.\" -%}\n    {%- assign t_s1_h = \"1. Le Style\" -%}\n    {%- assign t_s1_p = \"Sélectionne ton style, tes personnages et ton décor.\" -%}\n    {%- assign t_s2_h = \"2. Les Photos\" -%}\n    {%- assign t_s2_p = \"Transmets-nous tes photos, seul(e) ou avec quelqu’un.\" -%}\n    {%- assign t_s3_h = \"3. Le Dessin\" -%}\n    {%- assign t_s3_p = \"Nos artistes réalisent ton portrait avec soin.\" -%}\n    {%- assign t_s4_h = \"4. Le Portrait\" -%}\n    {%- assign t_s4_p = \"Aperçu sous 24–48 h ouvrées, avec retouches incluses.\" -%}\n    {%- assign t_cta = \"Créer mon portrait\" -%}\n    {%- assign t_trust1 = \"Retouches incluses\" -%}\n    {%- assign t_trust2 = \"Support 7j/7\" -%}\n    {%- assign t_trust3 = \"Livraison rapide\" -%}\n{%- endcase -%}\n\n\n\n<link href=\"https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap\" rel=\"stylesheet\">\n\n{% comment %} ————— HTML ————— {% endcomment %}\n<section class=\"apx-how\" id=\"apx-how\">\n  <div class=\"apx-how__inner\">\n\n    <div class=\"apx-how__head\">\n      <span class=\"apx-how__badge\">{{ t_badge }}</span>\n      <h2 class=\"apx-how__title\">{{ t_title }}</h2>\n      <p class=\"apx-how__sub\">{{ t_sub }}</p>\n    </div>\n\n    <div class=\"apx-how__track\" id=\"apx-track\" role=\"list\">\n\n      <div class=\"apx-step apx-reveal\" role=\"listitem\">\n        <div class=\"apx-step__icon apx-step__icon--1\" aria-hidden=\"true\">\n          <svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"36\" height=\"36\">\n            <path d=\"M12 2l1.2 4.2L17.4 8 13.2 9.2 12 13.5 10.8 9.2 6.6 8l4.2-1.8L12 2Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/>\n            <path d=\"M5 13l.7 2.5L8 16l-2.3 1 .7 2.5L5 18l-1.4 1.5.7-2.5L2 16l2.3-.5L5 13Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/>\n            <path d=\"M18 12l.8 2.8L22 16l-3.2 1.2.8 2.8L18 18.3 16.6 20l.8-2.8L14 16l3.2-.8L18 12Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/>\n          </svg>\n        </div>\n        <h3 class=\"apx-step__h\">{{ t_s1_h }}</h3>\n        <p class=\"apx-step__p\">{{ t_s1_p }}</p>\n      </div>\n\n      <div class=\"apx-step apx-reveal\" role=\"listitem\">\n        <div class=\"apx-step__icon apx-step__icon--2\" aria-hidden=\"true\">\n          <svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"36\" height=\"36\">\n            <path d=\"M7 8h10a2 2 0 0 1 2 2v9H5v-9a2 2 0 0 1 2-2Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/>\n            <path d=\"M9 8l1-2h4l1 2\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/>\n            <path d=\"M12 12.2a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2Z\" stroke=\"currentColor\" stroke-width=\"1.8\"/>\n            <path d=\"M16.8 6.7l.9.9\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n          </svg>\n        </div>\n        <h3 class=\"apx-step__h\">{{ t_s2_h }}</h3>\n        <p class=\"apx-step__p\">{{ t_s2_p }}</p>\n      </div>\n\n      <div class=\"apx-step apx-reveal\" role=\"listitem\">\n        <div class=\"apx-step__icon apx-step__icon--3\" aria-hidden=\"true\">\n          <svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"36\" height=\"36\">\n            <path d=\"M4 20h4l10.5-10.5a2 2 0 0 0 0-3L16.5 4a2 2 0 0 0-3 0L3 14.5V20Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/>\n            <path d=\"M12.5 5.5l6 6\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n            <path d=\"M9 19h6\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n          </svg>\n        </div>\n        <h3 class=\"apx-step__h\">{{ t_s3_h }}</h3>\n        <p class=\"apx-step__p\">{{ t_s3_p }}</p>\n      </div>\n\n      <div class=\"apx-step apx-reveal\" role=\"listitem\">\n        <div class=\"apx-step__icon apx-step__icon--4\" aria-hidden=\"true\">\n          <svg viewBox=\"0 0 24 24\" fill=\"none\" width=\"36\" height=\"36\">\n            <path d=\"M5 4h14v16H5V4Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/>\n            <path d=\"M8 8h8v8H8V8Z\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/>\n            <path d=\"M11 11.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z\" stroke=\"currentColor\" stroke-width=\"1.8\"/>\n          </svg>\n        </div>\n        <h3 class=\"apx-step__h\">{{ t_s4_h }}</h3>\n        <p class=\"apx-step__p\">{{ t_s4_p }}</p>\n      </div>\n\n    </div>\n\n    <!-- Dots (mobile) -->\n    <div class=\"apx-dots\" id=\"apx-dots\" aria-hidden=\"true\">\n      <button class=\"apx-dot-btn active\" data-idx=\"0\"></button>\n      <button class=\"apx-dot-btn\" data-idx=\"1\"></button>\n      <button class=\"apx-dot-btn\" data-idx=\"2\"></button>\n      <button class=\"apx-dot-btn\" data-idx=\"3\"></button>\n    </div>\n\n    <!-- CTA -->\n    <div class=\"apx-how__cta apx-reveal\">\n      <a class=\"apx-how__btn\" href=\"{{ product.url }}#apx-config\">{{ t_cta }}</a>\n      <div class=\"apx-how__trust\">\n        <span class=\"apx-trust-dot\"></span>{{ t_trust1 }}\n        <span class=\"apx-trust-dot\"></span>{{ t_trust2 }}\n        <span class=\"apx-trust-dot\"></span>{{ t_trust3 }}\n      </div>\n    </div>\n\n  </div>\n</section>\n\n<style>\n  /* ── BASE ── */\n  .apx-how{\n    padding: 72px 20px;\n    background: transparent;\n    font-family: 'DM Sans', sans-serif;\n    overflow: hidden;\n  }\n  .apx-how__inner{ max-width: 1100px; margin: 0 auto; }\n\n  /* ── HEADER ── */\n  .apx-how__head{ text-align: center; margin-bottom: 40px; }\n  .apx-how__badge{\n    display: inline-flex;\n    background: rgba(245,166,35,.1);\n    border: 1px solid rgba(245,166,35,.25);\n    color: #f5a623;\n    font-size: 11px;\n    font-weight: 600;\n    letter-spacing: .1em;\n    text-transform: uppercase;\n    padding: 5px 14px;\n    border-radius: 99px;\n    margin-bottom: 14px;\n  }\n  .apx-how__title{\n    font-family: 'Bebas Neue', sans-serif;\n    font-size: clamp(26px, 3.2vw, 44px);\n    letter-spacing: .02em;\n    line-height: 1.05;\n    color: #f0ede8;\n    margin: 0 0 10px;\n  }\n  .apx-how__sub{\n    color: #9a9690;\n    font-size: 15px;\n    font-weight: 300;\n    margin: 0;\n  }\n\n  /* ── GRID desktop ── */\n  .apx-how__track{\n    display: grid;\n    grid-template-columns: repeat(4, 1fr);\n    gap: 16px;\n  }\n\n  /* ── CARTE ── */\n  .apx-step{\n    text-align: center;\n    padding: 28px 18px 24px;\n    background: #141416;\n    border: 1px solid rgba(255,255,255,.07);\n    border-radius: 16px;\n    transition: border-color .25s, transform .25s;\n  }\n  .apx-step:hover{\n    border-color: rgba(245,166,35,.25);\n    transform: translateY(-5px);\n  }\n\n  /* ── ICÔNE ── */\n  .apx-step__icon{\n    width: 80px;\n    height: 80px;\n    border-radius: 999px;\n    margin: 0 auto 16px;\n    display: grid;\n    place-items: center;\n    position: relative;\n  }\n  .apx-step__icon::after{\n    content: \"\";\n    position: absolute;\n    inset: -1px;\n    border-radius: 999px;\n    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.15), transparent 55%);\n    pointer-events: none;\n  }\n  .apx-step__icon--1{ background: rgba(245,166,35,.12); border: 1px solid rgba(245,166,35,.2); color: #f5a623; }\n  .apx-step__icon--2{ background: rgba(99,179,237,.1);  border: 1px solid rgba(99,179,237,.2);  color: #63b3ed; }\n  .apx-step__icon--3{ background: rgba(154,214,117,.1); border: 1px solid rgba(154,214,117,.2); color: #9ad675; }\n  .apx-step__icon--4{ background: rgba(169,140,245,.1); border: 1px solid rgba(169,140,245,.2); color: #a98cf5; }\n\n  /* ── TEXTE ── */\n  .apx-step__h{\n    font-family: 'Bebas Neue', sans-serif;\n    font-size: 20px;\n    letter-spacing: .03em;\n    color: #f0ede8;\n    margin: 0 0 8px;\n  }\n  .apx-step__p{\n    font-size: 13px;\n    font-weight: 300;\n    color: #9a9690;\n    line-height: 1.6;\n    margin: 0;\n  }\n\n  /* ── DOTS (cachés desktop) ── */\n  .apx-dots{ display: none; }\n\n  /* ── CTA ── */\n  .apx-how__cta{ text-align: center; margin-top: 40px; }\n  .apx-how__btn{\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    padding: 15px 36px;\n    border-radius: 99px;\n    background: #f5a623;\n    color: #000;\n    font-family: 'Bebas Neue', sans-serif;\n    font-size: 18px;\n    letter-spacing: .06em;\n    text-decoration: none;\n    transition: background .2s, transform .2s, box-shadow .2s;\n    box-shadow: 0 8px 24px rgba(245,166,35,.25);\n  }\n  .apx-how__btn:hover{\n    background: #fff;\n    transform: translateY(-2px);\n    box-shadow: 0 12px 32px rgba(255,255,255,.15);\n  }\n  .apx-how__btn:active{ transform: translateY(0); opacity: .92; }\n\n  .apx-how__trust{\n    margin-top: 14px;\n    color: #9a9690;\n    font-size: 13px;\n    font-weight: 300;\n  }\n  .apx-trust-dot{\n    display: inline-block;\n    width: 4px; height: 4px;\n    border-radius: 999px;\n    background: rgba(245,166,35,.5);\n    margin: 0 10px;\n    transform: translateY(-2px);\n  }\n\n  /* ── REVEAL ── */\n  .apx-reveal{ opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }\n  .apx-reveal.is-visible{ opacity: 1; transform: translateY(0); }\n\n  /* ══ MOBILE carousel ══ */\n  @media(max-width: 760px){\n    .apx-how{ padding: 52px 0; }\n    .apx-how__inner{ padding: 0; }\n    .apx-how__head{ padding: 0 20px; }\n\n    .apx-how__track{\n      display: flex;\n      overflow-x: scroll;\n      scroll-snap-type: x mandatory;\n      -webkit-overflow-scrolling: touch;\n      scrollbar-width: none;\n      gap: 0;\n      padding: 4px 0 16px;\n    }\n    .apx-how__track::-webkit-scrollbar{ display: none; }\n\n    .apx-step{\n      flex: 0 0 calc(100vw - 64px);\n      max-width: 300px;\n      scroll-snap-align: center;\n      margin: 0 10px;\n      transform: none !important;\n    }\n    .apx-step:first-child{ margin-left: calc((100vw - (100vw - 64px)) / 2); }\n    .apx-step:last-child { margin-right: calc((100vw - (100vw - 64px)) / 2); }\n    .apx-step.is-active{ border-color: rgba(245,166,35,.3); background: rgba(245,166,35,.04); }\n\n    .apx-dots{\n      display: flex;\n      justify-content: center;\n      gap: 8px;\n      margin: 4px 0 20px;\n    }\n    .apx-dot-btn{\n      width: 8px; height: 8px;\n      border-radius: 99px;\n      border: none;\n      background: rgba(255,255,255,.2);\n      padding: 0; cursor: pointer;\n      transition: background .2s, width .2s;\n    }\n    .apx-dot-btn.active{ background: #f5a623; width: 22px; }\n\n    .apx-how__cta{ padding: 0 20px; }\n    .apx-how__btn{\n      width: auto;\n      font-size: 14px;\n      padding: 12px 24px;\n      letter-spacing: .04em;\n      background: transparent;\n      color: #f5a623;\n      border: 1px solid rgba(245,166,35,.4);\n      box-shadow: none;\n    }\n    .apx-how__btn:hover{\n      background: rgba(245,166,35,.08);\n      color: #f5a623;\n      box-shadow: none;\n    }\n  }\n\n  @media(prefers-reduced-motion: reduce){\n    .apx-step, .apx-how__btn, .apx-reveal{ transition: none !important; }\n  }\n</style>\n\n<script>\n(function(){\n  var section = document.getElementById('apx-how');\n  if(!section || section.dataset.apxInit === '1') return;\n  section.dataset.apxInit = '1';\n\n  /* Reveal */\n  var revealEls = section.querySelectorAll('.apx-reveal');\n  if(revealEls.length){\n    var io = new IntersectionObserver(function(entries){\n      entries.forEach(function(e){\n        if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }\n      });\n    },{ threshold: 0.15 });\n    revealEls.forEach(function(el, i){ el.style.transitionDelay = (i * 70) + 'ms'; io.observe(el); });\n  }\n\n  /* Carousel dots */\n  var track = document.getElementById('apx-track');\n  var dots  = document.querySelectorAll('#apx-dots .apx-dot-btn');\n  var cards = track ? track.querySelectorAll('.apx-step') : [];\n  if(!track || !dots.length || !cards.length) return;\n\n  function onScroll(){\n    var idx = Math.round(track.scrollLeft / (track.scrollWidth / cards.length));\n    idx = Math.max(0, Math.min(idx, cards.length - 1));\n    dots.forEach(function(d, i){ d.classList.toggle('active', i === idx); });\n    cards.forEach(function(c, i){ c.classList.toggle('is-active', i === idx); });\n  }\n\n  dots.forEach(function(dot){\n    dot.addEventListener('click', function(){\n      var card = cards[parseInt(this.dataset.idx, 10)];\n      if(card) track.scrollTo({ left: card.offsetLeft - (track.offsetWidth - card.offsetWidth) / 2, behavior: 'smooth' });\n    });\n  });\n\n  track.addEventListener('scroll', onScroll, { passive: true });\n  onScroll();\n})();\n</script>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "20px,,80px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,70px,",
+        "pd_mb": ""
+      }
+    },
+    "af48bad3-3159-42c8-899e-d5e240c6cfb1": {
+      "type": "collection-products-banner2",
+      "blocks": {
+        "template--20139736891715__af48bad3-3159-42c8-899e-d5e240c6cfb1-b_item-1": {
+          "type": "b_item",
+          "disabled": true,
+          "settings": {
+            "b_link": "",
+            "open_link": "_self",
+            "img_effect": "none",
+            "b_effect": "none",
+            "content_align": "center",
+            "content_align_mobile": "center",
+            "custom_height_dk": 350,
+            "custom_height": 250,
+            "cv_pos": 50,
+            "ch_pos": 50,
+            "cv_pos_mb": 50,
+            "ch_pos_mb": 50,
+            "bg_overlay": "#000000",
+            "bg_opacity": 0,
+            "bg_content_bl": false,
+            "bg_content_cl": "#ffffff",
+            "bg_content_op": 50,
+            "content_pd_tb": 20,
+            "content_pd_lr": 20,
+            "content_pd_tb_mb": 10,
+            "content_pd_lr_mb": 10,
+            "border_bl": false,
+            "br_color": "#222222",
+            "br_bg": "#ffffff",
+            "br_opacity": 50,
+            "br_style": "solid",
+            "br_pd": 20,
+            "br_pd_mb": 10,
+            "time_animation": 1,
+            "animation_delay": 40,
+            "col_dk": "3",
+            "col_tb": "4",
+            "col_mb": "12"
+          }
+        },
+        "template--20139736891715__af48bad3-3159-42c8-899e-d5e240c6cfb1-custom_text-1": {
+          "type": "custom_text",
+          "disabled": true,
+          "settings": {
+            "text": "LOOKBOOK 2023",
+            "remove_br_tag": false,
+            "tag": "p",
+            "fontf": "inherit",
+            "text_cl": "#ffffff",
+            "text_fs": 24,
+            "text_lh": 24,
+            "text_fw": 500,
+            "text_ls": 0,
+            "font_italic": false,
+            "text_shadow": false,
+            "text_mgb": 5,
+            "hidden_mobile": false,
+            "text_fs_mb": 16,
+            "text_lh_mb": 0,
+            "text_ls_mb": 0,
+            "text_mgb_mobile": 10,
+            "animation": "none"
+          }
+        }
+      },
+      "block_order": [
+        "template--20139736891715__af48bad3-3159-42c8-899e-d5e240c6cfb1-b_item-1",
+        "template--20139736891715__af48bad3-3159-42c8-899e-d5e240c6cfb1-custom_text-1"
+      ],
+      "custom_css": [
+        ".t4s-product-btns2 {display: none;}"
+      ],
+      "settings": {
+        "top_heading": "Voyagez dans un Autre Univers ?",
+        "heading_height": 30,
+        "tophead_mb": 30,
+        "head_btn_label": "",
+        "head_btn_url": "",
+        "head_btn_icon": false,
+        "head_btn_style": "default",
+        "head_btn_size": "medium",
+        "head_btn_cl": "light",
+        "head_btn_effect": "default",
+        "head_btn_hidden_mb": false,
+        "collection": "portrait-pop-culture-personnalise",
+        "product_des": "1",
+        "show_vendor": false,
+        "use_cdt": false,
+        "image_ratio": "ratio1_1",
+        "image_size": "cover",
+        "image_position": "8",
+        "content_align": "default",
+        "limit": 12,
+        "col_dk": "5",
+        "col_tb": "2",
+        "col_mb": "2",
+        "space_h_item": "30",
+        "space_v_item": "30",
+        "space_h_item_mb": "10",
+        "space_v_item_mb": "10",
+        "layout_des": "2",
+        "banner_pos": "left",
+        "loop": true,
+        "au_time": 6,
+        "au_hover": true,
+        "nav_btn": false,
+        "slide_btn_pos": "default",
+        "btn_vi": "hover",
+        "btn_owl": "default",
+        "btn_shape": "none",
+        "btn_cl": "dark",
+        "btn_size": "small",
+        "btn_hidden_mobile": true,
+        "nav_dot": false,
+        "dot_owl": "elessi",
+        "dots_position": "default",
+        "dots_cl": "primary",
+        "dots_round": true,
+        "dots_space": 10,
+        "dots_bottom_pos": 20,
+        "dots_hidden_mobile": false,
+        "viewall_btn": false,
+        "btn_icon": false,
+        "button_style": "default",
+        "btns_size": "large",
+        "btns_cl": "dark",
+        "button_effect": "default",
+        "btn_pos": "t4s-text-center",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": "",
+        "pd_mb": "",
+        "use_cus_css": false,
+        "code_cus_css": ""
+      },
+      "disabled": true
+    },
+    "custom_liquid_NAqn6n": {
+      "type": "custom-liquid",
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "{%- comment -%} APV • FAQ (mise en page du modèle One Piece) · Pop Culture portraits (Custom Liquid) {%- endcomment -%}\n\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_aria  = \"Product FAQ\" -%}\n    {%- assign t_title = \"Frequently asked questions\" -%}\n    {%- assign t_sub   = \"Answers to the most common questions about our <strong>custom pop culture portraits from photo</strong> (movies, series, gaming) — couple, family, friends.\" -%}\n\n    {%- assign q1 = \"What is a custom pop culture portrait from photo?\" -%}\n    {%- assign a1 = \"It’s a personalized artwork inspired by movies, series or gaming aesthetics, created from your photo. Perfect as a couple portrait, family portrait or friends gift, with a clean premium finish.\" -%}\n\n    {%- assign q2 = \"How long does it take to receive the preview?\" -%}\n    {%- assign a2 = \"You’ll receive a first preview within <strong>48–72 hours</strong>. Once approved, we deliver the final Digital HD file and/or start printing depending on the option chosen.\" -%}\n\n    {%- assign q3 = \"What photo should I send for the best result?\" -%}\n    {%- assign a3 = \"Use a clear, sharp, well-lit photo (face visible). Avoid filters and very dark photos. The clearer the photo, the more accurate the likeness.\" -%}\n\n    {%- assign q4 = \"Can I create a couple or family portrait with multiple people?\" -%}\n    {%- assign a4 = \"Yes. Choose a couple, family or group option. You can also send multiple photos—we can combine people into a single pop culture artwork.\" -%}\n\n    {%- assign q5 = \"Are revisions included?\" -%}\n    {%- assign a5 = \"Yes. You can request adjustments (text, details, small elements) before final delivery to get a result you love.\" -%}\n\n    {%- assign q6 = \"Can I cancel or modify my order?\" -%}\n    {%- assign a6 = \"Refunds aren’t possible due to the time spent on each custom artwork. However, revisions are included to ensure your satisfaction.\" -%}\n\n    {%- assign q7 = \"What formats are available (Digital, A3, Displate)?\" -%}\n    {%- assign a7 = \"Depending on the option chosen: <strong>Digital HD</strong>, <strong>A3 poster</strong> (29.7 × 42 cm) or <strong>Displate</strong>. The exact format depends on the product selected.\" -%}\n\n    {%- assign q8 = \"Can I send extra photos or notes by email?\" -%}\n    {%- assign a8 = \"Yes. You can email extra photos or details to <strong>hello@artpixe.com</strong>.\" -%}\n\n    {%- assign q9 = \"Is this a good personalized gift idea?\" -%}\n    {%- assign a9 = \"Absolutely. A custom pop culture portrait is a unique gift for birthdays, Christmas or Valentine’s Day—especially as a couple portrait.\" -%}\n\n  {%- when 'es' -%}\n    {%- assign t_aria  = \"FAQ del producto\" -%}\n    {%- assign t_title = \"Preguntas frecuentes\" -%}\n    {%- assign t_sub   = \"Respuestas a las preguntas más comunes sobre nuestros <strong>retratos pop culture personalizados a partir de foto</strong> (cine, series, gaming) — pareja, familia, amigos.\" -%}\n\n    {%- assign q1 = \"¿Qué es un retrato pop culture personalizado a partir de foto?\" -%}\n    {%- assign a1 = \"Es una creación personalizada inspirada en estética de cine, series o videojuegos, hecha a partir de tu foto. Ideal como retrato de pareja, familia o regalo para amigos, con acabado premium.\" -%}\n\n    {%- assign q2 = \"¿Cuánto tarda en llegar la vista previa?\" -%}\n    {%- assign a2 = \"Recibirás una primera vista previa en <strong>48–72 h</strong>. Tras la aprobación, entregamos el archivo Digital HD y/o iniciamos la impresión según la opción elegida.\" -%}\n\n    {%- assign q3 = \"¿Qué foto debo enviar para un resultado óptimo?\" -%}\n    {%- assign a3 = \"Una foto clara, nítida y bien iluminada (rostro visible). Evita filtros y fotos muy oscuras.\" -%}\n\n    {%- assign q4 = \"¿Puedo hacer un retrato de pareja o familia con varias personas?\" -%}\n    {%- assign a4 = \"Sí. Elige la opción pareja, familia o grupo. También puedes enviar varias fotos: unimos a las personas en una sola creación.\" -%}\n\n    {%- assign q5 = \"¿Los retoques están incluidos?\" -%}\n    {%- assign a5 = \"Sí. Puedes pedir ajustes (texto, detalles, pequeños elementos) antes de la entrega final.\" -%}\n\n    {%- assign q6 = \"¿Puedo cancelar o modificar mi pedido?\" -%}\n    {%- assign a6 = \"No se aceptan reembolsos por el trabajo a medida. Sin embargo, los retoques están incluidos para asegurar tu satisfacción.\" -%}\n\n    {%- assign q7 = \"¿Qué formatos están disponibles (Digital, póster A3, Displate)?\" -%}\n    {%- assign a7 = \"Según la opción: <strong>Digital HD</strong>, <strong>póster A3</strong> (29,7 × 42 cm) o <strong>Displate</strong>.\" -%}\n\n    {%- assign q8 = \"¿Puedo enviar fotos o indicaciones adicionales por email?\" -%}\n    {%- assign a8 = \"Sí. Puedes enviar detalles a <strong>hello@artpixe.com</strong>.\" -%}\n\n    {%- assign q9 = \"¿Es una buena idea de regalo personalizado?\" -%}\n    {%- assign a9 = \"Sí. Un retrato pop culture personalizado es un regalo único para cumpleaños, Navidad o San Valentín—especialmente como retrato de pareja.\" -%}\n\n  {%- when 'de' -%}\n    {%- assign t_aria  = \"Produkt-FAQ\" -%}\n    {%- assign t_title = \"Häufige Fragen\" -%}\n    {%- assign t_sub   = \"Antworten auf die häufigsten Fragen zu unseren <strong>personalisierten Popkultur-Porträts aus Foto</strong> (Filme, Serien, Gaming) — Paar, Familie, Freunde.\" -%}\n\n    {%- assign q1 = \"Was ist ein personalisiertes Popkultur-Porträt aus Foto?\" -%}\n    {%- assign a1 = \"Ein individuelles Artwork aus deinem Foto, inspiriert von Film-, Serien- oder Gaming-Ästhetik. Ideal als Paarporträt, Familienporträt oder Geschenk, mit sauberem Premium-Finish.\" -%}\n\n    {%- assign q2 = \"Wie lange dauert die Vorschau?\" -%}\n    {%- assign a2 = \"Du erhältst eine erste Vorschau innerhalb von <strong>48–72 Stunden</strong>. Nach Freigabe liefern wir Digital HD und/oder starten den Druck je nach Option.\" -%}\n\n    {%- assign q3 = \"Welches Foto ist ideal?\" -%}\n    {%- assign a3 = \"Ein klares, scharfes, gut beleuchtetes Foto (Gesicht sichtbar). Vermeide Filter und sehr dunkle Fotos.\" -%}\n\n    {%- assign q4 = \"Kann ich ein Paar- oder Familienporträt mit mehreren Personen erstellen?\" -%}\n    {%- assign a4 = \"Ja. Wähle Paar, Familie oder Gruppe. Du kannst auch mehrere Fotos senden – wir kombinieren die Personen zu einem Artwork.\" -%}\n\n    {%- assign q5 = \"Sind Korrekturen inklusive?\" -%}\n    {%- assign a5 = \"Ja. Du kannst Anpassungen (Text, Details, kleine Elemente) vor der finalen Lieferung anfragen.\" -%}\n\n    {%- assign q6 = \"Kann ich meine Bestellung stornieren oder ändern?\" -%}\n    {%- assign a6 = \"Erstattungen sind wegen des Aufwands nicht möglich. Korrekturen sind jedoch inklusive, um deine Zufriedenheit sicherzustellen.\" -%}\n\n    {%- assign q7 = \"Welche Formate gibt es (Digital, A3, Displate)?\" -%}\n    {%- assign a7 = \"Je nach Option: <strong>Digital HD</strong>, <strong>A3-Poster</strong> (29,7 × 42 cm) oder <strong>Displate</strong>.\" -%}\n\n    {%- assign q8 = \"Kann ich zusätzliche Fotos oder Hinweise per E-Mail senden?\" -%}\n    {%- assign a8 = \"Ja. Sende Details an <strong>hello@artpixe.com</strong>.\" -%}\n\n    {%- assign q9 = \"Ist das eine gute Geschenkidee?\" -%}\n    {%- assign a9 = \"Ja. Ein personalisiertes Popkultur-Porträt ist ein einzigartiges Geschenk für Geburtstag, Weihnachten oder Valentinstag – besonders als Paarporträt.\" -%}\n\n  {%- when 'it' -%}\n    {%- assign t_aria  = \"FAQ prodotto\" -%}\n    {%- assign t_title = \"Domande frequenti\" -%}\n    {%- assign t_sub   = \"Risposte alle domande più comuni sui nostri <strong>ritratti pop culture personalizzati da foto</strong> (film, serie, gaming) — coppia, famiglia, amici.\" -%}\n\n    {%- assign q1 = \"Cos’è un ritratto pop culture personalizzato da foto?\" -%}\n    {%- assign a1 = \"È una creazione su misura basata sulla tua foto, ispirata a estetiche di film, serie o videogiochi. Perfetta come ritratto di coppia, famiglia o regalo, con risultato premium.\" -%}\n\n    {%- assign q2 = \"Quanto tempo per ricevere l’anteprima?\" -%}\n    {%- assign a2 = \"Ricevi una prima anteprima entro <strong>48–72 ore</strong>. Dopo l’approvazione, consegniamo il file Digital HD e/o avviamo la stampa secondo l’opzione scelta.\" -%}\n\n    {%- assign q3 = \"Che foto devo inviare?\" -%}\n    {%- assign a3 = \"Una foto chiara, nitida e ben illuminata (viso visibile). Evita filtri e foto troppo scure.\" -%}\n\n    {%- assign q4 = \"Posso creare un ritratto di coppia o famiglia con più persone?\" -%}\n    {%- assign a4 = \"Sì. Scegli l’opzione coppia, famiglia o gruppo. Puoi anche inviare più foto: uniamo i soggetti in un’unica creazione.\" -%}\n\n    {%- assign q5 = \"I ritocchi sono inclusi?\" -%}\n    {%- assign a5 = \"Sì. Puoi chiedere modifiche (testo, dettagli, piccoli elementi) prima della consegna finale.\" -%}\n\n    {%- assign q6 = \"Posso annullare o modificare l’ordine?\" -%}\n    {%- assign a6 = \"I rimborsi non sono possibili per via del lavoro su misura. Tuttavia, i ritocchi sono inclusi per garantire la tua soddisfazione.\" -%}\n\n    {%- assign q7 = \"Quali formati sono disponibili (Digital, A3, Displate)?\" -%}\n    {%- assign a7 = \"In base all’opzione: <strong>Digital HD</strong>, <strong>Poster A3</strong> (29,7 × 42 cm) o <strong>Displate</strong>.\" -%}\n\n    {%- assign q8 = \"Posso inviare foto o indicazioni aggiuntive via email?\" -%}\n    {%- assign a8 = \"Sì. Puoi inviare dettagli a <strong>hello@artpixe.com</strong>.\" -%}\n\n    {%- assign q9 = \"È una buona idea regalo?\" -%}\n    {%- assign a9 = \"Sì. Un ritratto pop culture personalizzato è un regalo unico per compleanni, Natale o San Valentino—soprattutto come ritratto di coppia.\" -%}\n\n  {%- else -%}\n    {%- assign t_aria  = \"FAQ produit\" -%}\n    {%- assign t_title = \"Questions fréquentes\" -%}\n    {%- assign t_sub   = \"On répond ici aux questions les plus courantes sur nos <strong>portraits pop culture personnalisés à partir de photo</strong> (cinéma, séries, gaming) — portrait couple, famille, amis.\" -%}\n\n    {%- assign q1 = \"Qu’est-ce qu’un portrait pop culture personnalisé à partir de photo ?\" -%}\n    {%- assign a1 = \"C’est une création sur mesure basée sur votre photo, inspirée d’univers de films, séries ou jeux vidéo (ex : fantasy, science-fiction, aventure). Notre équipe travaille la ressemblance et les détails pour un rendu premium. Idéal en portrait couple, famille ou amis.\" -%}\n\n    {%- assign q2 = \"Quel est le délai pour recevoir l’aperçu ?\" -%}\n    {%- assign a2 = \"Vous recevez un premier <strong>aperçu sous 24–48 h ouvrées</strong>. Une fois validé, nous livrons la version finale (Digital HD) et/ou lançons l’impression selon l’option choisie.\" -%}\n\n    {%- assign q3 = \"Quelle photo est idéale pour un portrait pop culture ?\" -%}\n    {%- assign a3 = \"Utilisez une photo nette, bien éclairée, de face (visage visible). Évitez les filtres et les photos trop sombres. Plus la photo est claire, plus le résultat sera fidèle.\" -%}\n\n    {%- assign q4 = \"Puis-je faire un portrait couple ou famille avec plusieurs personnes ?\" -%}\n    {%- assign a4 = \"Oui ! Choisissez une option <strong>portrait couple</strong>, <strong>famille</strong> ou <strong>groupe</strong>. Vous pouvez aussi envoyer plusieurs photos : nous assemblons les sujets sur un seul visuel.\" -%}\n\n    {%- assign q5 = \"Les retouches sont-elles incluses ?\" -%}\n    {%- assign a5 = \"Oui. Vous pouvez demander des ajustements (texte, détails, petits éléments) avant la livraison finale, afin d’obtenir un portrait pop culture qui vous plaît.\" -%}\n\n    {%- assign q6 = \"Puis-je annuler ou modifier ma commande ?\" -%}\n    {%- assign a6 = \"Les remboursements ne sont pas possibles en raison du temps consacré à chaque création sur mesure. En revanche, nous proposons des retouches pour garantir votre satisfaction.\" -%}\n\n    {%- assign q7 = \"Quels formats sont disponibles (Digital, Poster A3, Displate) ?\" -%}\n    {%- assign a7 = \"Selon l’option choisie, vous pouvez recevoir : <strong>Digital HD</strong>, <strong>Poster A3</strong> (29,7 × 42 cm) ou <strong>Displate</strong>. Le format exact dépend du produit sélectionné.\" -%}\n\n    {%- assign q8 = \"Puis-je envoyer des photos ou des instructions additionnelles par e-mail ?\" -%}\n    {%- assign a8 = \"Oui. Vous pouvez envoyer des détails (photos, texte, ambiance souhaitée) à : <strong>hello@artpixe.com</strong>.\" -%}\n\n    {%- assign q9 = \"Est-ce une bonne idée cadeau ?\" -%}\n    {%- assign a9 = \"Oui : un <strong>portrait pop culture personnalisé</strong> est un cadeau unique pour un anniversaire, Noël, ou la Saint-Valentin. En couple, c’est une surprise qui fait toujours son effet.\" -%}\n{%- endcase -%}\n\n{%- case lang -%}{%- when 'en' -%}{%- assign t_faq_cta = \"Create my portrait\" -%}{%- when 'es' -%}{%- assign t_faq_cta = \"Crear mi retrato\" -%}{%- when 'de' -%}{%- assign t_faq_cta = \"Mein Porträt erstellen\" -%}{%- when 'it' -%}{%- assign t_faq_cta = \"Crea il mio ritratto\" -%}{%- else -%}{%- assign t_faq_cta = \"Créer mon portrait\" -%}{%- endcase -%}\n\n<section style=\"padding:52px 20px;background:transparent;\" aria-label=\"{{ t_aria }}\">\n  <div style=\"max-width:760px;margin:0 auto;\">\n\n    <h2 style=\"font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,4vw,36px);letter-spacing:.02em;color:#f0ede8;margin-bottom:10px;line-height:1.1;\">{{ t_title }}</h2>\n    <p style=\"font-size:14px;color:#9a9690;line-height:1.6;margin:0 0 24px;\">{{ t_sub }}</p>\n\n    {%- if q1 != blank -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ q1 }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ a1 }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endif -%}\n    {%- if q2 != blank -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ q2 }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ a2 }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endif -%}\n    {%- if q3 != blank -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ q3 }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ a3 }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endif -%}\n    {%- if q4 != blank -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ q4 }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ a4 }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endif -%}\n    {%- if q5 != blank -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ q5 }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ a5 }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endif -%}\n    {%- if q6 != blank -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ q6 }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ a6 }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endif -%}\n    {%- if q7 != blank -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ q7 }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ a7 }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endif -%}\n    {%- if q8 != blank -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ q8 }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ a8 }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endif -%}\n    {%- if q9 != blank -%}\n      <div style=\"border-bottom:1px solid rgba(255,255,255,.07);\">\n        <details style=\"padding:0;\">\n          <summary style=\"list-style:none;display:flex;justify-content:space-between;align-items:center;padding:18px 4px;cursor:pointer;gap:14px;\">\n            <h3 style=\"font-size:15px;font-weight:500;color:#f0ede8;line-height:1.4;margin:0;\">{{ q9 }}</h3>\n            <span class=\"ap-arr\" style=\"color:#f5a623;font-size:22px;flex-shrink:0;transition:transform .2s;line-height:1;user-select:none;\" aria-hidden=\"true\">+</span>\n          </summary>\n          <div style=\"padding:0 4px 18px;\">\n            <p style=\"font-size:14px;color:#9a9690;line-height:1.75;margin:0;\">{{ a9 }}</p>\n          </div>\n        </details>\n      </div>\n    {%- endif -%}\n\n    <div style=\"text-align:center;margin-top:36px;\">\n      <a href=\"{{ product.url }}#apx-config\" class=\"ap-faq-cta\" style=\"display:inline-block;background:#f5a623;color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;padding:15px 44px;border-radius:99px;text-decoration:none;transition:background .2s;\" onmouseover=\"this.style.background='#e09520'\" onmouseout=\"this.style.background='#f5a623'\">{{ t_faq_cta }}</a>\n    </div>\n\n  </div>\n</section>\n\n<style>\n  details summary::-webkit-details-marker { display: none; }\n  details[open] .ap-arr { transform: rotate(45deg); }\n  details summary:focus { outline: none; }\n  @media(max-width:600px) {\n    .ap-faq-cta { font-size: 15px !important; padding: 13px 28px !important; letter-spacing: .03em !important; }\n  }\n</style>\n\n<script type=\"application/ld+json\">\n{\n  \"@context\":\"https://schema.org\",\n  \"@type\":\"FAQPage\",\n  \"mainEntity\":[\n    {\"@type\":\"Question\",\"name\":{{ q1 | strip_html | strip_newlines | json }},\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":{{ a1 | strip_html | strip_newlines | json }}}},\n    {\"@type\":\"Question\",\"name\":{{ q2 | strip_html | strip_newlines | json }},\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":{{ a2 | strip_html | strip_newlines | json }}}},\n    {\"@type\":\"Question\",\"name\":{{ q3 | strip_html | strip_newlines | json }},\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":{{ a3 | strip_html | strip_newlines | json }}}},\n    {\"@type\":\"Question\",\"name\":{{ q4 | strip_html | strip_newlines | json }},\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":{{ a4 | strip_html | strip_newlines | json }}}},\n    {\"@type\":\"Question\",\"name\":{{ q5 | strip_html | strip_newlines | json }},\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":{{ a5 | strip_html | strip_newlines | json }}}},\n    {\"@type\":\"Question\",\"name\":{{ q6 | strip_html | strip_newlines | json }},\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":{{ a6 | strip_html | strip_newlines | json }}}},\n    {\"@type\":\"Question\",\"name\":{{ q7 | strip_html | strip_newlines | json }},\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":{{ a7 | strip_html | strip_newlines | json }}}},\n    {\"@type\":\"Question\",\"name\":{{ q8 | strip_html | strip_newlines | json }},\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":{{ a8 | strip_html | strip_newlines | json }}}},\n    {\"@type\":\"Question\",\"name\":{{ q9 | strip_html | strip_newlines | json }},\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":{{ a9 | strip_html | strip_newlines | json }}}}\n  ]\n}\n</script>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "d3ab81d2-c85b-4ee1-a60c-57e8cc7d99d5": {
+      "type": "accordion",
+      "blocks": {
+        "accor_item_iLqfWF": {
+          "type": "accor_item",
+          "settings": {
+            "icon": "none",
+            "title": "POURQUOI L'AFFICHE WANTED DE ONE PIECE INDIQUE-T-ELLE \"MARINE\" ?",
+            "content": "<p>Les affiches \"WANTED\" dans <em>One Piece</em> sont diffusées par la Marine, l'organisation qui régit la loi et l’ordre dans l’univers du manga. La mention \"MARINE\" souligne l'implication de la Marine dans la chasse aux pirates recherchés, en leur attribuant des primes pour leur capture.</p>"
+          }
+        },
+        "accor_item_iYxdXB": {
+          "type": "accor_item",
+          "settings": {
+            "icon": "none",
+            "title": "QUEL EST LE DÉLAI DE RÉCEPTION DE MON PORTRAIT ?",
+            "content": "<p>Vous recevrez un premier aperçu sous 2 jours ouvrés. Une fois approuvé, le portrait final sera livré à votre domicile sous 4 à 6 jours supplémentaires.</p>"
+          }
+        },
+        "template--20139736891715__d3ab81d2-c85b-4ee1-a60c-57e8cc7d99d5-accor_item-1": {
+          "type": "accor_item",
+          "settings": {
+            "icon": "none",
+            "title": "QUELLE PHOTO EST IDÉALE POUR UN PORTRAIT PERSONNALISÉ ?",
+            "content": "<p>Utilisez une photo claire, nette et bien éclairée pour obtenir le meilleur rendu possible.</p>"
+          }
+        },
+        "template--20139736891715__d3ab81d2-c85b-4ee1-a60c-57e8cc7d99d5-accor_item-2": {
+          "type": "accor_item",
+          "settings": {
+            "icon": "none",
+            "title": "EST-IL POSSIBLE D'ENVOYER PLUSIEURS PHOTOS POUR FUSIONNER LES SUJETS SUR UN SEUL PORTRAIT ?",
+            "content": "<p>Absolument ! </p><p>Même si une photo unique est préférable, vous pouvez nous fournir plusieurs clichés. Nous assemblerons les sujets pour vous.</p>"
+          }
+        },
+        "template--20139736891715__d3ab81d2-c85b-4ee1-a60c-57e8cc7d99d5-accor_item-3": {
+          "type": "accor_item",
+          "settings": {
+            "icon": "none",
+            "title": "EST-IL POSSIBLE DE DEMANDER DES MODIFICATIONS SUR LE PORTRAIT ?",
+            "content": "<p>Oui, nous offrons une retouche gratuite pour s'assurer que vous soyez pleinement satisfait.</p>"
+          }
+        },
+        "fa98c592-f03e-4ba9-a92a-15bce8f4bbf0": {
+          "type": "accor_item",
+          "settings": {
+            "icon": "none",
+            "title": "PUIS-JE ANNULER OU MODIFIER MA COMMANDE ?",
+            "content": "<p>Les remboursements ne sont pas possibles en raison du temps consacré à chaque dessin. Cependant, nous offrons des retouches pour assurer votre satisfaction. 🛒💸</p>"
+          }
+        },
+        "accor_item_deEGRT": {
+          "type": "accor_item",
+          "settings": {
+            "icon": "none",
+            "title": "QUELLES SONT LES DIMENSIONS DES PORTRAITS IMPRIMÉS ?",
+            "content": "<p>Nos impressions sont au format A3 (29,7x42cm), idéal pour la décoration.</p>"
+          }
+        },
+        "accor_item_LUyc4X": {
+          "type": "accor_item",
+          "settings": {
+            "icon": "none",
+            "title": "PUIS-JE ENVOYER DES PHOTOS ADDITIONNELLES PAR E-MAIL ?",
+            "content": "<p>Absolument ! Nous recommandons d’envoyer plusieurs photos pour mieux personnaliser votre portrait. Veuillez nous les envoyer à : <a>hello@artpixe.com</a>.</p>"
+          }
+        },
+        "accor_item_NVN7B7": {
+          "type": "accor_item",
+          "settings": {
+            "icon": "none",
+            "title": "PUIS-JE RECEVOIR MA COMMANDE EN VERSION NUMÉRIQUE EN PLUS DE LA VERSION PHYSIQUE ?",
+            "content": "<p>Oui, il suffit de cocher l'option lors de la personnalisation de votre portrait, pour un coût additionnel de 2€ seulement.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "accor_item_iLqfWF",
+        "accor_item_iYxdXB",
+        "template--20139736891715__d3ab81d2-c85b-4ee1-a60c-57e8cc7d99d5-accor_item-1",
+        "template--20139736891715__d3ab81d2-c85b-4ee1-a60c-57e8cc7d99d5-accor_item-2",
+        "template--20139736891715__d3ab81d2-c85b-4ee1-a60c-57e8cc7d99d5-accor_item-3",
+        "fa98c592-f03e-4ba9-a92a-15bce8f4bbf0",
+        "accor_item_deEGRT",
+        "accor_item_LUyc4X",
+        "accor_item_NVN7B7"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".t4s-title {font-size: 30px;}",
+        "@media screen and (max-width: 749px) {.t4s-title {font-size: 26px; }}"
+      ],
+      "settings": {
+        "design_heading": "8",
+        "heading_align": "t4s-text-center",
+        "top_heading": "LES QUESTIONS FRÉQUENTES",
+        "icon_heading": "las la-gem",
+        "top_subheading": "SUR NOS PORTRAITS PERSONNALISÉS !",
+        "tophead_mb": 20,
+        "accor_des": "1",
+        "title_cl": "#ff9900",
+        "bg_title_cl": "#f6f6f8",
+        "title_active_cl": "#ff9900",
+        "bg_title_active_cl": "#f6f6f8",
+        "content_cl": "#222222",
+        "bg_content_cl": "#ffffff",
+        "content_align": "t4s-text-start",
+        "auto_active": true,
+        "layout": "t4s-cus-width",
+        "custom_width": 1000,
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": "",
+        "use_cus_css": false,
+        "code_cus_css": ""
+      }
+    },
+    "slideshow_MHzA7N": {
+      "type": "slideshow",
+      "settings": {
+        "se_height": "t4s_ratioadapt",
+        "custom_dk": true,
+        "height_dk": 600,
+        "custom_tb": true,
+        "height_tb": 400,
+        "custom_mb": true,
+        "height_mb": 250,
+        "eff": "slide",
+        "loop": true,
+        "au_time": 0,
+        "au_hover": true,
+        "nav_btn": false,
+        "btn_vi": "hover",
+        "btn_owl": "default",
+        "btn_icon": "0",
+        "btn_shape": "none",
+        "btn_cl": "dark",
+        "btn_size": "small",
+        "btn_hidden_mobile": false,
+        "nav_dot": false,
+        "dot_owl": "default",
+        "dots_position": "default",
+        "dots_cl": "dark",
+        "dots_round": false,
+        "dots_space": 10,
+        "dots_hidden_mobile": false,
+        "layout": "t4s-container-fluid",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": "",
+        "use_cus_css": false,
+        "code_cus_css": ""
+      },
+      "disabled": true
+    },
+    "hero_image_hkQ6DP": {
+      "type": "hero_image",
+      "disabled": true,
+      "settings": {
+        "se_height": "t4s_ratioadapt",
+        "custom_dk": true,
+        "height_dk": 600,
+        "custom_tb": true,
+        "height_tb": 400,
+        "custom_mb": true,
+        "height_mb": 243,
+        "image": "shopify://shop_images/personnalise_ton_portrait_1.webp",
+        "parallax": false,
+        "image_position": "0",
+        "link_img1": "",
+        "open_link": "_blank",
+        "text_align": "center",
+        "text_align_mb": "center",
+        "content_width": "auto",
+        "cv_pos": 50,
+        "ch_pos": 50,
+        "cv_pos_mb": 50,
+        "ch_pos_mb": 50,
+        "bg_overlay": "#000000",
+        "bg_opacity": 0,
+        "bg_content_cl": "#ffffff",
+        "bg_content_op": 0,
+        "content_pd_tb": 15,
+        "content_pd_lr": 15,
+        "content_pd_tb_mb": 0,
+        "content_pd_lr_mb": 10,
+        "border_bl": false,
+        "br_color": "#222222",
+        "br_bg": "#ffffff",
+        "br_opacity": 50,
+        "br_style": "solid",
+        "br_pd": 20,
+        "br_pd_mb": 10,
+        "time_animation": 1,
+        "animation_delay": 40,
+        "layout": "t4s-container-fluid",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": "",
+        "use_cus_css": false,
+        "code_cus_css": ""
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "disabled": true,
+      "settings": {
+        "show": true,
+        "design_heading": "7",
+        "heading_align": "t4s-text-center",
+        "top_heading": "Nos meilleures ventes",
+        "icon_heading": "las la-gem",
+        "top_subheading": "",
+        "tophead_mb": 30,
+        "product_des": "1",
+        "show_vendor": false,
+        "use_cdt": false,
+        "limit": 12,
+        "display_type": "3",
+        "image_ratio": "rationt",
+        "image_size": "nt_cover",
+        "image_position": "8",
+        "content_align": "default",
+        "col_dk": "4",
+        "col_tb": "2",
+        "col_mb": "2",
+        "space_h_item": "30",
+        "space_v_item": "30",
+        "space_h_item_mb": "10",
+        "space_v_item_mb": "10",
+        "layout_des": "2",
+        "loop": true,
+        "au_time": 0,
+        "au_hover": true,
+        "nav_btn": true,
+        "btn_vi": "1",
+        "btn_owl": "outline",
+        "btn_shape": "round",
+        "btn_cl": "dark",
+        "btn_size": "small",
+        "btn_hidden_mobile": true,
+        "nav_dot": false,
+        "dot_owl": "1",
+        "dots_cl": "dark",
+        "dots_round": true,
+        "dots_space": 10,
+        "dots_hidden_mobile": false,
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    },
+    "a240ccfa-6260-4ed0-83ac-0130c19e15fe": {
+      "type": "our_mission",
+      "blocks": {
+        "template--20139736891715__a240ccfa-6260-4ed0-83ac-0130c19e15fe-om_item-1": {
+          "type": "om_item",
+          "disabled": true,
+          "settings": {
+            "heading": "POURQUOI S'ABONNER À HOPJOY ?",
+            "content": "Chez HopJoy, nous avons une chose à cœur : soutenir les artisans qui infusent passion et savoir-faire dans chaque goutte de vos bières artisanales préférées.\nNos partenaires ? Des brasseurs éparpillés aux quatre coins de l'Europe, apportant une explosion de saveurs aussi diverses que notre cher continent.\nNotre mission ? Vous faire découvrir des bières extraordinaires, celles que vous ne trouverez pas dans le commerce local. Nous soutenons fermement l'importance de l'origine des ingrédients, de l'impact environnemental de la brasserie et du respect d'une éthique de marketing, en évitant tout contenu à connotation sexiste, politique ou inappropriée. Voilà les valeurs qui nous guident chez HopJoy.",
+            "text_align": "start",
+            "col_tb": "12",
+            "col_mb": "12"
+          }
+        },
+        "template--20139736891715__a240ccfa-6260-4ed0-83ac-0130c19e15fe-om_item-2": {
+          "type": "om_item",
+          "settings": {
+            "heading": "ARPIXE : TRANSFORMEZ VOS PROCHES EN HÉROS !",
+            "content": "Artpixe est le cadeau ultime qui va ravir tout le monde ! Imaginez pouvoir métamorphoser vos proches en personnages de manga en un clin d'œil. C'est une expérience ludique qui va créer des souvenirs inoubliables. Offrir Artpixe, c'est offrir une touche de magie et d'originalité à chaque occasion spéciale. Que ce soit pour un anniversaire, une fête ou simplement pour faire plaisir, Artpixe est le cadeau qui fera sensation pour longtemps.",
+            "text_align": "start",
+            "col_tb": "6",
+            "col_mb": "12"
+          }
+        },
+        "template--20139736891715__a240ccfa-6260-4ed0-83ac-0130c19e15fe-om_item-3": {
+          "type": "om_item",
+          "settings": {
+            "heading": "LE CADEAU PERSONNALISABLE QUI FAIT SENSATION !",
+            "content": "Artpixe est bien plus qu'un simple cadeau. C'est une expérience personnalisable unique en son genre. Transformez les moments précieux de vos proches en œuvres d'art personnalisées. Avec Artpixe, chaque cadeau devient une expression de votre amour et de votre créativité, créant des souvenirs qui dureront toute une vie.",
+            "text_align": "start",
+            "col_tb": "6",
+            "col_mb": "12"
+          }
+        }
+      },
+      "block_order": [
+        "template--20139736891715__a240ccfa-6260-4ed0-83ac-0130c19e15fe-om_item-1",
+        "template--20139736891715__a240ccfa-6260-4ed0-83ac-0130c19e15fe-om_item-2",
+        "template--20139736891715__a240ccfa-6260-4ed0-83ac-0130c19e15fe-om_item-3"
+      ],
+      "disabled": true,
+      "custom_css": [
+        "p,h3 {color: #fff;}"
+      ],
+      "settings": {
+        "design_heading": "1",
+        "heading_align": "t4s-text-center",
+        "top_heading": "",
+        "icon_heading": "las la-gem",
+        "top_subheading": "",
+        "tophead_mb": 30,
+        "space_h_item": "30",
+        "space_v_item": "30",
+        "space_h_item_mb": "10",
+        "space_v_item_mb": "10",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "#ff9900",
+        "cl_bg_gradient": "",
+        "mg": "0",
+        "pd": "20px,,20px,",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": "",
+        "pd_mb": "",
+        "use_cus_css": false,
+        "code_cus_css": ""
+      }
+    },
+    "91de1d03-6a4a-4c6a-90f6-0eec82e2bd0d": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<h4 style=\"display:none;\">Quelle photo idéale pour un portrait personnalisé pop culture</h4>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": "",
+        "pd_mb": ""
+      }
+    },
+    "fa8e7952-39e2-4339-bcd2-d5ac6708d371": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<h4 style=\"display:none;\">Est-il possible de demander des modifications à mon portrait pop culture personnalisé ?</h4>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": "",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": "",
+        "pd_mb": ""
+      }
+    },
+    "1738951722e69c8e7d": {
+      "type": "apps",
+      "blocks": {
+        "instafeed_app_block_ph3bwV": {
+          "type": "shopify://apps/instafeed/blocks/app-block/c447db20-095d-4a10-9725-b5977662c9d5",
+          "settings": {
+            "title": "",
+            "title_color": "",
+            "title_size_v2": 0,
+            "alignment": "center",
+            "instafeed_margin_top": 0,
+            "instafeed_margin_bottom": 0,
+            "instafeed_margin_sides": 0,
+            "show_instagram_link": false,
+            "link_alignment": "left",
+            "link_color": "#000000",
+            "background_color": "",
+            "feed_id": "",
+            "html_area": ""
+          }
+        }
+      },
+      "block_order": [
+        "instafeed_app_block_ph3bwV"
+      ],
+      "settings": {}
+    },
+    "custom_liquid_apxReco": {
+      "type": "custom-liquid",
+      "name": "Autres univers",
+      "settings": {
+        "custom_liquid": "{% comment %}\n  ARTPIXE — Autres univers — portraits de la collection « portrait-pop-culture-personnalise », sans le produit courant.\n  Prix « dès » lus dans Shopify (prix le plus bas des variantes). i18n : FR · EN · ES · DE · IT\n{% endcomment %}\n{%- assign lang_raw = localization.language.iso_code | default: request.locale.iso_code | default: shop.locale -%}\n{%- assign lang = lang_raw | downcase | replace: '_', '-' | split: '-' | first -%}\n{%- assign reco_col = collections['portrait-pop-culture-personnalise'] -%}\n{%- case lang -%}\n  {%- when 'en' -%}\n    {%- assign t_badge = \"You may also like\" -%}\n    {%- assign t_title = \"Explore another universe?\" -%}\n    {%- assign t_sub = \"Other personalised pop culture portraits — same quality, different universe.\" -%}\n    {%- assign t_from = \"From\" -%}\n    {%- assign t_go = \"See this portrait →\" -%}\n    {%- assign t_collection = \"All pop culture portraits →\" -%}\n  {%- when 'es' -%}\n    {%- assign t_badge = \"Te puede gustar\" -%}\n    {%- assign t_title = \"¿Y si viajas a otro universo?\" -%}\n    {%- assign t_sub = \"Otros retratos pop culture personalizados — misma calidad, universo diferente.\" -%}\n    {%- assign t_from = \"Desde\" -%}\n    {%- assign t_go = \"Ver este retrato →\" -%}\n    {%- assign t_collection = \"Todos los retratos pop culture →\" -%}\n  {%- when 'de' -%}\n    {%- assign t_badge = \"Das könnte dir gefallen\" -%}\n    {%- assign t_title = \"Lust auf ein anderes Universum?\" -%}\n    {%- assign t_sub = \"Weitere personalisierte Popkultur-Porträts — gleiche Qualität, anderes Universum.\" -%}\n    {%- assign t_from = \"Ab\" -%}\n    {%- assign t_go = \"Dieses Porträt ansehen →\" -%}\n    {%- assign t_collection = \"Alle Popkultur-Porträts ansehen →\" -%}\n  {%- when 'it' -%}\n    {%- assign t_badge = \"Potrebbe piacerti\" -%}\n    {%- assign t_title = \"Viaggia in un altro universo?\" -%}\n    {%- assign t_sub = \"Altri ritratti pop culture personalizzati — stessa qualità, universo diverso.\" -%}\n    {%- assign t_from = \"Da\" -%}\n    {%- assign t_go = \"Vedi questo ritratto →\" -%}\n    {%- assign t_collection = \"Tutti i ritratti pop culture →\" -%}\n  {%- else -%}\n    {%- assign t_badge = \"Vous aimerez aussi\" -%}\n    {%- assign t_title = \"Voyagez dans un autre univers ?\" -%}\n    {%- assign t_sub = \"D'autres portraits pop culture personnalisés — même qualité, même passion.\" -%}\n    {%- assign t_from = \"Dès\" -%}\n    {%- assign t_go = \"Voir ce portrait →\" -%}\n    {%- assign t_collection = \"Tous les portraits pop culture →\" -%}\n{%- endcase -%}\n\n<link href=\"https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap\" rel=\"stylesheet\">\n\n<section class=\"apx-reco\" id=\"apx-reco\">\n  <div class=\"apx-reco__inner\">\n    <div class=\"apx-reco__head\">\n      <span class=\"apx-reco__badge\">{{ t_badge }}</span>\n      <h2 class=\"apx-reco__title\">{{ t_title }}</h2>\n      <p class=\"apx-reco__sub\">{{ t_sub }}</p>\n    </div>\n    <div class=\"apx-reco__track\" id=\"apx-reco-track\">\n      {%- assign shown = 0 -%}\n      {%- for p in reco_col.products -%}\n        {%- if p.id == product.id or p.available == false -%}{%- continue -%}{%- endif -%}\n        {%- assign shown = shown | plus: 1 -%}\n        {%- comment -%} Nom court : « Portrait Naruto personnalisé | À partir de ta photo » -> « Portrait Naruto personnalisé » {%- endcomment -%}\n        {%- assign p_name = p.title | split: ' — ' | first -%}\n        {%- assign p_head = p_name | split: ' | ' | first -%}\n        {%- unless p_head == 'Portrait personnalisé' or p_head == 'Portrait manga personnalisé' or p_head == 'Portrait Cartoon personnalisé' -%}\n          {%- assign p_name = p_head -%}\n        {%- endunless -%}\n        <a class=\"apx-reco__card\" href=\"{{ p.url }}\">\n          <div class=\"apx-reco__img-wrap\">\n            {%- if p.featured_image -%}\n              <img src=\"{{ p.featured_image | image_url: width: 400 }}\" alt=\"{{ p.featured_image.alt | default: p_name | escape }}\" width=\"400\" loading=\"lazy\">\n            {%- endif -%}\n          </div>\n          <div class=\"apx-reco__info\">\n            <p class=\"apx-reco__name\">{{ p_name }}</p>\n            <p class=\"apx-reco__price\">{{ t_from }} {{ p.price_min | money }}</p>\n          </div>\n          <span class=\"apx-reco__btn\">{{ t_go }}</span>\n        </a>\n        {%- if shown >= 4 -%}{%- break -%}{%- endif -%}\n      {%- endfor -%}\n    </div>\n    {%- if shown > 1 -%}\n    <div class=\"apx-reco__dots\" id=\"apx-reco-dots\" aria-hidden=\"true\">\n      {%- for i in (1..shown) -%}<button class=\"apx-reco__dot{% if forloop.first %} active{% endif %}\" data-idx=\"{{ forloop.index0 }}\"></button>{%- endfor -%}\n    </div>\n    {%- endif -%}\n    <div class=\"apx-reco__footer\">\n      <a href=\"{{ reco_col.url }}\" class=\"apx-reco__collection-btn\">{{ t_collection }}</a>\n    </div>\n  </div>\n</section>\n\n<style>\n  .apx-reco{\n    padding: 64px 20px;\n    background: transparent;\n    font-family: 'DM Sans', sans-serif;\n    overflow: hidden;\n  }\n  .apx-reco__inner{ max-width: 1100px; margin: 0 auto; }\n  .apx-reco__head{ text-align: center; margin-bottom: 36px; }\n  .apx-reco__badge{\n    display: inline-flex;\n    background: rgba(245,166,35,.1);\n    border: 1px solid rgba(245,166,35,.25);\n    color: #f5a623;\n    font-size: 11px;\n    font-weight: 600;\n    letter-spacing: .1em;\n    text-transform: uppercase;\n    padding: 5px 14px;\n    border-radius: 99px;\n    margin-bottom: 12px;\n  }\n  .apx-reco__title{\n    font-family: 'Bebas Neue', sans-serif;\n    font-size: clamp(24px, 3vw, 40px);\n    letter-spacing: .02em;\n    line-height: 1.05;\n    color: #f0ede8;\n    margin: 0 0 8px;\n  }\n  .apx-reco__sub{\n    font-size: 14px;\n    font-weight: 300;\n    color: #9a9690;\n    margin: 0;\n  }\n  .apx-reco__track{\n    display: flex;\n    gap: 14px;\n  }\n  .apx-reco__card{\n    flex: 1;\n    min-width: 0;\n    display: flex;\n    flex-direction: column;\n    background: #141416;\n    border-radius: 16px;\n    overflow: hidden;\n    text-decoration: none;\n    transition: transform .25s;\n  }\n  .apx-reco__card:hover{ transform: translateY(-4px); }\n  .apx-reco__img-wrap{ position: relative; overflow: hidden; }\n  .apx-reco__img-wrap img{\n    width: 100%; height: auto; display: block;\n    transition: transform .4s ease;\n  }\n  .apx-reco__card:hover .apx-reco__img-wrap img{ transform: scale(1.04); }\n  .apx-reco__universe{ display: none; }\n  .apx-reco__info{ padding: 12px 14px 4px; flex: 1; }\n  .apx-reco__name{\n    font-size: 13px; font-weight: 500;\n    color: #f0ede8; margin: 0 0 4px; line-height: 1.3;\n  }\n  .apx-reco__price{\n    font-size: 12px; font-weight: 300;\n    color: #f5a623; margin: 0;\n  }\n  .apx-reco__btn{\n    display: block;\n    margin: 10px 14px 14px;\n    padding: 8px 0;\n    text-align: center;\n    background: rgba(245,166,35,.1);\n    border: 1px solid rgba(245,166,35,.2);\n    color: #f5a623;\n    font-family: 'Bebas Neue', sans-serif;\n    font-size: 13px;\n    letter-spacing: .05em;\n    border-radius: 99px;\n    transition: background .2s, border-color .2s;\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis;\n  }\n  .apx-reco__card:hover .apx-reco__btn{\n    background: #f5a623; color: #000; border-color: #f5a623;\n  }\n  .apx-reco__footer{ text-align: center; margin-top: 28px; }\n  .apx-reco__collection-btn{\n    display: inline-flex;\n    align-items: center;\n    gap: 8px;\n    padding: 9px 20px;\n    border-radius: 99px;\n    border: 1px solid rgba(245,166,35,.35);\n    background: transparent;\n    color: #f5a623;\n    font-family: 'Bebas Neue', sans-serif;\n    font-size: 13px;\n    letter-spacing: .06em;\n    text-decoration: none;\n    transition: background .2s, border-color .2s, color .2s;\n  }\n  .apx-reco__collection-btn:hover{\n    background: #f5a623; border-color: #f5a623; color: #000;\n  }\n  .apx-reco__dots{ display: none; }\n\n  @media(max-width: 760px){\n    .apx-reco{ padding: 52px 0; }\n    .apx-reco__inner{ padding: 0; }\n    .apx-reco__head{ padding: 0 20px; }\n    .apx-reco__track{\n      overflow-x: scroll;\n      scroll-snap-type: x mandatory;\n      -webkit-overflow-scrolling: touch;\n      scrollbar-width: none;\n      gap: 0;\n      padding: 4px 0 12px;\n    }\n    .apx-reco__track::-webkit-scrollbar{ display: none; }\n    .apx-reco__card{\n      flex: 0 0 calc(100vw - 80px);\n      max-width: 260px;\n      scroll-snap-align: center;\n      margin: 0 8px;\n      transform: none !important;\n    }\n    .apx-reco__card:first-child{ margin-left: calc((100vw - (100vw - 80px)) / 2); }\n    .apx-reco__card:last-child{ margin-right: calc((100vw - (100vw - 80px)) / 2); }\n    .apx-reco__dots{\n      display: flex; justify-content: center; gap: 8px; margin: 8px 0 0;\n    }\n    .apx-reco__dot{\n      width: 8px; height: 8px; border-radius: 99px; border: none;\n      background: rgba(255,255,255,.2); padding: 0; cursor: pointer;\n      transition: background .2s, width .2s;\n    }\n    .apx-reco__dot.active{ background: #f5a623; width: 22px; }\n    .apx-reco__collection-btn{ font-size: 12px; padding: 8px 18px; width: auto; }\n  }\n\n  @media(min-width: 761px) and (max-width: 1024px){\n    .apx-reco__card:nth-child(4){ display: none; }\n  }\n\n  @media(prefers-reduced-motion: reduce){\n    .apx-reco__card,\n    .apx-reco__img-wrap img{ transition: none !important; }\n  }\n</style>\n\n<script>\n(function(){\n  var section = document.getElementById('apx-reco');\n  if(!section || section.dataset.apxInit === '1') return;\n  section.dataset.apxInit = '1';\n\n  var track = document.getElementById('apx-reco-track');\n  var dots  = document.querySelectorAll('#apx-reco-dots .apx-reco__dot');\n  var cards = track ? track.querySelectorAll('.apx-reco__card') : [];\n  if(!track || !dots.length || !cards.length) return;\n\n  function onScroll(){\n    var idx = Math.round(track.scrollLeft / (track.scrollWidth / cards.length));\n    idx = Math.max(0, Math.min(idx, cards.length - 1));\n    dots.forEach(function(d,i){ d.classList.toggle('active', i === idx); });\n    cards.forEach(function(c,i){ c.classList.toggle('is-active', i === idx); });\n  }\n\n  dots.forEach(function(dot){\n    dot.addEventListener('click', function(){\n      var card = cards[parseInt(this.dataset.idx, 10)];\n      if(card) track.scrollTo({\n        left: card.offsetLeft - (track.offsetWidth - card.offsetWidth) / 2,\n        behavior: 'smooth'\n      });\n    });\n  });\n\n  track.addEventListener('scroll', onScroll, { passive: true });\n  onScroll();\n})();\n</script>",
+        "layout": "t4s-container-wrap",
+        "cl_bg": "",
+        "cl_bg_gradient": "",
+        "mg": ",,50px,",
+        "pd": "",
+        "mg_tb": "",
+        "pd_tb": "",
+        "mg_mb": ",,30px,",
+        "pd_mb": ""
+      }
+    }
+  },
+  "order": [
+    "breadcrumb",
+    "custom_liquid_VzWXW6",
+    "main",
+    "17700291493732a25d",
+    "6b0f2b31-1a7a-402a-9f9a-8d9498d1c8d8",
+    "hero_image_KBmtq6",
+    "recently-viewed-products",
+    "sidebar",
+    "f6a2f27e-553f-4ea0-a978-ab616e1727df",
+    "line_XbWYNe",
+    "af48bad3-3159-42c8-899e-d5e240c6cfb1",
+    "d3ab81d2-c85b-4ee1-a60c-57e8cc7d99d5",
+    "slideshow_MHzA7N",
+    "hero_image_hkQ6DP",
+    "product-recommendations",
+    "a240ccfa-6260-4ed0-83ac-0130c19e15fe",
+    "9af9f87f-4d1f-4610-8b35-051976b34b07",
+    "custom_liquid_apxReco",
+    "custom_liquid_NAqn6n",
+    "91de1d03-6a4a-4c6a-90f6-0eec82e2bd0d",
+    "fa8e7952-39e2-4339-bcd2-d5ac6708d371",
+    "1738951722e69c8e7d"
+  ]
+}

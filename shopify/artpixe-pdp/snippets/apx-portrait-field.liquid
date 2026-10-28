@@ -2,7 +2,8 @@
   Un champ de personnalisation de la fiche portrait (snippets/apx-portrait.liquid), à partir d'un bloc Kalles
   « properties » : même nom de propriété de commande et même logique de visibilité que snippets/frm_properties.liquid.
 
-  Accepte : field (bloc), mode ('short' : tous les champs sauf texte long, 'long' : texte long), product, form_id,
+  Accepte : field (bloc), mode ('short' : tous les champs sauf texte long, 'long' : texte long,
+  'probe' : écrit seulement « visible » si le champ s'affiche sur cette fiche), product, form_id,
   is_op (fiche One Piece), pr_collection_titles, et les libellés traduits t_*.
 
   Usage :
@@ -87,7 +88,9 @@
   endif
   assign opts = fs.options | remove: '  ' | replace: ', ', ',' | replace: ' ,', ',' | split: ','
 -%}
-{%- if show -%}
+{%- if mode == 'probe' -%}
+  {%- if show %}visible{% endif -%}
+{%- elsif show -%}
 <div class="apx-field">
   {%- case fs.type -%}
     {%- when 'long' -%}

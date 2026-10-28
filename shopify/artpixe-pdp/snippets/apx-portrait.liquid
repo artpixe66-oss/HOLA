@@ -271,13 +271,20 @@
   endif
 
   comment
-    Propriétés : One Piece (champ prime) garde ses libellés d'affiche Wanted
+    Propriétés : One Piece (champ prime visible sur cette fiche) garde ses libellés d'affiche Wanted.
+    Le bloc prime est présent dans tous les modèles, limité à One Piece par sa visibilité : on la vérifie.
   endcomment
+  assign pr_collection_titles = product.collections | map: 'title'
   assign is_op = false
   for field in props
     assign h = field.settings.heading | downcase
     if h contains 'prime'
-      assign is_op = true
+      capture prime_probe
+        render 'apx-portrait-field', field: field, mode: 'probe', product: product, pr_collection_titles: pr_collection_titles
+      endcapture
+      if prime_probe contains 'visible'
+        assign is_op = true
+      endif
     endif
   endfor
 
@@ -309,8 +316,6 @@
       assign t_upsell = t_up_people
       assign t_hint_photos = t_photos_hint
   endcase
-
-  assign pr_collection_titles = product.collections | map: 'title'
 -%}
 
 {%- comment -%} Champs de personnalisation : courts dans l'étape 3, longs après les photos {%- endcomment -%}

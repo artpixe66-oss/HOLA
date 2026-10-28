@@ -77,6 +77,20 @@ Pour publier : ajouter les snippets `apx-portrait`, `apx-portrait-field`, `apx-i
 les assets `apx-product.css`, `apx-product.js`, `apx-sections.css`, `apx-sections.js`, appliquer le correctif à
 `sections/main-product.liquid`, puis ajouter les fichiers de l'offre (`../artpixe-polish`).
 
+### Anciens modèles passés à la mise en page One Piece (28 octobre 2026)
+
+`one-piece-a-b` (8 fiches manga), `page-produit-pop-culture` (4), `cartoone` (3) et `netflix` ont la mise en page
+du modèle One Piece, avec leurs textes d'origine :
+- sous le bouton : carrousel « Ce que disent nos clients » et cadre « Pourquoi Artpixe » (titre par famille ; nombre
+  d'avis et note lus dans Loox). Le widget Loox, « Garanties & avantages » et Instagram de la zone produit sont désactivés ;
+- en bas : « Comment ça marche » (textes de l'ancien bloc, sans balisage HowTo comme avant), « Autres univers »
+  (fiches de la collection, prix « dès » lus dans Shopify), FAQ (mêmes questions, même JSON-LD ; Netflix sans JSON-LD
+  comme avant). Fil d'Ariane visible, bandeau d'icônes, trait, carrousel de collection et diaporama vide : désactivés.
+Rien n'est supprimé : les blocs et sections retirés sont désactivés et se réactivent dans l'éditeur.
+
+Les modèles récents (One Piece, Naruto, DBZ, Demon Slayer, Bleach, manga, Simpsons, LEGO, Rick et Morty, couple)
+affichent dans « Autres univers » le prix « dès » réel lu dans Shopify au lieu d'un prix écrit à la main (19,90 €).
+
 `templates/product.onepiecesolo.json` est le modèle One Piece d'origine (27 octobre 2026), remis dans le brouillon :
 la fiche portrait s'y applique comme aux autres. L'ancienne conversion (section `apx-product-main`) reste disponible
 dans l'historique git.
