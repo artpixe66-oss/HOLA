@@ -134,16 +134,24 @@
 
     if (cfg.badge) page.setBadge(cfg.displateFormat, cfg.badge);
 
-    // L'encadré prend la place du bandeau à remplacer, sinon il se place sous les cartes de format
+    // L'encadré remplace le bandeau cfg.replace. Il se colle sous le bouton de commande (cfg.attachTo),
+    // sinon il prend la place du bandeau, sinon il se place sous les cartes de format.
     var box = el('div', 'apx-offer');
     var replaced = cfg.replace && document.querySelector(cfg.replace);
-    if (replaced) {
-      var block = replaced.closest('.apx-liquid, .t4s-pr__custom-liquid') || replaced;
-      block.parentNode.insertBefore(box, block);
-      block.style.display = 'none';
+    var replacedBlock = replaced && (replaced.closest('.apx-liquid, .t4s-pr__custom-liquid') || replaced);
+    var buyButton = cfg.attachTo && document.querySelector(cfg.attachTo);
+    if (buyButton) {
+      var glue = el('div', 'apx-offer-glue');
+      buyButton.parentNode.insertBefore(glue, buyButton);
+      glue.appendChild(buyButton);
+      glue.appendChild(box);
+      box.classList.add('apx-offer--attached');
+    } else if (replacedBlock) {
+      replacedBlock.parentNode.insertBefore(box, replacedBlock);
     } else {
       page.cards.parentNode.insertBefore(box, page.cards.nextSibling);
     }
+    if (replacedBlock) replacedBlock.style.display = 'none';
 
     var head = el('div', 'apx-offer__head');
     var intro = el('div', 'apx-offer__intro');
