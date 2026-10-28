@@ -45,8 +45,10 @@ seule la section Kalles `main-product` est remplacée. Elle est installée dans 
 - Jusqu'au bouton : badges d'avis, titre, accroche, prix, 1. nombre de personnes, 2. format (cartes),
   3. nom et prime (sans le choix de style), 4. photos (UploadKit, « pas encore la photo »), notes au graphiste,
   bouton « Commander mon portrait » qui mène directement au paiement, comme aujourd'hui.
-- Après le bouton : les blocs actuels, code inchangé (bandeau livraison, avis clients, garanties), dans des blocs
-  « Liquid personnalisé ». Les 4 cartes avantages sont à côté des photos sur ordinateur, sous le bouton sur mobile.
+- Après le bouton : les blocs actuels, code inchangé, dans des blocs « Liquid personnalisé » : le bandeau livraison,
+  puis « Ce que disent nos clients » et « Pourquoi Artpixe » réunis dans un seul cadre (un conteneur `.apx-pack`
+  et sa mise en forme autour des deux codes d'origine : textes, titre H2 et textes alternatifs inchangés).
+  Les 4 cartes avantages sont à côté des photos sur ordinateur, sous le bouton sur mobile.
 - Sous la fiche : les onglets Description et Nos avis clients (section `apx-product-tabs`), puis toutes les
   sections actuelles, sans changement.
 - Les propriétés de commande gardent les noms actuels : « Prénom(s) ou Pseudo(s) : », « Montant de la prime ฿ : »,
