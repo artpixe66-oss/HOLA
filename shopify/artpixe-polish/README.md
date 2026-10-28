@@ -65,7 +65,8 @@ La date de fin se règle en haut de `snippets/apx-offer-displate.liquid` (`offer
 rien ne s'affiche plus, même si la page vient du cache, et le bandeau « livraison offerte » revient.
 
 Livraison : le profil d'expédition « Offre Displate – express offerte (jusqu'au 7 déc.) »
-(Paramètres > Expédition et livraison) contient les 12 variantes Displate One Piece : livraison rapide assurée
+(Paramètres > Expédition et livraison) contient les 325 variantes Displate et Displate avec cadre de tous les
+portraits personnalisés : livraison rapide assurée
 offerte partout (France, UE, International, Reste du monde), Bpost offert en Belgique. Les livraisons standard
 gratuites (Colissimo, « Standard 2 à 4 jours ouvrables ») y sont reprises sous le même nom que dans le profil
 général : dans un panier qui mélange un Displate et un autre article, Shopify additionne les tarifs de même nom,
