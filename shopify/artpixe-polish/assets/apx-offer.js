@@ -220,13 +220,18 @@
 
       box.classList.toggle('apx-offer--on', on);
       toggle.setAttribute('aria-checked', on ? 'true' : 'false');
-      sub.textContent = (on ? cfg.subOn : cfg.subOff)
-        .replace('[format]', (cfg.labels && cfg.labels[offerFormat]) || offerFormat)
-        .replace('[ecart]', money(ecart));
+      // Une ligne chacun : le texte se raccourcit si l'écran est trop étroit, jamais le prix
+      sub.innerHTML = '';
+      sub.appendChild(el('span', 'apx-offer__sublabel', (on ? cfg.subOn : cfg.subOff)
+        .replace('[format]', (cfg.labels && cfg.labels[offerFormat]) || offerFormat)));
+      sub.appendChild(el('span', 'apx-offer__subprice', '+' + money(ecart)));
 
       perks.innerHTML = '';
-      cfg.perks.forEach(function (text) {
-        perks.appendChild(el('li', '', text.replace('[hd]', hd ? money(hd.price) : '')));
+      cfg.perks.forEach(function (perk) {
+        var li = el('li');
+        li.appendChild(el('span', 'apx-offer__perk', perk.text));
+        if (perk.value && hd) li.appendChild(el('s', 'apx-offer__value', perk.value.replace('[hd]', money(hd.price))));
+        perks.appendChild(li);
       });
       setProperty(on);
     }

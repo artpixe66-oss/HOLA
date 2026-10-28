@@ -49,8 +49,8 @@ Sur la page :
 - un encadré « Offre spéciale Displate » remplace le bandeau « livraison offerte » sous le bouton ;
 - son interrupteur, désactivé à l'arrivée (un supplément payant ne doit pas être pré-coché), fait passer le portrait
   en Displate pour la différence de prix réelle avec le format choisi (« +20,00 € » depuis l'affiche A3) ;
-- une fois activé, il débloque trois cadeaux : livraison express offerte (France et UE, Bpost en Belgique),
-  commande prioritaire, version digitale HD offerte (avec son prix réel seul) ;
+- une fois activé, il débloque trois cadeaux, chacun sur une ligne : livraison express offerte (partout),
+  commande prioritaire, version digitale HD offerte (avec son prix réel seul, barré) ;
 - le désactiver revient au format choisi avant ; choisir une carte Displate l'active aussi ;
 - le badge de la carte Displate devient « Offre spéciale » ;
 - la propriété de commande « Offre Displate : Livraison express offerte + commande prioritaire + version digitale HD
@@ -61,8 +61,8 @@ La date de fin se règle en haut de `snippets/apx-offer-displate.liquid` (`offer
 rien ne s'affiche plus, même si la page vient du cache, et le bandeau « livraison offerte » revient.
 
 Livraison : le profil d'expédition « Offre Displate – express offerte (jusqu'au 7 déc.) »
-(Paramètres > Expédition et livraison) contient les 12 variantes Displate One Piece : express assurée offerte
-en France et dans l'UE, Bpost offert en Belgique, tarifs habituels ailleurs (5,90 €). Les livraisons standard
+(Paramètres > Expédition et livraison) contient les 12 variantes Displate One Piece : livraison rapide assurée
+offerte partout (France, UE, International, Reste du monde), Bpost offert en Belgique. Les livraisons standard
 gratuites (Colissimo, « Standard 2 à 4 jours ouvrables ») y sont reprises sous le même nom que dans le profil
 général : dans un panier qui mélange un Displate et un autre article, Shopify additionne les tarifs de même nom,
 donc aucune option ne disparaît. **Le supprimer le 8 décembre** : les variantes reviennent au profil général.

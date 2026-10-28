@@ -47,12 +47,12 @@
       "badge": "Offre spéciale",
       "title": "Offre spéciale Displate",
       "switchLabel": "Activer l’offre spéciale Displate",
-      "subOff": "Passe ton portrait en [format] pour +[ecart] et débloque :",
-      "subOn": "Activée : ton portrait passe en [format] (+[ecart]). Offerts :",
+      "subOff": "Passe en [format]",
+      "subOn": "Activée : [format]",
       "perks": [
-        "Livraison express offerte en France et dans l’UE (Bpost en Belgique)",
-        "Commande prioritaire",
-        "Version digitale HD offerte (vendue seule [hd])"
+        { "text": "Livraison express offerte" },
+        { "text": "Commande prioritaire" },
+        { "text": "Version digitale HD offerte", "value": "[hd]" }
       ],
       "until": {{ 'Jusqu’au ' | append: offer_end_label | append: '.' | json }},
       "propertyName": "Offre Displate",
