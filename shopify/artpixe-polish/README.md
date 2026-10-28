@@ -57,6 +57,9 @@ Sur la page :
 La date de fin se règle en haut de `snippets/apx-offer-displate.liquid` (`offer_end`). Après cette date,
 rien ne s'affiche plus, même si la page vient du cache.
 
-Livraison : le profil d'expédition « Offre Displate » (Paramètres > Expédition et livraison) contient les
-12 variantes Displate One Piece : express assurée offerte en France et dans l'UE, Bpost offert en Belgique,
-tarifs habituels ailleurs (5,90 €). **Le supprimer le 8 décembre** : les variantes reviennent au profil général.
+Livraison : le profil d'expédition « Offre Displate – express offerte (jusqu'au 7 déc.) »
+(Paramètres > Expédition et livraison) contient les 12 variantes Displate One Piece : express assurée offerte
+en France et dans l'UE, Bpost offert en Belgique, tarifs habituels ailleurs (5,90 €). Les livraisons standard
+gratuites (Colissimo, « Standard 2 à 4 jours ouvrables ») y sont reprises sous le même nom que dans le profil
+général : dans un panier qui mélange un Displate et un autre article, Shopify additionne les tarifs de même nom,
+donc aucune option ne disparaît. **Le supprimer le 8 décembre** : les variantes reviennent au profil général.
