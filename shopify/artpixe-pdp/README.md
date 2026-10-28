@@ -39,40 +39,41 @@ il ajoute uniquement des sections, un snippet, deux assets et un template altern
 4. Assigner le template à un produit (fiche produit > Modèle de thème > `apx-pdp`) seulement après validation.
    Tant que le thème brouillon n'est pas publié, rien ne change pour les visiteurs.
 
-## Fiche One Piece : nouvelle zone d'achat, reste de la page inchangé
+## Fiche portrait sur tous les portraits personnalisés
 
-`templates/product.onepiecesolo.json` est la fiche One Piece actuelle (copie du 27 octobre 2026) dans laquelle
-seule la section Kalles `main-product` est remplacée. Elle est installée dans le thème brouillon.
+La zone produit des portraits est rendue par `snippets/apx-portrait.liquid`, appelé depuis la section Kalles
+`main-product` pour les modèles listés (`apx_portraits` en haut du correctif, voir `kalles/main-product.patch`) :
+One Piece, Naruto, Demon Slayer, Portrait manga, Dragon Ball Z, le modèle partagé `one-piece-a-b` (8 fiches),
+cartoon, pop culture, Simpsons, Rick et Morty, LEGO, carte Pokémon, couple, Bleach, animaux et Netflix.
+Les modèles JSON ne changent pas : chaque univers garde ses sections (FAQ, textes SEO, onglets, Instagram).
 
-- Jusqu'au bouton : badges d'avis, titre, accroche, prix, 1. nombre de personnes, 2. format (cartes),
-  3. nom et prime (sans le choix de style), 4. photos (UploadKit, « pas encore la photo »), notes au graphiste,
-  bouton « Commander mon portrait » qui mène directement au paiement, comme aujourd'hui.
-- Après le bouton : les blocs actuels, code inchangé, dans des blocs « Liquid personnalisé » : le bandeau livraison,
-  puis « Ce que disent nos clients » et « Pourquoi Artpixe » réunis dans un seul cadre (un conteneur `.apx-pack`
-  et sa mise en forme autour des deux codes d'origine : textes, titre H2 et textes alternatifs inchangés).
-  Les 4 cartes avantages sont à côté des photos sur ordinateur, sous le bouton sur mobile.
-- Sous la fiche : les onglets Description et Nos avis clients (section `apx-product-tabs`), puis toutes les
-  sections actuelles, sans changement.
-- Navigation (section `apx-page-nav`, placée après les onglets) : une fois la fiche dépassée, une barre
-  « Avis · Comment ça marche · Autres univers · FAQ · Guide » apparaît sous l'en-tête, surligne la section en cours
-  et montre la progression. Le défilement tient compte de l'en-tête fixe ; « Avis » ouvre l'onglet des avis.
-  Les boutons « Commander » des sections (Comment ça marche, FAQ) ramènent à la zone d'achat au lieu de quitter
-  la page (leur lien reste dans le HTML). La FAQ n'ouvre qu'une réponse à la fois ; le bloc SEO du bas est replié
-  avec « Lire la suite » (son texte reste dans la page). Les sections gardent leur contenu : seuls l'espacement,
-  les cartes et les états (survol, ouvert) changent. Sans JavaScript, la page s'affiche comme avant.
-- Les propriétés de commande gardent les noms actuels : « Prénom(s) ou Pseudo(s) : », « Montant de la prime ฿ : »,
-  « Demandes particulières : » et « Uploaded file » (UploadKit). S'y ajoutent « Photo » quand la case
-  « pas encore la photo » est cochée, et « Offre Displate » pendant l'offre.
-- L'affiche A3 est présélectionnée. Pendant l'offre Displate, l'interrupteur « Offre spéciale » remplace le bandeau
-  « livraison offerte » (voir `../artpixe-polish/README.md`). Pour présélectionner un format jusqu'à une date :
-  réglages « Valeur présélectionnée », « Présélection jusqu'au », « Valeur présélectionnée ensuite ».
-- Les textes de la zone d'achat sont en français. Pour les autres langues de la boutique, les traduire dans
-  Translate & Adapt (contenu du thème, modèle produit « onepiecesolo »).
+- Jusqu'au bouton : badges d'avis, titre, accroche, prix, 1. nombre de personnes (ou d'animaux), 2. format en cartes,
+  3. champs de personnalisation, 4. photos (UploadKit, « pas encore la photo »), notes, bouton qui mène au paiement.
+- Champs : ceux des blocs Kalles « properties » du modèle, avec les mêmes noms de propriétés de commande et la même
+  logique de visibilité (`snippets/apx-portrait-field.liquid`). Les champs courts vont à l'étape 3, les textes longs
+  après les photos. One Piece (champ prime) garde « Nom sur l'affiche » et « Prime (฿) ».
+- Applications placées avant le formulaire Kalles (UploadKit) : dans l'étape photos. Loox y est ignoré (la note
+  Loox est déjà dans les badges).
+- Blocs placés après le formulaire : sous le bouton, code inchangé. Les 4 cartes avantages Kalles sont remplacées
+  par celles de la fiche (à côté des photos sur ordinateur) ; avis clients et « Pourquoi Artpixe » sont réunis dans un cadre.
+- Onglets Description / Avis, sections du modèle et données structurées Product : ceux de Kalles, inchangés.
+- Barre de navigation : liens trouvés dans la page (avis, comment ça marche, autres univers, FAQ, guide).
+- Textes traduits dans le code selon la langue de la boutique : fr, en, es, de, it, nl. Les noms des propriétés
+  de commande restent en français pour l'atelier. Les libellés propres à un modèle (ex. champs de la carte Pokémon)
+  restent ceux du bloc Kalles.
 
-Pour publier : ajouter au thème en ligne les sections `apx-product-main`, `apx-product-tabs` et `apx-page-nav`, les snippets
-`apx-variant-picker`, `apx-feature-cards`, `apx-icon` et `apx-product-schema`, les assets `apx-product.css`,
-`apx-product.js`, `apx-sections.css` et `apx-sections.js`, puis remplacer `templates/product.onepiecesolo.json`. Si la fiche en ligne a été modifiée
-depuis le 27 octobre, reporter ces changements avant de remplacer le template.
+Le correctif Kalles (`kalles/main-product.patch`) ajoute un bloc au début de `sections/main-product.liquid` et ferme
+le `if` après la zone produit Kalles ; la barre d'achat fixe Kalles est désactivée sur ces fiches (la fiche a la sienne).
+Pour l'appliquer à une autre copie du thème : `patch sections/main-product.liquid kalles/main-product.patch`.
+Le fichier Kalles complet n'est pas dans ce dépôt (thème sous licence).
+
+Pour publier : ajouter les snippets `apx-portrait`, `apx-portrait-field`, `apx-icon`,
+les assets `apx-product.css`, `apx-product.js`, `apx-sections.css`, `apx-sections.js`, appliquer le correctif à
+`sections/main-product.liquid`, puis ajouter les fichiers de l'offre (`../artpixe-polish`).
+
+`templates/product.onepiecesolo.json` est le modèle One Piece d'origine (27 octobre 2026), remis dans le brouillon :
+la fiche portrait s'y applique comme aux autres. L'ancienne conversion (section `apx-product-main`) reste disponible
+dans l'historique git.
 
 ## La zone d'achat
 

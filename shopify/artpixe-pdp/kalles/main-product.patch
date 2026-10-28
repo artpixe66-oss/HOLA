@@ -1,0 +1,76 @@
+--- main-product.orig.liquid	2026-10-28 11:18:06.346323020 +0000
++++ main-product.liquid	2026-10-28 11:18:41.116656436 +0000
+@@ -251,6 +251,56 @@
+   {%- endcapture -%}
+ {%- endif -%}
+ 
++{%- comment -%}
++  ARTPIXE · Fiche portrait : pour les portraits listés, la zone produit est rendue par snippets/apx-portrait.liquid
++  (galerie, zone d'achat en étapes, textes traduits dans le code). Les blocs Kalles « properties » donnent les champs,
++  les applications placées avant le formulaire (UploadKit) vont dans l'étape photos, les blocs placés après le
++  formulaire restent sous le bouton. Onglets, sections du modèle et données structurées : inchangés (Kalles).
++{%- endcomment -%}
++{%- liquid
++  assign apx_portraits = 'onepiecesolo,narutosolo,demonslayersolo,perosnalisesolo,dbzsolo,one-piece-a-b,cartoone,page-produit-pop-culture,simpsonsolo,rcketmortysolo,legosolo,carte-poke-2,st-valentin,bleachsolo,chien,netflix' | split: ','
++  assign apx_on = false
++  if apx_portraits contains template.suffix and isProductDefault == false
++    assign apx_on = true
++  endif
++-%}
++{%- if apx_on -%}
++  {%- liquid
++    assign apx_upload = ''
++    assign apx_after = ''
++    assign apx_pack = ''
++    assign apx_seen_form = false
++    assign apx_props = seBlocks | where: 'type', 'properties'
++  -%}
++  {%- for block in seBlocks -%}
++    {%- case block.type -%}
++      {%- when 'form' -%}
++        {%- assign apx_seen_form = true -%}
++      {%- when '@app' -%}
++        {%- capture apx_app -%}{% render block %}{%- endcapture -%}
++        {%- assign apx_app_dc = apx_app | downcase -%}
++        {%- if apx_seen_form -%}
++          {%- assign apx_after = apx_after | append: apx_app -%}
++        {%- elsif apx_app_dc contains 'loox' -%}
++        {%- else -%}
++          {%- assign apx_upload = apx_upload | append: apx_app -%}
++        {%- endif -%}
++      {%- when 'custom_liquid' -%}
++        {%- if apx_seen_form -%}
++          {%- capture apx_cl -%}{{ block.settings.custom_liquid }}{%- endcapture -%}
++          {%- if apx_cl contains 'class="apx-feat"' -%}
++          {%- elsif apx_cl contains 'avc-section' or apx_cl contains 'apx-guar' -%}
++            {%- assign apx_pack = apx_pack | append: apx_cl -%}
++          {%- else -%}
++            {%- capture apx_wrapped -%}<div class="apx-liquid t4s-pr__custom-liquid t4s-rte">{{ apx_cl }}</div>{%- endcapture -%}
++            {%- assign apx_after = apx_after | append: apx_wrapped -%}
++          {%- endif -%}
++        {%- endif -%}
++    {%- endcase -%}
++  {%- endfor -%}
++  {%- render 'apx-portrait', product: product, section: section, props: apx_props, upload_html: apx_upload, after_html: apx_after, pack_html: apx_pack -%}
++{%- else -%}
++
+ {{ 'pre_flickityt4s.min.css' | asset_url | stylesheet_tag }}
+ {{ 'main-product.css' | asset_url | stylesheet_tag }}
+ {{ 'accordion.css' | asset_url | stylesheet_tag }}
+@@ -924,6 +974,7 @@
+     <aside data-sidebar-content class="t4s-col-item t4s-col-12 t4s-col-lg-3 t4s-sidebar t4s-dn"><div class="t4s-loading--bg"></div></aside>
+   </div>
+ </div>
++{%- endif -%}
+ 
+ {%- render 'FBT' -%}
+ 
+@@ -949,7 +1000,7 @@
+   </svg>
+ </template>
+ 
+-{%- if isSticky and product != blank -%}
++{%- if isSticky and product != blank and apx_on == false -%}
+ 
+   {%- liquid 
+     assign current_inventory_quantity = current_variant.inventory_quantity

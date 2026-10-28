@@ -3,6 +3,7 @@
   en Displate (différence de prix réelle) et débloque livraison express, commande prioritaire et version HD offertes.
   Désactivé à l'arrivée : un supplément payant ne doit pas être pré-coché.
   Rendu dans le <head> par snippets/apx-polish.liquid. Rien ne s'affiche hors des dates.
+  Textes traduits ici (fr, en, es, de, it, nl) ; valeurs barrées en centimes, affichées au format de la langue.
   La livraison offerte est assurée par le profil d'expédition « Offre Displate » (Paramètres > Expédition) :
   le supprimer après la fin de l'offre.
 
@@ -12,7 +13,6 @@
 {%- liquid
   assign offer_start = ''
   assign offer_end = '2026-12-07 23:59'
-  assign offer_end_label = 'dimanche 7 décembre'
 
   assign now_s = 'now' | date: '%s' | plus: 0
   assign start_s = 0
@@ -30,6 +30,24 @@
   if end_s > 0 and now_s > end_s
     assign offer_live = false
   endif
+
+  # Textes selon la langue de la boutique. Les propriétés de commande restent en français pour l'atelier.
+  assign lang = localization.language.iso_code | default: request.locale.iso_code | default: 'fr' | downcase | split: '-' | first
+  case lang
+    when 'en'
+      assign t = 'Special offer|Displate special offer|Turn on the Displate special offer|Upgrade to [format]|On: [format]|Metal Displate|Displate + frame|HD metal print|Free express delivery|Free priority order|Free HD digital version|Until Sunday 7 December.|⏳ Offer ends in [temps]|d|h|min|s'
+    when 'es'
+      assign t = 'Oferta especial|Oferta especial Displate|Activar la oferta especial Displate|Cambia a [format]|Activada: [format]|Displate de metal|Displate + marco|Impresión en metal HD|Envío exprés gratis|Pedido prioritario gratis|Versión digital HD gratis|Hasta el domingo 7 de diciembre.|⏳ La oferta termina en [temps]|d|h|min|s'
+    when 'de'
+      assign t = 'Sonderangebot|Displate-Sonderangebot|Displate-Sonderangebot aktivieren|Wechsle zu [format]|Aktiviert: [format]|Metall-Displate|Displate + Rahmen|HD-Metalldruck|Kostenloser Expressversand|Kostenlose Prioritätsbestellung|Kostenlose digitale HD-Version|Bis Sonntag, 7. Dezember.|⏳ Angebot endet in [temps]|T|Std.|Min.|Sek.'
+    when 'it'
+      assign t = 'Offerta speciale|Offerta speciale Displate|Attiva l’offerta speciale Displate|Passa a [format]|Attivata: [format]|Displate in metallo|Displate + cornice|Stampa su metallo HD|Spedizione express gratuita|Ordine prioritario gratuito|Versione digitale HD gratuita|Fino a domenica 7 dicembre.|⏳ L’offerta termina tra [temps]|g|h|min|s'
+    when 'nl'
+      assign t = 'Speciale aanbieding|Displate-actie|Displate-actie activeren|Kies [format]|Actief: [format]|Metalen Displate|Displate + lijst|HD-print op metaal|Gratis expreslevering|Gratis voorrangsbestelling|Gratis digitale HD-versie|Tot en met zondag 7 december.|⏳ Actie eindigt over [temps]|d|u|min|s'
+    else
+      assign t = 'Offre spéciale|Offre spéciale Displate|Activer l’offre spéciale Displate|Passe en [format]|Activée : [format]|Displate métal|Displate + cadre|Impression sur métal HD|Livraison express offerte|Commande prioritaire offerte|Version digitale HD offerte|Jusqu’au dimanche 7 décembre.|⏳ Fin de l’offre dans [temps]|j|h|min|s'
+  endcase
+  assign t = t | split: '|'
 -%}
 {%- if offer_live -%}
   {{ 'apx-offer.css' | asset_url | stylesheet_tag }}
@@ -41,23 +59,24 @@
       "digitalFormat": "Digital",
       "posterFormat": "Poster A3",
       "displateFormat": "Displate",
-      "labels": { "Displate": "Displate métal", "Displate avec cadre": "Displate + cadre" },
+      "labels": { "Displate": {{ t[5] | json }}, "Displate avec cadre": {{ t[6] | json }} },
       "replace": ".aliv-wrap",
       "attachTo": "[data-apx-submit], [data-buy-now-btn]",
-      "badge": "Offre spéciale",
-      "title": "Offre spéciale Displate",
-      "switchLabel": "Activer l’offre spéciale Displate",
-      "subOff": "Passe en [format]",
-      "subOn": "Activée : [format]",
+      "badge": {{ t[0] | json }},
+      "title": {{ t[1] | json }},
+      "switchLabel": {{ t[2] | json }},
+      "subOff": {{ t[3] | json }},
+      "subOn": {{ t[4] | json }},
       "perks": [
-        { "text": "Impression sur métal HD", "value": "19,90 €" },
-        { "text": "Livraison express offerte", "value": "3,90 €" },
-        { "text": "Commande prioritaire offerte", "value": "4,90 €" },
-        { "text": "Version digitale HD offerte", "value": "19,90 €" }
+        { "text": {{ t[7] | json }}, "value": 1990 },
+        { "text": {{ t[8] | json }}, "value": 390 },
+        { "text": {{ t[9] | json }}, "value": 490 },
+        { "text": {{ t[10] | json }}, "value": 1990 }
       ],
-      "until": {{ 'Jusqu’au ' | append: offer_end_label | append: '.' | json }},
-      "countdown": "⏳ Fin de l’offre dans [temps]",
+      "until": {{ t[11] | json }},
+      "countdown": {{ t[12] | json }},
       "countdownDays": 14,
+      "units": { "d": {{ t[13] | json }}, "h": {{ t[14] | json }}, "m": {{ t[15] | json }}, "s": {{ t[16] | json }} },
       "propertyName": "Offre Displate",
       "propertyValue": "Livraison express offerte + commande prioritaire + version digitale HD offerte"
     }

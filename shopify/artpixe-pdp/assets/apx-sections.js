@@ -5,6 +5,7 @@
    - boutons « Commander » des sections : ramènent à la zone d'achat au lieu de quitter la page ;
    - FAQ : une seule réponse ouverte à la fois ;
    - textes longs repliés avec « Lire la suite » (le texte reste dans la page).
+   Les liens viennent des blocs de la section « Artpixe · Navigation », ou sont trouvés dans la page (data-auto).
    Le contenu des sections n'est jamais modifié. Sans JavaScript, la page s'affiche comme avant. */
 (function () {
   'use strict';
@@ -48,11 +49,43 @@
   document.body.appendChild(nav);
   var list = nav.querySelector('.apx-pnav__list');
   var progress = nav.querySelector('.apx-pnav__progress');
-  var after = findSection(nav.getAttribute('data-after'));
+  var afterSel = nav.getAttribute('data-after-el');
+  var after = afterSel ? document.querySelector(afterSel) : findSection(nav.getAttribute('data-after'));
+
+  // Mode automatique : les liens sont créés pour les sections présentes dans la page, dans leur ordre
+  if (nav.hasAttribute('data-auto') && after) {
+    var isAfter = function (el) { return el && (after.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) && !after.contains(el); };
+    var faq = null;
+    Array.prototype.some.call(document.querySelectorAll('.shopify-section'), function (s) {
+      if (isAfter(s) && s.querySelectorAll('details').length >= 3) { faq = s; return true; }
+      return false;
+    });
+    var found = [
+      { key: 'avis', el: document.querySelector('.t4s-product-tabs-wrapper'), reviews: true },
+      { key: 'how', el: document.querySelector('.apx-how') },
+      { key: 'reco', el: document.querySelector('.apx-reco') },
+      { key: 'faq', el: faq },
+      { key: 'guide', el: document.querySelector('.op-hub, .apx-seo') }
+    ].filter(function (f) { return isAfter(f.el) && nav.getAttribute('data-l-' + f.key); });
+    found.sort(function (x, y) { return x.el.compareDocumentPosition(y.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });
+    found.forEach(function (f) {
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.className = 'apx-pnav__link';
+      a.href = '#';
+      a.textContent = nav.getAttribute('data-l-' + f.key);
+      if (f.reviews) a.setAttribute('data-open-reviews', '');
+      a._apxTarget = f.el;
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+  }
+
   var links = Array.prototype.slice.call(nav.querySelectorAll('.apx-pnav__link'))
-    .map(function (a) { return { a: a, el: findSection(a.getAttribute('data-target')) }; })
+    .map(function (a) { return { a: a, el: a._apxTarget || findSection(a.getAttribute('data-target')) }; })
     .filter(function (l) { return l.el; });
   links.forEach(function (l) { l.el.classList.add('apx-pagesec'); });
+  if (!links.length) return;
 
   function openReviews(sectionEl) {
     var title = sectionEl.querySelector('.t4s-tab__title[href^="#t4s-tab-review"]');
@@ -63,9 +96,9 @@
   }
 
   function go(link) {
-    var target = link.hasAttribute('data-open-reviews') ? openReviews(findSection(link.getAttribute('data-target'))) : findSection(link.getAttribute('data-target'));
-    if (!target) return;
-    scrollToEl(target, nav.offsetHeight);
+    var el = link._apxTarget || findSection(link.getAttribute('data-target'));
+    if (!el) return;
+    scrollToEl(link.hasAttribute('data-open-reviews') ? openReviews(el) : el, nav.offsetHeight);
   }
 
   links.forEach(function (l) {

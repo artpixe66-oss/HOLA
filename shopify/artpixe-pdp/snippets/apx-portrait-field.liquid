@@ -1,0 +1,115 @@
+{%- comment -%}
+  Un champ de personnalisation de la fiche portrait (snippets/apx-portrait.liquid), à partir d'un bloc Kalles
+  « properties » : même nom de propriété de commande et même logique de visibilité que snippets/frm_properties.liquid.
+
+  Accepte : field (bloc), mode ('short' : tous les champs sauf texte long, 'long' : texte long), product, form_id,
+  is_op (fiche One Piece), pr_collection_titles, et les libellés traduits t_*.
+
+  Usage :
+  {% render 'apx-portrait-field', field: field, mode: 'short', product: product, form_id: form_id, ... %}
+{%- endcomment -%}
+{%- liquid
+  assign fs = field.settings
+  assign is_long = false
+  if fs.type == 'long'
+    assign is_long = true
+  endif
+  assign show = true
+  if mode == 'long' and is_long == false
+    assign show = false
+  endif
+  if mode == 'short' and is_long
+    assign show = false
+  endif
+  if show
+  case fs.visibility
+    when 'collection'
+      assign cb = fs.collection_based | map: 'title'
+      assign show = false
+      for ct in cb
+        if pr_collection_titles contains ct
+          assign show = true
+        endif
+      endfor
+    when 'type'
+      assign tb = fs.type_based | remove: '  ' | replace: ', ', ',' | replace: ' ,', ',' | split: ','
+      unless tb contains product.type
+        assign show = false
+      endunless
+    when 'tag'
+      assign tgb = fs.tag_based | remove: '  ' | replace: ', ', ',' | replace: ' ,', ',' | split: ','
+      assign show = false
+      for tg in tgb
+        if product.tags contains tg
+          assign show = true
+        endif
+      endfor
+    when 'product'
+      assign pb = fs.product_based | map: 'title'
+      unless pb contains product.title
+        assign show = false
+      endunless
+    when 'metafield'
+      unless product.metafields.theme.visibility_customizable
+        assign show = false
+      endunless
+  endcase
+  endif
+
+  assign pname = fs.heading | escape
+  unless fs.show_at_checkout
+    assign pname = '_' | append: pname
+  endunless
+  assign h = fs.heading | downcase
+  assign label = fs.heading | remove: ' :' | remove: ':' | strip
+  assign ph = ''
+  assign fid = 'apx-f-' | append: field.id
+  if is_long
+    if h contains 'demande' or h contains 'note'
+      assign label = t_l_notes
+    endif
+    if is_op
+      assign ph = t_ph_notes_op
+    else
+      assign ph = t_ph_notes
+    endif
+  elsif h contains 'prime'
+    assign label = t_l_prime
+    assign ph = '3 000 000 000'
+  elsif h contains 'pseudo' or h contains 'prénom'
+    if is_op
+      assign label = t_l_name_op
+      assign ph = 'MONKEY D. LUFFY'
+    else
+      assign label = t_l_name
+      assign ph = t_ph_name
+    endif
+  endif
+  assign opts = fs.options | remove: '  ' | replace: ', ', ',' | replace: ' ,', ',' | split: ','
+-%}
+{%- if show -%}
+<div class="apx-field">
+  {%- case fs.type -%}
+    {%- when 'long' -%}
+      <label class="apx-label" for="{{ fid }}">
+        {{- label -}}
+        {%- unless fs.required %} <span class="apx-optional">{{ t_optional }}</span>{% endunless -%}
+      </label>
+      <textarea id="{{ fid }}" class="apx-input" name="properties[{{ pname }}]" form="{{ form_id }}" rows="2" placeholder="{{ ph | escape }}" {% if fs.required %}required{% endif %}></textarea>
+    {%- when 'checkbox' -%}
+      <div class="apx-later">
+        <input type="hidden" name="properties[{{ pname }}]" value="No" form="{{ form_id }}">
+        <input type="checkbox" id="{{ fid }}" name="properties[{{ pname }}]" value="Yes" form="{{ form_id }}" {% if fs.required %}required{% endif %}>
+        <label for="{{ fid }}">{{ label }}</label>
+      </div>
+    {%- when 'select' or 'radio' -%}
+      <label class="apx-label" for="{{ fid }}">{{ label }}</label>
+      <select id="{{ fid }}" class="apx-input" name="properties[{{ pname }}]" form="{{ form_id }}" {% if fs.required %}required{% endif %}>
+        {%- for o in opts -%}<option value="{{ o | strip | escape }}">{{ o | strip | escape }}</option>{%- endfor -%}
+      </select>
+    {%- else -%}
+      <label class="apx-label" for="{{ fid }}">{{ label }}</label>
+      <input id="{{ fid }}" class="apx-input" type="text" name="properties[{{ pname }}]" form="{{ form_id }}" placeholder="{{ ph | escape }}" autocomplete="off" {% if fs.required %}required{% endif %}>
+  {%- endcase -%}
+</div>
+{%- endif -%}

@@ -1,0 +1,617 @@
+{%- comment -%}
+  Artpixe · Fiche portrait personnalisé : galerie, zone d'achat en étapes, barre de navigation.
+  Rendue par sections/main-product.liquid (Kalles) pour les portraits listés : chaque modèle garde ses propres
+  sections (FAQ, textes SEO, onglets), seule la zone produit change. Mêmes classes que la section
+  « Artpixe · Fiche produit » : styles et comportements dans assets/apx-product.css et apx-product.js.
+  Les textes sont traduits ici selon la langue de la boutique (fr, en, es, de, it, nl).
+  Les noms des propriétés de commande restent ceux des blocs Kalles « properties » (en français pour l'atelier).
+
+  Accepte :
+  - product {Object}
+  - section {Object} : la section Kalles main-product
+  - props {Array} : ses blocs « properties »
+  - upload_html {String} : applications placées avant le formulaire Kalles (UploadKit), rendues dans l'étape photos
+  - after_html {String} : blocs Kalles placés après le formulaire, rendus sous le bouton
+  - pack_html {String} : avis clients + garanties, réunis dans un seul cadre
+
+  Usage :
+  {% render 'apx-portrait', product: product, section: section, props: arr, upload_html: a, after_html: b, pack_html: c %}
+{%- endcomment -%}
+{%- liquid
+  assign lang = localization.language.iso_code | default: request.locale.iso_code | default: 'fr' | downcase | split: '-' | first
+  case lang
+    when 'en'
+      assign t_reviews = 'reviews'
+      assign t_sub = 'Your portrait, drawn by a designer from your photo. You approve the preview before printing.'
+      assign t_sub_op = 'Your wanted poster, drawn by a designer from your photo. You approve the preview before printing.'
+      assign t_save = 'Save [montant]'
+      assign t_opt_people = 'Number of people (pets included)'
+      assign t_opt_animals = 'Number of pets'
+      assign t_opt_subjects = 'Number of subjects (pets and people)'
+      assign t_format = 'Format'
+      assign t_up_people = 'Two of you? +[ecart] for one more person.'
+      assign t_up_animals = 'Two pets? +[ecart] for one more pet.'
+      assign t_up_subjects = 'One more subject: +[ecart].'
+      assign t_c_hd = 'HD file|By email, print it wherever you like'
+      assign t_c_a3 = 'A3 poster|29.7 × 42 cm, premium paper'
+      assign t_c_dp = 'Metal Displate|Magnetic mount, no nails'
+      assign t_c_fr = 'Displate + frame|Framed, ready to hang'
+      assign t_popular = 'Most popular'
+      assign t_step_op = 'Name and bounty'
+      assign t_step_custom = 'Personalisation'
+      assign t_l_name_op = 'Name on the poster'
+      assign t_l_name = 'First name(s) or nickname(s)'
+      assign t_l_prime = 'Bounty (฿)'
+      assign t_l_notes = 'Notes for the designer'
+      assign t_optional = '(optional)'
+      assign t_ph_name = 'e.g. Leah & Tom'
+      assign t_ph_notes_op = 'e.g. me as Luffy with his straw hat, my girlfriend as Nami.'
+      assign t_ph_notes = 'e.g. the character, background or outfit you want.'
+      assign t_step_photos = 'Your photos'
+      assign t_photos_hint = 'Sharp face, front-facing, good light. One photo per person or a group photo.'
+      assign t_photos_hint_animals = 'Sharp photo, good light. One photo per pet or a group photo.'
+      assign t_later = 'No photo yet? Order now, we will ask for it by email right after.'
+      assign t_buy = 'Order my portrait'
+      assign t_soldout = 'Unavailable'
+      assign t_micro = 'Nothing is printed without your approval · Preview within 24–48 business hours'
+      assign t_feat = 'Drawn by a designer|Unlimited customisation|Revisions until you approve|Preview within 24–48 business hours'
+      assign t_sticky = 'Customise'
+      assign t_nav = 'Page sections|Reviews|How it works|Other universes|FAQ|Guide|Read more|Show less'
+    when 'es'
+      assign t_reviews = 'opiniones'
+      assign t_sub = 'Tu retrato dibujado por un diseñador a partir de tu foto. Validas la vista previa antes de imprimir.'
+      assign t_sub_op = 'Tu cartel de búsqueda dibujado por un diseñador a partir de tu foto. Validas la vista previa antes de imprimir.'
+      assign t_save = 'Ahorras [montant]'
+      assign t_opt_people = 'Número de personas (mascotas incluidas)'
+      assign t_opt_animals = 'Número de mascotas'
+      assign t_opt_subjects = 'Número de sujetos (mascotas y personas)'
+      assign t_format = 'Formato'
+      assign t_up_people = '¿Sois dos? +[ecart] por una persona más.'
+      assign t_up_animals = '¿Dos mascotas? +[ecart] por una mascota más.'
+      assign t_up_subjects = 'Un sujeto más: +[ecart].'
+      assign t_c_hd = 'Archivo HD|Por e-mail, imprímelo donde quieras'
+      assign t_c_a3 = 'Póster A3|29,7 × 42 cm, papel premium'
+      assign t_c_dp = 'Displate de metal|Fijación magnética, sin clavos'
+      assign t_c_fr = 'Displate + marco|Enmarcado, listo para colgar'
+      assign t_popular = 'El más elegido'
+      assign t_step_op = 'Nombre y recompensa'
+      assign t_step_custom = 'Personalización'
+      assign t_l_name_op = 'Nombre en el cartel'
+      assign t_l_name = 'Nombre(s) o apodo(s)'
+      assign t_l_prime = 'Recompensa (฿)'
+      assign t_l_notes = 'Notas para el diseñador'
+      assign t_optional = '(opcional)'
+      assign t_ph_name = 'Ej.: Lea y Tomás'
+      assign t_ph_notes_op = 'Ej.: yo como Luffy con su sombrero de paja, mi novia como Nami.'
+      assign t_ph_notes = 'Ej.: el personaje, el fondo o el atuendo que quieras.'
+      assign t_step_photos = 'Tus fotos'
+      assign t_photos_hint = 'Rostro nítido, de frente, buena luz. Una foto por persona o una foto de grupo.'
+      assign t_photos_hint_animals = 'Foto nítida y bien iluminada. Una foto por mascota o una foto de grupo.'
+      assign t_later = '¿Aún no tienes la foto? Pide ahora, te la pediremos por e-mail justo después.'
+      assign t_buy = 'Pedir mi retrato'
+      assign t_soldout = 'No disponible'
+      assign t_micro = 'Nada se imprime sin tu aprobación · Vista previa en 24-48 h laborables'
+      assign t_feat = 'Dibujado por un diseñador|Personalización ilimitada|Retoques hasta tu aprobación|Vista previa en 24-48 h laborables'
+      assign t_sticky = 'Personalizar'
+      assign t_nav = 'Secciones de la página|Opiniones|Cómo funciona|Otros universos|FAQ|Guía|Leer más|Mostrar menos'
+    when 'de'
+      assign t_reviews = 'Bewertungen'
+      assign t_sub = 'Dein Porträt, von einem Grafiker nach deinem Foto gezeichnet. Du gibst die Vorschau vor dem Druck frei.'
+      assign t_sub_op = 'Dein Steckbrief, von einem Grafiker nach deinem Foto gezeichnet. Du gibst die Vorschau vor dem Druck frei.'
+      assign t_save = 'Du sparst [montant]'
+      assign t_opt_people = 'Anzahl der Personen (Haustiere inklusive)'
+      assign t_opt_animals = 'Anzahl der Tiere'
+      assign t_opt_subjects = 'Anzahl der Motive (Tiere und Personen)'
+      assign t_format = 'Format'
+      assign t_up_people = 'Ihr seid zu zweit? +[ecart] für eine weitere Person.'
+      assign t_up_animals = 'Zwei Tiere? +[ecart] für ein weiteres Tier.'
+      assign t_up_subjects = 'Ein weiteres Motiv: +[ecart].'
+      assign t_c_hd = 'HD-Datei|Per E-Mail, drucke sie, wo du willst'
+      assign t_c_a3 = 'A3-Poster|29,7 × 42 cm, Premiumpapier'
+      assign t_c_dp = 'Metall-Displate|Magnetbefestigung, ohne Nägel'
+      assign t_c_fr = 'Displate + Rahmen|Gerahmt, fertig zum Aufhängen'
+      assign t_popular = 'Am beliebtesten'
+      assign t_step_op = 'Name und Kopfgeld'
+      assign t_step_custom = 'Personalisierung'
+      assign t_l_name_op = 'Name auf dem Poster'
+      assign t_l_name = 'Vorname(n) oder Spitzname(n)'
+      assign t_l_prime = 'Kopfgeld (฿)'
+      assign t_l_notes = 'Hinweise für den Grafiker'
+      assign t_optional = '(optional)'
+      assign t_ph_name = 'z. B. Lea & Tom'
+      assign t_ph_notes_op = 'z. B. ich als Ruffy mit Strohhut, meine Freundin als Nami.'
+      assign t_ph_notes = 'z. B. die Figur, der Hintergrund oder das Outfit, das du willst.'
+      assign t_step_photos = 'Deine Fotos'
+      assign t_photos_hint = 'Scharfes Gesicht, von vorne, gutes Licht. Ein Foto pro Person oder ein Gruppenfoto.'
+      assign t_photos_hint_animals = 'Scharfes, gut beleuchtetes Foto. Ein Foto pro Tier oder ein Gruppenfoto.'
+      assign t_later = 'Noch kein Foto? Bestelle jetzt, wir fragen es direkt danach per E-Mail an.'
+      assign t_buy = 'Mein Portrait bestellen'
+      assign t_soldout = 'Nicht verfügbar'
+      assign t_micro = 'Nichts wird ohne deine Freigabe gedruckt · Vorschau in 24–48 Werktagsstunden'
+      assign t_feat = 'Von einem Grafiker gezeichnet|Unbegrenzte Anpassung|Korrekturen bis zur Freigabe|Vorschau in 24–48 Werktagsstunden'
+      assign t_sticky = 'Gestalten'
+      assign t_nav = 'Seitenabschnitte|Bewertungen|So funktioniert es|Andere Universen|FAQ|Ratgeber|Weiterlesen|Weniger anzeigen'
+    when 'it'
+      assign t_reviews = 'recensioni'
+      assign t_sub = 'Il tuo ritratto disegnato da un grafico a partire dalla tua foto. Approvi l’anteprima prima della stampa.'
+      assign t_sub_op = 'Il tuo avviso di taglia disegnato da un grafico a partire dalla tua foto. Approvi l’anteprima prima della stampa.'
+      assign t_save = 'Risparmi [montant]'
+      assign t_opt_people = 'Numero di persone (animali inclusi)'
+      assign t_opt_animals = 'Numero di animali'
+      assign t_opt_subjects = 'Numero di soggetti (animali e persone)'
+      assign t_format = 'Formato'
+      assign t_up_people = 'Siete in due? +[ecart] per una persona in più.'
+      assign t_up_animals = 'Due animali? +[ecart] per un animale in più.'
+      assign t_up_subjects = 'Un soggetto in più: +[ecart].'
+      assign t_c_hd = 'File HD|Via e-mail, da stampare dove vuoi'
+      assign t_c_a3 = 'Poster A3|29,7 × 42 cm, carta premium'
+      assign t_c_dp = 'Displate in metallo|Fissaggio magnetico, senza chiodi'
+      assign t_c_fr = 'Displate + cornice|Incorniciato, pronto da appendere'
+      assign t_popular = 'Il più scelto'
+      assign t_step_op = 'Nome e taglia'
+      assign t_step_custom = 'Personalizzazione'
+      assign t_l_name_op = 'Nome sul poster'
+      assign t_l_name = 'Nome/i o soprannome/i'
+      assign t_l_prime = 'Taglia (฿)'
+      assign t_l_notes = 'Note per il grafico'
+      assign t_optional = '(facoltativo)'
+      assign t_ph_name = 'Es.: Lea e Tom'
+      assign t_ph_notes_op = 'Es.: io come Rufy con il cappello di paglia, la mia ragazza come Nami.'
+      assign t_ph_notes = 'Es.: il personaggio, lo sfondo o l’outfit che vuoi.'
+      assign t_step_photos = 'Le tue foto'
+      assign t_photos_hint = 'Viso nitido, frontale, buona luce. Una foto per persona o una foto di gruppo.'
+      assign t_photos_hint_animals = 'Foto nitida e ben illuminata. Una foto per animale o una foto di gruppo.'
+      assign t_later = 'Non hai ancora la foto? Ordina ora, te la chiediamo via e-mail subito dopo.'
+      assign t_buy = 'Ordina il mio ritratto'
+      assign t_soldout = 'Non disponibile'
+      assign t_micro = 'Nulla viene stampato senza la tua approvazione · Anteprima entro 24-48 ore lavorative'
+      assign t_feat = 'Disegnato da un grafico|Personalizzazione illimitata|Ritocchi fino all’approvazione|Anteprima entro 24-48 ore lavorative'
+      assign t_sticky = 'Personalizza'
+      assign t_nav = 'Sezioni della pagina|Recensioni|Come funziona|Altri universi|FAQ|Guida|Leggi di più|Mostra meno'
+    when 'nl'
+      assign t_reviews = 'reviews'
+      assign t_sub = 'Je portret, getekend door een ontwerper op basis van je foto. Je keurt de preview goed vóór het drukken.'
+      assign t_sub_op = 'Je wanted-poster, getekend door een ontwerper op basis van je foto. Je keurt de preview goed vóór het drukken.'
+      assign t_save = 'Je bespaart [montant]'
+      assign t_opt_people = 'Aantal personen (huisdieren inbegrepen)'
+      assign t_opt_animals = 'Aantal dieren'
+      assign t_opt_subjects = 'Aantal onderwerpen (dieren en personen)'
+      assign t_format = 'Formaat'
+      assign t_up_people = 'Met z’n tweeën? +[ecart] voor een extra persoon.'
+      assign t_up_animals = 'Twee dieren? +[ecart] voor een extra dier.'
+      assign t_up_subjects = 'Een extra onderwerp: +[ecart].'
+      assign t_c_hd = 'HD-bestand|Per e-mail, print het waar je wilt'
+      assign t_c_a3 = 'A3-poster|29,7 × 42 cm, premium papier'
+      assign t_c_dp = 'Metalen Displate|Magnetische bevestiging, zonder spijkers'
+      assign t_c_fr = 'Displate + lijst|Ingelijst, klaar om op te hangen'
+      assign t_popular = 'Meest gekozen'
+      assign t_step_op = 'Naam en premie'
+      assign t_step_custom = 'Personalisatie'
+      assign t_l_name_op = 'Naam op de poster'
+      assign t_l_name = 'Voornaam/-namen of bijnaam/-namen'
+      assign t_l_prime = 'Premie (฿)'
+      assign t_l_notes = 'Opmerkingen voor de ontwerper'
+      assign t_optional = '(optioneel)'
+      assign t_ph_name = 'Bijv. Lea & Tom'
+      assign t_ph_notes_op = 'Bijv. ik als Luffy met zijn strohoed, mijn vriendin als Nami.'
+      assign t_ph_notes = 'Bijv. het personage, de achtergrond of de outfit die je wilt.'
+      assign t_step_photos = 'Je foto’s'
+      assign t_photos_hint = 'Scherp gezicht, van voren, goed licht. Eén foto per persoon of een groepsfoto.'
+      assign t_photos_hint_animals = 'Scherpe, goed belichte foto. Eén foto per dier of een groepsfoto.'
+      assign t_later = 'Nog geen foto? Bestel nu, we vragen hem direct daarna per e-mail.'
+      assign t_buy = 'Mijn portret bestellen'
+      assign t_soldout = 'Niet beschikbaar'
+      assign t_micro = 'Niets wordt gedrukt zonder jouw goedkeuring · Preview binnen 24-48 werkuren'
+      assign t_feat = 'Getekend door een ontwerper|Onbeperkt personaliseren|Aanpassingen tot je goedkeuring|Preview binnen 24-48 werkuren'
+      assign t_sticky = 'Personaliseren'
+      assign t_nav = 'Pagina-onderdelen|Reviews|Hoe het werkt|Andere werelden|FAQ|Gids|Lees meer|Minder tonen'
+    else
+      assign t_reviews = 'avis'
+      assign t_sub = 'Ton portrait dessiné par un graphiste à partir de ta photo. Tu valides l’aperçu avant l’impression.'
+      assign t_sub_op = 'Ton avis de recherche dessiné par un graphiste à partir de ta photo. Tu valides l’aperçu avant l’impression.'
+      assign t_save = 'Économise [montant]'
+      assign t_opt_people = 'Nombre de personnes (animaux compris)'
+      assign t_opt_animals = 'Nombre d’animaux'
+      assign t_opt_subjects = 'Nombre de sujets (animaux et personnes)'
+      assign t_format = 'Format'
+      assign t_up_people = 'Vous êtes deux ? +[ecart] pour une personne de plus.'
+      assign t_up_animals = 'Deux compagnons ? +[ecart] pour un animal de plus.'
+      assign t_up_subjects = 'Un sujet de plus : +[ecart].'
+      assign t_c_hd = 'Fichier HD|Par e-mail, à imprimer où tu veux'
+      assign t_c_a3 = 'Affiche A3|29,7 × 42 cm, papier premium'
+      assign t_c_dp = 'Displate métal|Fixation magnétique, sans clou'
+      assign t_c_fr = 'Displate + cadre|Encadré, prêt à accrocher'
+      assign t_popular = 'Le plus choisi'
+      assign t_step_op = 'Nom et prime'
+      assign t_step_custom = 'Personnalisation'
+      assign t_l_name_op = 'Nom sur l’affiche'
+      assign t_l_name = 'Prénom(s) ou pseudo(s)'
+      assign t_l_prime = 'Prime (฿)'
+      assign t_l_notes = 'Notes au graphiste'
+      assign t_optional = '(facultatif)'
+      assign t_ph_name = 'Ex. : Léa & Tom'
+      assign t_ph_notes_op = 'Ex. : moi en Luffy avec son chapeau de paille, ma copine en Nami.'
+      assign t_ph_notes = 'Ex. : le personnage, le décor ou la tenue que tu veux.'
+      assign t_step_photos = 'Tes photos'
+      assign t_photos_hint = 'Visage net, de face, bonne lumière. Une photo par personne ou une photo de groupe.'
+      assign t_photos_hint_animals = 'Photo nette, bien éclairée. Une photo par animal ou une photo de groupe.'
+      assign t_later = 'Pas encore la photo ? Commande maintenant, on te la demande par e-mail juste après.'
+      assign t_buy = 'Commander mon portrait'
+      assign t_soldout = 'Indisponible'
+      assign t_micro = 'Rien n’est imprimé sans ta validation · Aperçu sous 24-48 h ouvrées'
+      assign t_feat = 'Dessiné par un graphiste|Personnalisation illimitée|Retouches jusqu’à validation|Aperçu sous 24-48 h ouvrées'
+      assign t_sticky = 'Personnaliser'
+      assign t_nav = 'Sections de la page|Avis|Comment ça marche|Autres univers|FAQ|Guide|Lire la suite|Réduire'
+  endcase
+  assign t_feat = t_feat | split: '|'
+  assign t_nav = t_nav | split: '|'
+
+  comment
+    Variante affichée : celle de l'URL, sinon l'affiche A3, sinon la première disponible
+  endcomment
+  assign form_id = 'apx-form-' | append: section.id
+  assign current_variant = product.selected_or_first_available_variant
+  if product.selected_variant == blank
+    for v in product.variants
+      if v.available and v.options contains 'Poster A3'
+        assign current_variant = v
+        break
+      endif
+    endfor
+  endif
+  assign savings = 0
+  if current_variant.compare_at_price > current_variant.price
+    assign savings = current_variant.compare_at_price | minus: current_variant.price
+  endif
+
+  comment
+    Propriétés : One Piece (champ prime) garde ses libellés d'affiche Wanted
+  endcomment
+  assign is_op = false
+  for field in props
+    assign h = field.settings.heading | downcase
+    if h contains 'prime'
+      assign is_op = true
+    endif
+  endfor
+
+  comment
+    Option « nombre » : personnes, animaux ou sujets
+  endcomment
+  assign kind = 'people'
+  if product.options.size > 1
+    assign opt1 = product.options_with_values[0].name | downcase
+    if opt1 contains 'sujet'
+      assign kind = 'subjects'
+    elsif opt1 contains 'personne'
+      assign kind = 'people'
+    elsif opt1 contains 'animal' or opt1 contains 'animaux'
+      assign kind = 'animals'
+    endif
+  endif
+  case kind
+    when 'animals'
+      assign t_opt1 = t_opt_animals
+      assign t_upsell = t_up_animals
+      assign t_hint_photos = t_photos_hint_animals
+    when 'subjects'
+      assign t_opt1 = t_opt_subjects
+      assign t_upsell = t_up_subjects
+      assign t_hint_photos = t_photos_hint_animals
+    else
+      assign t_opt1 = t_opt_people
+      assign t_upsell = t_up_people
+      assign t_hint_photos = t_photos_hint
+  endcase
+
+  assign pr_collection_titles = product.collections | map: 'title'
+-%}
+
+{%- comment -%} Champs de personnalisation : courts dans l'étape 3, longs après les photos {%- endcomment -%}
+{%- capture fields_short -%}
+  {%- for field in props -%}
+    {%- render 'apx-portrait-field', field: field, mode: 'short', product: product, form_id: form_id, is_op: is_op, pr_collection_titles: pr_collection_titles, t_l_prime: t_l_prime, t_l_name_op: t_l_name_op, t_l_name: t_l_name, t_ph_name: t_ph_name, t_l_notes: t_l_notes, t_optional: t_optional, t_ph_notes_op: t_ph_notes_op, t_ph_notes: t_ph_notes -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- capture fields_long -%}
+  {%- for field in props -%}
+    {%- render 'apx-portrait-field', field: field, mode: 'long', product: product, form_id: form_id, is_op: is_op, pr_collection_titles: pr_collection_titles, t_l_prime: t_l_prime, t_l_name_op: t_l_name_op, t_l_name: t_l_name, t_ph_name: t_ph_name, t_l_notes: t_l_notes, t_optional: t_optional, t_ph_notes_op: t_ph_notes_op, t_ph_notes: t_ph_notes -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- capture feature_cards -%}
+  {%- assign feat_icons = 'draw,custom,retouch' | split: ',' -%}
+  {%- for label in t_feat -%}
+    {%- if forloop.last -%}
+      <li class="apx-feat__card apx-feat__card--hl"><span class="apx-feat__big">48 h</span><span class="apx-feat__label">{{ label }}</span></li>
+    {%- else -%}
+      <li class="apx-feat__card"><span class="apx-feat__icon apx-feat__icon--{{ forloop.index }}">{% render 'apx-icon', name: feat_icons[forloop.index0] %}</span><span class="apx-feat__label">{{ label }}</span></li>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+<script>document.documentElement.classList.add('apx-js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&display=swap">
+{{ 'accordion.css' | asset_url | stylesheet_tag }}
+{{ 'apx-product.css' | asset_url | stylesheet_tag }}
+{{ 'apx-sections.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'apx-product.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'apx-sections.js' | asset_url }}" defer="defer"></script>
+
+<div class="apx-scope apx-main apx-brand-fonts" data-apx-root data-section-id="{{ section.id }}">
+  <script type="application/json" data-apx-json>
+    {
+      "formId": {{ form_id | json }},
+      "moneyFormat": {{ shop.money_format | json }},
+      "updateUrl": true,
+      "currentVariantId": {{ current_variant.id | json }},
+      "variants": [
+        {%- for v in product.variants -%}
+          {"id": {{ v.id }}, "options": {{ v.options | json }}, "price": {{ v.price }}, "compare": {{ v.compare_at_price | default: 0 }}, "available": {{ v.available | json }}, "media": {{ v.featured_media.id | default: 0 }}}{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+
+  <div class="apx-main__grid">
+    {%- comment -%} Galerie et cartes avantages {%- endcomment -%}
+    <div class="apx-gallery apx-ratio--adapt" data-apx-gallery>
+      <ul class="apx-gallery__track" data-apx-track aria-label="{{ product.title | escape }}">
+        {%- for media in product.media -%}
+          {%- liquid
+            assign media_alt = media.alt | default: product.title
+            if forloop.first
+              assign img_loading = 'eager'
+              assign img_priority = 'high'
+            else
+              assign img_loading = 'lazy'
+              assign img_priority = 'auto'
+            endif
+          -%}
+          <li class="apx-gallery__slide" data-media-id="{{ media.id }}">
+            {%- if media.media_type == 'image' -%}
+              {{ media | image_url: width: 1400 | image_tag: loading: img_loading, fetchpriority: img_priority, widths: '360, 540, 720, 900, 1100, 1400', sizes: '(min-width: 990px) 55vw, 100vw', alt: media_alt, class: 'apx-gallery__img' }}
+            {%- else -%}
+              <div class="apx-gallery__media">{{ media | media_tag: image_size: '1100x' }}</div>
+            {%- endif -%}
+          </li>
+        {%- else -%}
+          <li class="apx-gallery__slide">{{ 'product-1' | placeholder_svg_tag: 'apx-gallery__img' }}</li>
+        {%- endfor -%}
+      </ul>
+      <ul class="apx-feat apx-feat--gallery">{{ feature_cards }}</ul>
+      {%- if product.media.size > 1 -%}
+        <p class="apx-gallery__count" aria-hidden="true"><span data-apx-slide-index>1</span> / {{ product.media.size }}</p>
+        <ul class="apx-gallery__thumbs">
+          {%- for media in product.media -%}
+            <li>
+              <button type="button" class="apx-gallery__thumb" data-apx-thumb="{{ media.id }}" aria-label="{{ forloop.index }} / {{ product.media.size }}" {% if forloop.first %}aria-current="true"{% endif %}>
+                {{ media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}
+              </button>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Zone d'achat {%- endcomment -%}
+    <div class="apx-buy" id="apx-buy-{{ section.id }}">
+      {%- form 'product', product, id: form_id, class: 'apx-form', data-apx-form: '' -%}
+        <select name="id" class="apx-variant-select" aria-label="Variante" data-apx-variant-select>
+          {%- for v in product.variants -%}
+            <option value="{{ v.id }}" {% if v.id == current_variant.id %}selected{% endif %} {% unless v.available %}disabled{% endunless %}>
+              {{- v.title | escape }} · {{ v.price | money_with_currency | strip_html -}}
+            </option>
+          {%- endfor -%}
+        </select>
+        <input type="hidden" name="return_to" value="{{ routes.root_url | append: '/checkout' | replace: '//', '/' }}">
+      {%- endform -%}
+
+      {%- liquid
+        assign lx_stats = shop.metafields.loox.global_stats.value | default: shop.metafields.loox.global_stats | split: ','
+        assign lx_avg = lx_stats[0] | plus: 0
+        assign lx_count = lx_stats[1] | plus: 0
+      -%}
+      <div class="apx-trust">
+        <a class="apx-trust__badge apx-trust__badge--tp" href="https://fr.trustpilot.com/review/artpixe.com" target="_blank" rel="noopener">
+          <span class="apx-trust__star" aria-hidden="true">★</span>
+          <strong>Trustpilot</strong>
+          <span class="apx-trust__score">4,4/5</span>
+          <span class="apx-trust__count">31 {{ t_reviews }}</span>
+        </a>
+        {%- if lx_count > 0 -%}
+          <a class="apx-trust__badge apx-trust__badge--lx" href="#avis">
+            <span class="apx-stars" style="--apx-rating: {{ lx_avg }};" aria-hidden="true"></span>
+            <span class="apx-trust__score">{{ lx_avg | round: 1 | replace: '.', ',' }}/5</span>
+            <span class="apx-trust__count">{{ lx_count }} {{ t_reviews }}</span>
+          </a>
+        {%- endif -%}
+      </div>
+
+      <h1 class="apx-title">{{ product.title | escape }}</h1>
+      <p class="apx-subtitle">{% if is_op %}{{ t_sub_op }}{% else %}{{ t_sub }}{% endif %}</p>
+
+      <div class="apx-price">
+        <s class="apx-price__was" data-apx-compare {% if savings == 0 %}hidden{% endif %}>{{ current_variant.compare_at_price | money }}</s>
+        <span class="apx-price__now" data-apx-price>{{ current_variant.price | money }}</span>
+        {%- assign savings_money = savings | money -%}
+        <span class="apx-price__save" data-apx-savings data-template="{{ t_save | escape }}" {% if savings == 0 %}hidden{% endif %}>{{ t_save | replace: '[montant]', savings_money }}</span>
+      </div>
+
+      {%- comment -%} 1. Nombre (pastilles) · 2. Format (cartes) {%- endcomment -%}
+      <div class="apx-picker" id="apx-config" data-apx-picker data-chips-price="none" data-cards-price="true">
+        {%- for option in product.options_with_values -%}
+          {%- liquid
+            assign opt_index0 = forloop.index0
+            assign opt_index = forloop.index
+            assign is_card = false
+            if option.name == 'Version'
+              assign is_card = true
+            endif
+            if is_card
+              assign heading = t_format
+            elsif opt_index == 1
+              assign heading = t_opt1
+            else
+              assign heading = option.name
+            endif
+            assign cur_val = current_variant.options[opt_index0]
+            assign cur_label = cur_val
+            assign label_id = 'apx-' | append: section.id | append: '-l' | append: opt_index
+          -%}
+          {%- if option.values.size > 1 -%}
+            {%- capture values_html -%}
+              {%- for value in option.values -%}
+                {%- liquid
+                  assign value_name = value.name | default: value
+                  assign input_id = 'apx-' | append: section.id | append: '-o' | append: opt_index | append: '-' | append: forloop.index
+                  assign match = nil
+                  for v in product.variants
+                    assign ok = true
+                    for o in v.options
+                      if forloop.index0 == opt_index0
+                        if o != value_name
+                          assign ok = false
+                        endif
+                      elsif o != current_variant.options[forloop.index0]
+                        assign ok = false
+                      endif
+                    endfor
+                    if ok
+                      assign match = v
+                      break
+                    endif
+                  endfor
+
+                  assign card = ''
+                  assign card_icon = ''
+                  assign card_badge = ''
+                  assign card_style = 'default'
+                  case value_name
+                    when 'Digital'
+                      assign card = t_c_hd | split: '|'
+                      assign card_icon = '💻'
+                    when 'Poster A3'
+                      assign card = t_c_a3 | split: '|'
+                      assign card_icon = '🖼️'
+                      assign card_badge = t_popular
+                      assign card_style = 'green'
+                    when 'Displate'
+                      assign card = t_c_dp | split: '|'
+                      assign card_icon = '✨'
+                    when 'Displate avec cadre'
+                      assign card = t_c_fr | split: '|'
+                      assign card_icon = '🏆'
+                      assign card_badge = 'Premium'
+                      assign card_style = 'gold'
+                  endcase
+                  assign card_label = card[0] | default: value_name
+                  assign card_desc = card[1]
+                  if value_name == cur_val
+                    assign cur_label = card_label
+                  endif
+                -%}
+                <div class="apx-val apx-val--{{ card_style }}">
+                  <input type="radio" class="apx-val__input" id="{{ input_id }}" name="apx-{{ section.id }}-o{{ opt_index }}" value="{{ value_name | escape }}" data-apx-value data-label="{{ card_label | escape }}" {% if value_name == cur_val %}checked{% endif %} {% unless match and match.available %}data-unavailable{% endunless %}>
+                  <label class="apx-val__label" for="{{ input_id }}">
+                    {%- if is_card -%}
+                      <span class="apx-val__check" aria-hidden="true">{% render 'apx-icon', name: 'check' %}</span>
+                      {%- if card_badge != blank -%}<span class="apx-val__badge">{{ card_badge }}</span>{%- endif -%}
+                      {%- if card_icon != blank -%}<span class="apx-val__icon" aria-hidden="true">{{ card_icon }}</span>{%- endif -%}
+                    {%- endif -%}
+                    <span class="apx-val__name">{{ card_label }}</span>
+                    {%- if is_card and card_desc != blank -%}<span class="apx-val__desc">{{ card_desc }}</span>{%- endif -%}
+                    <span class="apx-val__price" data-apx-value-price>{%- if is_card and match -%}{{ match.price | money }}{%- endif -%}</span>
+                  </label>
+                </div>
+              {%- endfor -%}
+            {%- endcapture -%}
+            <div class="apx-opt {% if is_card %}apx-opt--cards{% else %}apx-opt--chips{% endif %} apx-opt--step" role="radiogroup" aria-labelledby="{{ label_id }}" data-apx-option="{{ opt_index0 }}">
+              <p class="apx-opt__label apx-stephead" id="{{ label_id }}">
+                <span class="apx-stephead__num" aria-hidden="true"></span>
+                <span class="apx-opt__name">{{ heading }}</span>
+                <span class="apx-opt__sep" aria-hidden="true"> : </span>
+                <span class="apx-opt__current" data-apx-current>{{ cur_label }}</span>
+              </p>
+              <div class="apx-opt__values">{{ values_html }}</div>
+              {%- if opt_index == 1 and is_card == false -%}
+                <p class="apx-upsell" data-apx-upsell data-template="{{ t_upsell | escape }}" hidden></p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} 3. Nom (et prime) {%- endcomment -%}
+      {%- assign short_html = fields_short | strip -%}
+      {%- if short_html != blank -%}
+        <div class="apx-stepline">
+          <p class="apx-stephead"><span class="apx-stephead__num" aria-hidden="true"></span>{% if is_op %}{{ t_step_op }}{% else %}{{ t_step_custom }}{% endif %}</p>
+        </div>
+        <div class="apx-field-row apx-field-row--auto">{{ short_html }}</div>
+      {%- endif -%}
+
+      {%- comment -%} 4. Photos {%- endcomment -%}
+      <div class="apx-stepline">
+        <p class="apx-stephead"><span class="apx-stephead__num" aria-hidden="true"></span>{{ t_step_photos }}</p>
+        <p class="apx-hint">{{ t_hint_photos }}</p>
+      </div>
+      {%- if upload_html != blank -%}<div class="apx-app">{{ upload_html }}</div>{%- endif -%}
+      <div class="apx-later">
+        <input type="checkbox" id="apx-p-{{ section.id }}" name="properties[Photo]" form="{{ form_id }}" value="Envoyée plus tard par e-mail">
+        <label for="apx-p-{{ section.id }}"><span aria-hidden="true">📎</span> {{ t_later }}</label>
+      </div>
+      {{ fields_long }}
+
+      <div class="apx-buy-buttons">
+        <button type="submit" name="add" form="{{ form_id }}" class="apx-btn apx-btn--primary apx-btn--buy" data-apx-submit data-label="{{ t_buy | escape }}" data-soldout="{{ t_soldout | escape }}" {% unless current_variant.available %}disabled{% endunless %}>
+          <span data-apx-btn-label>{% if current_variant.available %}{{ t_buy }}{% else %}{{ t_soldout }}{% endif %}</span>
+          <span class="apx-btn__prices">
+            <s data-apx-compare {% if savings == 0 %}hidden{% endif %}>{{ current_variant.compare_at_price | money }}</s>
+            <span data-apx-price>{{ current_variant.price | money }}</span>
+          </span>
+        </button>
+        <p class="apx-error" role="alert" data-apx-error hidden></p>
+        <div class="apx-micro"><p>{{ t_micro }}</p></div>
+      </div>
+
+      {{ after_html }}
+      <ul class="apx-feat apx-feat--mobile">{{ feature_cards }}</ul>
+      {%- if pack_html != blank -%}<div class="apx-liquid t4s-pr__custom-liquid t4s-rte"><div class="apx-pack">{{ pack_html }}</div></div>{%- endif -%}
+    </div>
+  </div>
+
+  <div class="apx-sticky" data-apx-sticky data-mode="scroll" hidden>
+    <div class="apx-sticky__info">
+      <span class="apx-sticky__title">{{ product.title | escape }}</span>
+      <span class="apx-sticky__price" data-apx-price>{{ current_variant.price | money }}</span>
+    </div>
+    <button type="button" class="apx-btn apx-btn--primary apx-sticky__btn" data-apx-sticky-btn>{{ t_sticky }}</button>
+  </div>
+</div>
+
+{%- comment -%} Navigation entre les sections : liens trouvés automatiquement dans la page (assets/apx-sections.js) {%- endcomment -%}
+<nav
+  class="apx-pnav"
+  data-apx-pnav
+  data-auto
+  data-after-el="[data-apx-root]"
+  data-buy="#apx-config"
+  data-order-links=".apx-how__btn, .ap-faq-cta"
+  data-fold=".apx-seo"
+  data-fold-height="320"
+  data-l-avis="{{ t_nav[1] | escape }}"
+  data-l-how="{{ t_nav[2] | escape }}"
+  data-l-reco="{{ t_nav[3] | escape }}"
+  data-l-faq="{{ t_nav[4] | escape }}"
+  data-l-guide="{{ t_nav[5] | escape }}"
+  data-more="{{ t_nav[6] | escape }}"
+  data-less="{{ t_nav[7] | escape }}"
+  aria-label="{{ t_nav[0] | escape }}"
+  hidden
+>
+  <div class="apx-pnav__inner"><ul class="apx-pnav__list"></ul></div>
+  <span class="apx-pnav__progress" aria-hidden="true"></span>
+</nav>

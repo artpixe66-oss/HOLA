@@ -413,6 +413,8 @@
 /* Champs */
 .apx-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .apx-field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.apx-field-row--auto:has(> .apx-field:only-child) { grid-template-columns: minmax(0, 1fr); }
+.apx-field-row--auto > .apx-field:last-child:nth-child(odd):not(:only-child) { grid-column: 1 / -1; }
 .apx-label { font-weight: 600; font-size: 13px; }
 .apx-optional { font-weight: 400; color: var(--apx-muted); }
 .apx-input {
@@ -603,4 +605,26 @@ textarea.apx-input { resize: vertical; min-height: 64px; }
 
 @media (prefers-reduced-motion: reduce) {
   .apx-scope * { scroll-behavior: auto !important; transition: none !important; }
+}
+
+/* Avis clients + « Pourquoi Artpixe » réunis dans un seul cadre (fiche portrait) */
+.apx-pack {
+  padding: 20px;
+  background: #141416;
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 18px;
+  font-family: 'DM Sans', sans-serif;
+}
+.apx-pack .avc-section { padding: 0; }
+.apx-pack .apx-guar {
+  margin: 20px 0 0;
+  padding: 20px 0 0;
+  background: none;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 0;
+}
+@media (max-width: 640px) {
+  .apx-pack { padding: 16px 14px; }
+  .apx-pack .apx-guar { margin-top: 16px; padding-top: 16px; }
 }

@@ -1,14 +1,21 @@
 {%- comment -%}
-  Charge la mise en forme de la zone d'achat Artpixe (assets/apx-polish.css), sans changer aucun contenu.
-  Ne s'applique qu'aux templates produit listés ci-dessous : ajouter un template ici pour l'étendre.
+  Chargé dans le <head> du thème.
+  - Offre spéciale Displate (snippets/apx-offer-displate.liquid) sur les portraits personnalisés listés.
+  - Mise en forme de l'ancienne zone d'achat Kalles (assets/apx-polish.css) : plus utilisée depuis que les portraits
+    passent par la fiche Artpixe (snippets/apx-portrait.liquid). Ajouter un template à apx_polish_templates pour la réactiver.
 
   Usage, dans le <head> du thème :
   {% render 'apx-polish' %}
 {%- endcomment -%}
 {%- liquid
-  assign apx_polish_templates = 'onepiecesolo' | split: ','
-  if request.page_type == 'product' and apx_polish_templates contains template.suffix
-    echo 'apx-polish.css' | asset_url | stylesheet_tag
-    render 'apx-offer-displate'
+  assign apx_polish_templates = '' | split: ','
+  assign apx_offer_templates = 'onepiecesolo,narutosolo,demonslayersolo,perosnalisesolo,dbzsolo,one-piece-a-b,cartoone,page-produit-pop-culture,simpsonsolo,rcketmortysolo,legosolo,carte-poke-2,st-valentin,bleachsolo,chien,netflix' | split: ','
+  if request.page_type == 'product'
+    if apx_polish_templates contains template.suffix
+      echo 'apx-polish.css' | asset_url | stylesheet_tag
+    endif
+    if apx_offer_templates contains template.suffix
+      render 'apx-offer-displate'
+    endif
   endif
 -%}
