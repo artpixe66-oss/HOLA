@@ -1,5 +1,5 @@
 const { chromium } = require('playwright');
-const URL = 'https://artpixe.com/products/portrait-personnalise-one-piece?preview_theme_id=211006259538';
+const URL = 'https://artpixe.com/products/portrait-personnalise-one-piece?preview_theme_id=210873549138';
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 400, height: 900 }, locale: 'fr-FR' });
@@ -32,6 +32,13 @@ const URL = 'https://artpixe.com/products/portrait-personnalise-one-piece?previe
     out.ukButton = btn.map(e => { let p = e, chain = []; while (p && p !== document.body) { chain.push(p.tagName.toLowerCase() + (p.id ? '#' + p.id : '') + (p.className && typeof p.className === 'string' ? '.' + p.className.trim().split(/\s+/).join('.') : '')); p = p.parentElement; } return chain.join(' < '); });
     return out;
   });
+  const where = await page.evaluate(() => {
+    const b = document.querySelector('.uploadkit-button'); if (!b) return 'NO UPLOADKIT BUTTON';
+    const u = b.closest('.uploadkit'); const prev = u.parentElement.previousElementSibling;
+    return 'uploadkit class=' + u.className + ' | parent=' + u.parentElement.className + ' | parent previous sibling=' + (prev && prev.className) + ' | inside form=' + !!u.closest('form[action*="/cart/add"]');
+  });
+  console.log('=== WHERE ' + where);
+  await page.screenshot({ path: 'shot.png', fullPage: false, clip: undefined });
   console.log('=== FORM FOUND', info.formFound);
   console.log('=== APP SLOT\n' + info.appSlot);
   console.log('=== UPLOADKIT BUTTON ANCESTORS\n' + info.ukButton.join('\n\n'));
