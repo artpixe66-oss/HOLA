@@ -589,7 +589,14 @@
         <p class="apx-stephead"><span class="apx-stephead__num" aria-hidden="true"></span>{{ t_step_photos }}</p>
         <p class="apx-hint">{{ t_hint_photos }}</p>
       </div>
-      {%- if upload_html != blank -%}<div class="apx-app">{{ upload_html }}</div>{%- endif -%}
+      {%- comment -%}
+        UploadKit monte son bouton dans le premier div.uploadkit de la page ; sans lui, il l'injecte avant le bouton
+        de commande. Son bloc d'application ne rend rien : on pose ce div ici, dans le formulaire.
+      {%- endcomment -%}
+      <div class="apx-app">
+        {{- upload_html -}}
+        {%- unless upload_html contains 'class="uploadkit' -%}<div class="uploadkit"></div>{%- endunless -%}
+      </div>
       <div class="apx-later">
         <input type="checkbox" id="apx-p-{{ section.id }}" name="properties[Photo]" form="{{ form_id }}" value="Envoyée plus tard par e-mail">
         <label for="apx-p-{{ section.id }}"><span aria-hidden="true">📎</span> {{ t_later }}</label>

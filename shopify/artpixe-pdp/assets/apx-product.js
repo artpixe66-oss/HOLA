@@ -268,7 +268,8 @@
       // Retour arrière depuis le panier : le bouton ne doit pas rester en chargement.
       window.addEventListener('pageshow', function () { setBusy(false); });
 
-      // UploadKit pose son bouton près du bouton de commande : on le ramène dans l'étape photos.
+      // Filet de sécurité : si une application (UploadKit sans son div.uploadkit) pose son bouton près du bouton de
+      // commande, on le ramène dans l'étape photos.
       // Est étranger tout élément visible sans classe apx-, placé après l'étape photos.
       var appSlot = root.querySelector('.apx-app');
       if (appSlot && 'MutationObserver' in window) {
