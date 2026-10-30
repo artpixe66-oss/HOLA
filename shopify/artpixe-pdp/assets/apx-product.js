@@ -267,6 +267,33 @@
 
       // Retour arrière depuis le panier : le bouton ne doit pas rester en chargement.
       window.addEventListener('pageshow', function () { setBusy(false); });
+
+      // UploadKit pose son bouton près du bouton de commande : on le ramène dans l'étape photos.
+      // Est étranger tout élément visible sans classe apx-, placé après l'étape photos.
+      var appSlot = root.querySelector('.apx-app');
+      if (appSlot && 'MutationObserver' in window) {
+        var isForeign = function (el) {
+          if (el.nodeType !== 1 || /^(INPUT|SELECT|TEXTAREA|SCRIPT|STYLE|LINK|TEMPLATE|NOSCRIPT)$/.test(el.tagName)) return false;
+          if (appSlot.contains(el) || el.contains(appSlot)) return false;
+          if (Array.prototype.some.call(el.attributes, function (a) { return a.name.indexOf('data-apx') === 0; })) return false;
+          return !/(^|\s)apx-/.test(el.getAttribute('class') || '');
+        };
+        var moves = 0;
+        var adoptApps = function () {
+          var containers = [form, root.querySelector('.apx-buy-buttons'), root.querySelector('.apx-offer-glue')];
+          containers.forEach(function (box) {
+            if (!box) return;
+            Array.prototype.slice.call(box.children).forEach(function (el) {
+              if (!isForeign(el)) return;
+              if (!(appSlot.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)) return;
+              if (moves++ > 20) return; // l'application le replace sans cesse : on la laisse faire
+              appSlot.appendChild(el);
+            });
+          });
+        };
+        adoptApps();
+        new MutationObserver(adoptApps).observe(form, { childList: true, subtree: true });
+      }
     }
 
     // Galerie
