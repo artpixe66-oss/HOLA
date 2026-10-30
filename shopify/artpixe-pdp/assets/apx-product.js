@@ -198,7 +198,20 @@
 
     // Envoi : état de chargement et message clair si un champ obligatoire manque.
     if (form) {
+      // Nos champs sont vérifiés ci-dessous ; la validation du navigateur bloquerait sur les champs des applications.
+      form.noValidate = true;
+      var sending = false;
+
+      var setBusy = function (on) {
+        sending = on;
+        root.querySelectorAll('[data-apx-submit]').forEach(function (btn) {
+          if (on) btn.setAttribute('aria-busy', 'true');
+          else btn.removeAttribute('aria-busy');
+        });
+      };
+
       form.addEventListener('submit', function (event) {
+        if (sending) { event.preventDefault(); return; }
         // Propriétés ajoutées hors du formulaire par une application (photos UploadKit…) : on les y rattache.
         root.querySelectorAll('input[name^="properties["]:not([type="file"]), textarea[name^="properties["], select[name^="properties["]').forEach(function (el) {
           if (!el.form && !el.closest('form')) el.setAttribute('form', data.formId);
@@ -217,14 +230,43 @@
           return;
         }
         if (error) error.hidden = true;
-        root.querySelectorAll('[data-apx-submit]').forEach(function (btn) { btn.setAttribute('aria-busy', 'true'); });
+        setBusy(true);
         publish('apx_add_to_cart', { variantId: current.id, price: current.price / 100 });
+
+        // Ajout au panier par /cart/add.js puis paiement, comme l'ancienne fiche Kalles : les applications
+        // (photos UploadKit) suivent ce chemin. Sans fetch, envoi classique du formulaire (return_to = paiement).
+        if (!window.fetch || !window.FormData) return;
+        event.preventDefault();
+        var body = new FormData(form);
+        // Pastilles et cartes d'options : déjà traduites en variante (champ id), inutiles au panier.
+        var extra = [];
+        body.forEach(function (value, key) { if (key.indexOf('apx-') === 0) extra.push(key); });
+        extra.forEach(function (key) { body.delete(key); });
+        var returnTo = form.querySelector('[name="return_to"]');
+        var rootUrl = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+
+        fetch(rootUrl + 'cart/add.js', { method: 'POST', body: body, headers: { Accept: 'application/json' }, credentials: 'same-origin' })
+          .then(function (response) {
+            if (response.ok) {
+              window.location.href = returnTo ? returnTo.value : rootUrl + 'checkout';
+              return;
+            }
+            return response.json().catch(function () { return {}; }).then(function (json) {
+              setBusy(false);
+              if (error) {
+                error.textContent = json.description || json.message || 'Impossible d’ajouter ce portrait au panier. Réessaie.';
+                error.hidden = false;
+              }
+            });
+          })
+          .catch(function () {
+            // Réseau ou navigateur : on retombe sur l'envoi classique du formulaire.
+            HTMLFormElement.prototype.submit.call(form);
+          });
       });
 
       // Retour arrière depuis le panier : le bouton ne doit pas rester en chargement.
-      window.addEventListener('pageshow', function () {
-        root.querySelectorAll('[data-apx-submit]').forEach(function (btn) { btn.removeAttribute('aria-busy'); });
-      });
+      window.addEventListener('pageshow', function () { setBusy(false); });
     }
 
     // Galerie

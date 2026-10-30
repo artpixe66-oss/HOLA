@@ -500,6 +500,8 @@ textarea.apx-input { resize: vertical; min-height: 64px; }
   font: inherit;
 }
 .apx-js .apx-variant-select { display: none; }
+/* Le formulaire englobe la zone d'achat (fiche portrait) sans changer sa mise en page */
+.apx-form { display: contents; }
 
 /* Barre fixe mobile */
 .apx-sticky {

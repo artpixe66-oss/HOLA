@@ -175,8 +175,16 @@ Ces éléments sont désactivés ou neutres par défaut, parce qu'ils engagent l
 - Un lien `?variant=` (Google Shopping) garde la variante demandée.
 - La barre fixe mobile apparaît sous le configurateur et ramène au configurateur.
 
-Le formulaire ne contient que le sélecteur de variante. Les champs, le bouton et les blocs d'application s'y rattachent par
-l'attribut HTML `form`, ce qui évite les formulaires imbriqués. Sans JavaScript, le sélecteur de variante reste visible et la commande fonctionne.
+Section « Artpixe · Fiche produit » : le formulaire ne contient que le sélecteur de variante. Les champs, le bouton et les blocs
+d'application s'y rattachent par l'attribut HTML `form`, ce qui évite les formulaires imbriqués. Sans JavaScript, le sélecteur de
+variante reste visible et la commande fonctionne.
+
+Fiche portrait (`apx-portrait`) : le formulaire englobe toute la zone d'achat, du sélecteur de variante au bouton, avec le bloc
+UploadKit à l'intérieur (`display: contents`, la mise en page ne change pas). UploadKit ajoute les photos au formulaire produit
+qui entoure son bloc : avec le bloc hors du formulaire (version du 28 octobre 2026), les photos n'arrivaient plus dans les
+commandes. Le bouton ajoute au panier par `/cart/add.js` puis ouvre le paiement, comme l'ancienne fiche Kalles ; sans `fetch`,
+le formulaire part normalement (`return_to` = paiement). La validation du navigateur est coupée quand le script tourne
+(les champs de la fiche restent vérifiés par le script) pour qu'un champ interne à une application ne bloque pas le bouton.
 
 ## Vérifier le code
 

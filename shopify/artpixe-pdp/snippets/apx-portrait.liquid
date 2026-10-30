@@ -10,7 +10,8 @@
   - product {Object}
   - section {Object} : la section Kalles main-product
   - props {Array} : ses blocs « properties »
-  - upload_html {String} : applications placées avant le formulaire Kalles (UploadKit), rendues dans l'étape photos
+  - upload_html {String} : applications placées avant le formulaire Kalles (UploadKit), rendues dans l'étape photos,
+    à l'intérieur du formulaire produit
   - after_html {String} : blocs Kalles placés après le formulaire, rendus sous le bouton
   - pack_html {String} : avis clients + garanties, réunis dans un seul cadre
 
@@ -409,7 +410,11 @@
 
     {%- comment -%} Zone d'achat {%- endcomment -%}
     <div class="apx-buy" id="apx-buy-{{ section.id }}">
-      {%- form 'product', product, id: form_id, class: 'apx-form', data-apx-form: '' -%}
+      {%- comment -%}
+        Le formulaire englobe toute la zone d'achat jusqu'au bouton : UploadKit cherche le formulaire produit autour
+        de son bloc et y ajoute les photos. Les blocs placés après (after_html) restent dehors.
+      {%- endcomment -%}
+      {%- form 'product', product, id: form_id, class: 'apx-form', data-apx-form: '', data-productid: product.id -%}
         <select name="id" class="apx-variant-select" aria-label="Variante" data-apx-variant-select>
           {%- for v in product.variants -%}
             <option value="{{ v.id }}" {% if v.id == current_variant.id %}selected{% endif %} {% unless v.available %}disabled{% endunless %}>
@@ -418,7 +423,6 @@
           {%- endfor -%}
         </select>
         <input type="hidden" name="return_to" value="{{ routes.root_url | append: '/checkout' | replace: '//', '/' }}">
-      {%- endform -%}
 
       {%- liquid
         assign lx_stats = shop.metafields.loox.global_stats.value | default: shop.metafields.loox.global_stats | split: ','
@@ -603,6 +607,7 @@
         <p class="apx-error" role="alert" data-apx-error hidden></p>
         <div class="apx-micro"><p>{{ t_micro }}</p></div>
       </div>
+      {%- endform -%}
 
       {{ after_html }}
       <ul class="apx-feat apx-feat--mobile">{{ feature_cards }}</ul>
