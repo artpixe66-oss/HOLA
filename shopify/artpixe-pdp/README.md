@@ -185,6 +185,7 @@ qui entoure son bloc : avec le bloc hors du formulaire (version du 28 octobre 20
 commandes. Le bouton ajoute au panier par `/cart/add.js` puis ouvre le paiement, comme l'ancienne fiche Kalles ; sans `fetch`,
 le formulaire part normalement (`return_to` = paiement). La validation du navigateur est coupée quand le script tourne
 (les champs de la fiche restent vérifiés par le script) pour qu'un champ interne à une application ne bloque pas le bouton.
+Correction copiée le 30 octobre 2026 dans « Artpixe PDP v4 - photos UploadKit (brouillon) », copie du thème en ligne v3, à publier.
 
 ## Vérifier le code
 
