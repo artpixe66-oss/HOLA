@@ -1,0 +1,16 @@
+# Temporaire : relève le code qu'UploadKit ajoute à la fiche portrait (aperçu du thème v4), puis supprimé.
+name: uploadkit-probe
+on:
+  push:
+    branches: [claude/vibrant-allen-yqq542]
+    paths: [.github/workflows/uploadkit-probe.yml, .github/probe/**]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm i playwright@1.48.2 && npx playwright install --with-deps chromium
+      - run: node .github/probe/probe.js
