@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Photo Ratée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Mise en page : image à gauche (collante sur grand écran), réglages à droite ; sur téléphone tout s'empile. */
+:root {
+  --bg: #eceef1;
+  --surface: #ffffff;
+  --surface-2: #f4f5f7;
+  --ink: #15181d;
+  --muted: #5b6470;
+  --line: #d5d9df;
+  --accent: #b45309;      /* orange des lampadaires au sodium */
+  --accent-ink: #ffffff;
+  --accent-soft: #fbeedd;
+  --stage: #23262b;
+  --stage-ink: #e9ebee;
+  --danger: #b42318;
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101215; --surface: #171a1f; --surface-2: #1e2228; --ink: #e8eaed; --muted: #9aa3ae;
+    --line: #2b3038; --accent: #f0a23b; --accent-ink: #1b1206; --accent-soft: #2d2315;
+    --stage: #0a0b0d; --stage-ink: #e9ebee; --danger: #f97066; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101215; --surface: #171a1f; --surface-2: #1e2228; --ink: #e8eaed; --muted: #9aa3ae;
+  --line: #2b3038; --accent: #f0a23b; --accent-ink: #1b1206; --accent-soft: #2d2315;
+  --stage: #0a0b0d; --stage-ink: #e9ebee; --danger: #f97066; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 14px/1.45 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 32px;
+}
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.top { display: flex; align-items: center; gap: 14px; padding-block: 18px 14px; max-width: 1500px; margin-inline: auto; }
+.mark { width: 34px; height: 34px; border-radius: 50%; flex: none;
+  background: radial-gradient(circle at 50% 50%, var(--accent) 0 26%, transparent 27%), conic-gradient(from 20deg, var(--ink) 0 12%, transparent 0 25%, var(--ink) 0 37%, transparent 0 50%, var(--ink) 0 62%, transparent 0 75%, var(--ink) 0 87%, transparent 0);
+  filter: blur(.4px); }
+.top h1 { font-family: var(--font-display); font-stretch: 78%; font-weight: 800; font-size: 26px; line-height: 1; margin: 0; letter-spacing: -.01em; }
+.top p { margin: 3px 0 0; color: var(--muted); }
+
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px; max-width: 1500px; margin-inline: auto; align-items: start; }
+@media (max-width: 920px) { .app { grid-template-columns: minmax(0, 1fr); } }
+
+.stage-col { position: sticky; top: 12px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+@media (max-width: 920px) { .stage-col { position: static; } }
+
+.stage { background: var(--stage); border-radius: var(--radius); padding: 14px; display: grid; place-items: center; min-height: 260px; }
+.frame { --ar: 1.5; position: relative; aspect-ratio: var(--ar); width: min(100%, calc((100dvh - 290px) * var(--ar))); max-width: 100%; touch-action: pan-y; cursor: ew-resize; user-select: none; -webkit-user-select: none; }
+@media (max-width: 920px) { .frame { width: min(100%, calc(62dvh * var(--ar))); } }
+.frame canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.frame #before { clip-path: inset(0 calc(100% - var(--split, 50%)) 0 0); }
+.split { position: absolute; top: 0; bottom: 0; left: var(--split, 50%); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.35); pointer-events: none; }
+.split::after { content: ""; position: absolute; top: 50%; left: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.45);
+  background-image: linear-gradient(90deg, transparent 7px, #333 7px 9px, transparent 9px 17px, #333 17px 19px, transparent 19px); }
+.tag { position: absolute; top: 8px; font: 500 11px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: #fff; background: rgba(0,0,0,.55); padding: 5px 7px; border-radius: 4px; pointer-events: none; }
+.tag-before { left: 8px; } .tag-after { right: 8px; }
+.frame.no-compare #before, .frame.no-compare .split, .frame.no-compare .tag-before { display: none; }
+.frame.no-compare { cursor: default; }
+.busy { position: absolute; right: 8px; bottom: 8px; font: 500 11px/1 var(--font-mono); color: #fff; background: rgba(0,0,0,.6); padding: 6px 8px; border-radius: 4px; }
+
+.readout { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 13px/1.3 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--muted); padding-inline: 2px; }
+.readout b { color: var(--ink); font-weight: 500; }
+
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.tools .hint { color: var(--muted); font-size: 12.5px; }
+
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px 12px; cursor: pointer; line-height: 1.2; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.small { padding: 5px 9px; font-size: 13px; }
+.check { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.check input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+
+.export { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.export label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+.export select { background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
+.export input[type=range] { width: 110px; accent-color: var(--accent); }
+.export output { font: 13px var(--font-mono); color: var(--ink); min-width: 3.2em; }
+.export .spacer { flex: 1 1 auto; }
+.status { width: 100%; color: var(--muted); font-size: 13px; }
+.status:empty { display: none; }
+.status.err { color: var(--danger); }
+
+.panel { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+.card h2, .group summary span { font-family: var(--font-display); font-stretch: 82%; font-weight: 700; font-size: 16px; margin: 0; letter-spacing: .005em; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.card-head small { color: var(--muted); }
+
+.drop { display: grid; place-items: center; text-align: center; gap: 4px; border: 1.5px dashed var(--line); border-radius: 8px; padding: 16px 12px; cursor: pointer; background: var(--surface-2); }
+.drop:hover, .drop.over, body.dragging .drop { border-color: var(--accent); background: var(--accent-soft); }
+.drop strong { font-weight: 600; }
+.drop span { color: var(--muted); font-size: 12.5px; }
+.thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; margin-top: 10px; }
+.thumbs:empty { display: none; }
+.thumb { position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden; border: 2px solid transparent; padding: 0; background: var(--surface-2); cursor: pointer; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb.active { border-color: var(--accent); }
+.thumb .x { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 50%; border: 0; background: rgba(0,0,0,.65); color: #fff; font-size: 13px; line-height: 20px; padding: 0; cursor: pointer; }
+.batch-opts { margin-top: 10px; display: grid; gap: 6px; font-size: 13px; }
+
+.presets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.preset { position: relative; text-align: left; border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; padding: 8px 10px; cursor: pointer; min-width: 0; }
+.preset b { display: block; font-weight: 600; font-size: 13.5px; }
+.preset small { display: block; color: var(--muted); font-size: 12px; line-height: 1.3; overflow-wrap: anywhere; }
+.preset:hover { border-color: var(--muted); }
+.preset.active { border-color: var(--accent); background: var(--accent-soft); }
+.preset .del { position: absolute; top: 4px; right: 4px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 14px; padding: 2px 5px; }
+.save-row { display: flex; gap: 6px; margin-top: 10px; }
+.save-row input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; padding: 7px 9px; }
+
+.group { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.group summary { list-style: none; cursor: pointer; padding: 12px 14px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.group summary::-webkit-details-marker { display: none; }
+.group summary small { color: var(--muted); font-size: 12px; }
+.group summary::after { content: "+"; font: 500 16px/1 var(--font-mono); color: var(--muted); }
+.group[open] summary::after { content: "−"; }
+.rows { display: grid; gap: 12px; padding: 0 14px 14px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; }
+.row label { cursor: pointer; }
+.row label.changed { font-weight: 600; }
+.row output { font: 12.5px var(--font-mono); font-variant-numeric: tabular-nums; color: var(--muted); text-align: right; }
+.row input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); margin: 2px 0 0; }
+.row .help { grid-column: 1 / -1; color: var(--muted); font-size: 12px; }
+.foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; color: var(--muted); font-size: 12.5px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <span class="mark" aria-hidden="true"></span>
+  <div>
+    <h1>Photo Ratée</h1>
+    <p>Bougé, nuit, bruit, pixels, compression. Tout se passe dans votre navigateur, aucune photo n'est envoyée.</p>
+  </div>
+</header>
+
+<main class="app">
+  <section class="stage-col" aria-label="Aperçu">
+    <div class="stage">
+      <div class="frame" id="frame">
+        <canvas id="after" aria-label="Photo après effets"></canvas>
+        <canvas id="before" aria-label="Photo originale"></canvas>
+        <div class="split" aria-hidden="true"></div>
+        <span class="tag tag-before">Original</span>
+        <span class="tag tag-after">Résultat</span>
+        <div class="busy" id="busy" hidden>Calcul…</div>
+      </div>
+    </div>
+    <div class="readout" id="readout" aria-live="polite"></div>
+    <div class="tools">
+      <label class="check"><input type="checkbox" id="compare" checked> Avant / après</label>
+      <button class="btn small" id="reseed" title="Change le tirage aléatoire du bruit et du tremblement">Nouveau tirage</button>
+      <span class="hint">Glissez sur l'image pour déplacer la séparation.</span>
+    </div>
+    <div class="export">
+      <label for="fmt">Format
+        <select id="fmt">
+          <option value="image/jpeg">JPG</option>
+          <option value="image/png">PNG</option>
+          <option value="image/webp">WebP</option>
+        </select>
+      </label>
+      <label for="q">Qualité du fichier <input type="range" id="q" min="40" max="100" step="1" value="92"><output id="qo">92 %</output></label>
+      <span class="spacer"></span>
+      <button class="btn primary" id="exportOne">Exporter cette photo</button>
+      <button class="btn" id="exportAll" hidden>Tout exporter (.zip)</button>
+      <div class="status" id="status" role="status"></div>
+    </div>
+  </section>
+
+  <aside class="panel" aria-label="Réglages">
+    <section class="card">
+      <div class="card-head"><h2>Photos</h2><small id="count">Image d'exemple</small></div>
+      <label class="drop" id="drop" for="file">
+        <strong>Ajouter des photos</strong>
+        <span>Cliquez ou glissez vos JPG, PNG, WebP ici. Plusieurs à la fois possible.</span>
+      </label>
+      <input type="file" id="file" accept="image/*" multiple hidden>
+      <div class="thumbs" id="thumbs"></div>
+      <div class="batch-opts" id="batchOpts" hidden>
+        <label class="check"><input type="checkbox" id="vary" checked> Varier légèrement chaque photo (angle, bruit, exposition)</label>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Préréglages</h2><small id="presetName"></small></div>
+      <div class="presets" id="presets"></div>
+      <form class="save-row" id="saveForm">
+        <input id="saveName" placeholder="Nom de mon réglage" maxlength="40" aria-label="Nom du réglage à enregistrer">
+        <button class="btn small" type="submit">Enregistrer</button>
+      </form>
+    </section>
+
+    <div id="controls" class="panel"></div>
+
+    <div class="foot">
+      <button class="btn small" id="resetAll">Tout remettre à zéro</button>
+      <span>Double-clic sur un nom de réglage pour le remettre à zéro.</span>
+    </div>
+  </aside>
+</main>
+
+<script>
+"use strict";
+
+/* ---------- Réglages ---------- */
+const DEFAULTS = {
+  motion: 0, angle: 0, shake: 0, tilt: 0,
+  exposure: 0, contrast: 0, saturation: 0, temperature: 0, tint: 0, bloom: 0, vignette: 0,
+  noise: 0, chroma: 0, grain: 1,
+  defocus: 0, sharpen: 0, aberration: 0,
+  resolution: 100, keepSize: true, pixel: 0,
+  jpeg: 100, passes: 1
+};
+
+const sign = (v, d = 0) => (v > 0 ? "+" : "") + v.toFixed(d);
+const GROUPS = [
+  { title: "Mouvement", hint: "photo prise vite", items: [
+    { key: "motion", label: "Flou de mouvement", min: 0, max: 60, step: 1 },
+    { key: "angle", label: "Direction du mouvement", min: -90, max: 90, step: 1, fmt: v => v + "°" },
+    { key: "shake", label: "Tremblement de la main", min: 0, max: 30, step: 1 },
+    { key: "tilt", label: "Horizon penché", min: -12, max: 12, step: 0.5, fmt: v => sign(v, 1) + "°" }
+  ]},
+  { title: "Lumière", hint: "nuit, flash, couleurs", items: [
+    { key: "exposure", label: "Exposition", min: -3, max: 1.5, step: 0.1, fmt: v => sign(v, 1) + " EV" },
+    { key: "contrast", label: "Contraste", min: -60, max: 60, step: 1, fmt: v => sign(v) },
+    { key: "saturation", label: "Saturation", min: -100, max: 60, step: 1, fmt: v => sign(v) },
+    { key: "temperature", label: "Température (bleu ↔ orange)", min: -60, max: 60, step: 1, fmt: v => sign(v) },
+    { key: "tint", label: "Teinte (vert ↔ magenta)", min: -40, max: 40, step: 1, fmt: v => sign(v) },
+    { key: "bloom", label: "Halos autour des lumières", min: 0, max: 100, step: 1 },
+    { key: "vignette", label: "Coins assombris", min: 0, max: 100, step: 1 }
+  ]},
+  { title: "Bruit", hint: "capteur poussé en ISO", items: [
+    { key: "noise", label: "Grain (luminance)", min: 0, max: 100, step: 1 },
+    { key: "chroma", label: "Taches de couleur", min: 0, max: 100, step: 1 },
+    { key: "grain", label: "Taille du grain", min: 1, max: 4, step: 0.5, fmt: v => v.toFixed(1) }
+  ]},
+  { title: "Netteté et optique", hint: "mise au point, objectif", items: [
+    { key: "defocus", label: "Mise au point ratée", min: 0, max: 20, step: 0.5, fmt: v => v.toFixed(1) },
+    { key: "sharpen", label: "Netteté forcée (effet téléphone)", min: 0, max: 100, step: 1 },
+    { key: "aberration", label: "Franges colorées", min: 0, max: 10, step: 0.5, fmt: v => v.toFixed(1) }
+  ]},
+  { title: "Résolution", hint: "petit capteur, pixels", items: [
+    { key: "resolution", label: "Résolution", min: 5, max: 100, step: 1, fmt: v => v + " %" },
+    { key: "keepSize", label: "Garder la taille d'origine (image agrandie, floue)", type: "check" },
+    { key: "pixel", label: "Pixelisation", min: 0, max: 40, step: 1, fmt: v => v ? v : "aucune" }
+  ]},
+  { title: "Compression", hint: "JPG abîmé, partages", items: [
+    { key: "jpeg", label: "Qualité JPG", min: 5, max: 100, step: 1, fmt: v => v >= 100 ? "désactivée" : v + " %" },
+    { key: "passes", label: "Repartages successifs", min: 1, max: 5, step: 1, fmt: v => "×" + v,
+      help: "Chaque repartage recompresse et redimensionne, comme une photo envoyée plusieurs fois." }
+  ]}
+];
+const ITEMS = Object.fromEntries(GROUPS.flatMap(g => g.items).map(i => [i.key, i]));
+
+const PRESETS = [
+  { id: "original", name: "Original", desc: "Aucun effet", p: {} },
+  { id: "bouge", name: "Prise en mouvement", desc: "Bougé, horizon penché", p: { motion: 22, angle: 12, shake: 4, tilt: 3, defocus: 1, noise: 10, chroma: 5, jpeg: 78 } },
+  { id: "nuit", name: "Nuit", desc: "Sombre, grain, halos", p: { exposure: -1.4, contrast: -10, saturation: -35, temperature: 22, noise: 45, chroma: 40, grain: 2, defocus: 1.5, bloom: 45, vignette: 25, resolution: 75, jpeg: 68 } },
+  { id: "nuit-bouge", name: "Nuit + bougé", desc: "Pose longue à main levée", p: { exposure: -1.2, contrast: -8, saturation: -30, temperature: 20, noise: 40, chroma: 35, grain: 2, defocus: 1, bloom: 50, vignette: 25, resolution: 75, jpeg: 66, motion: 16, angle: -8, shake: 9, tilt: -2 } },
+  { id: "flash", name: "Flash de nuit", desc: "Flash dur, fond noir", p: { exposure: 0.4, contrast: 28, saturation: -10, temperature: -10, vignette: 75, noise: 18, chroma: 10, bloom: 20, sharpen: 25, jpeg: 70 } },
+  { id: "pixel", name: "Pixelisé", desc: "Gros pixels, JPG", p: { pixel: 10, jpeg: 55 } },
+  { id: "vieux", name: "Vieux téléphone", desc: "Petit capteur des années 2000", p: { resolution: 30, noise: 18, chroma: 12, saturation: -20, contrast: -15, temperature: 8, vignette: 35, aberration: 3, sharpen: 40, jpeg: 45 } },
+  { id: "partage", name: "Repartagée 3 fois", desc: "Compressée par les messageries", p: { resolution: 55, jpeg: 38, passes: 3, saturation: -5 } },
+  { id: "flou", name: "Mise au point ratée", desc: "Tout est flou", p: { defocus: 7, noise: 6, jpeg: 80 } },
+  { id: "webcam", name: "Webcam", desc: "Visio, lumière de bureau", p: { resolution: 40, noise: 22, chroma: 15, saturation: -25, temperature: -12, contrast: -20, sharpen: 30, jpeg: 50 } }
+];
+
+/* ---------- Stockage local (facultatif) ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("photoratee." + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("photoratee." + k, JSON.stringify(v)); } catch {} }
+};
+
+/* ---------- État ---------- */
+const $ = s => document.querySelector(s);
+let params = { ...DEFAULTS, ...PRESETS.find(p => p.id === "nuit").p };
+let activePreset = "nuit";
+let customPresets = store.get("presets", []);
+let photos = [];          // { name, file, preview, thumb, w, h }
+let current = 0;
+let seed = (Math.random() * 1e9) >>> 0;
+let sample = null;
+const saved = store.get("state", null);
+if (saved && saved.params) { params = { ...DEFAULTS, ...saved.params }; activePreset = saved.preset ?? null; }
+
+/* ---------- Outils canvas ---------- */
+const FILTER_OK = typeof document.createElement("canvas").getContext("2d").filter === "string";
+const PREVIEW_MAX = 1400;
+const MAX_AREA = 16e6;
+
+function mk(w, h) { const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; }
+function cx(c) { return c.getContext("2d"); }
+function free(c) { if (c) { c.width = 0; c.height = 0; } }
+
+function rngFrom(s) {
+  let a = s >>> 0;
+  return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function gauss(r) { return (r() + r() + r() + r() - 2) * 1.732; }
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+
+// Agrandit l'image en recopiant ses bords, pour que les flous ne fassent pas de bordure sombre.
+function padCanvas(src, p) {
+  p = Math.ceil(p);
+  const w = src.width, h = src.height, c = mk(w + 2 * p, h + 2 * p), x = cx(c);
+  x.imageSmoothingEnabled = false;
+  x.drawImage(src, p, p);
+  if (p > 0) {
+    x.drawImage(src, 0, 0, w, 1, p, 0, w, p);
+    x.drawImage(src, 0, h - 1, w, 1, p, h + p, w, p);
+    x.drawImage(src, 0, 0, 1, h, 0, p, p, h);
+    x.drawImage(src, w - 1, 0, 1, h, w + p, p, p, h);
+    x.drawImage(src, 0, 0, 1, 1, 0, 0, p, p);
+    x.drawImage(src, w - 1, 0, 1, 1, w + p, 0, p, p);
+    x.drawImage(src, 0, h - 1, 1, 1, 0, h + p, p, p);
+    x.drawImage(src, w - 1, h - 1, 1, 1, w + p, h + p, p, p);
+  }
+  return { c, p };
+}
+
+// Flou directionnel (longueur L en px) : moyenne de 2^n copies décalées, par doublements successifs.
+function lineBlur(src, L, ang) {
+  if (L < 1) return src;
+  const { c: padded, p } = padCanvas(src, L / 2 + 2);
+  const W = padded.width, H = padded.height, dx = Math.cos(ang), dy = Math.sin(ang);
+  const n = Math.ceil(Math.log2(L + 1)), s = L / (2 ** n - 1);
+  let cur = padded, tmp = mk(W, H);
+  for (let j = 0; j < n; j++) {
+    const sh = s * 2 ** j / 2, t = cx(tmp);
+    t.globalCompositeOperation = "copy"; t.globalAlpha = 1;
+    t.drawImage(cur, -dx * sh, -dy * sh);
+    t.globalCompositeOperation = "source-over"; t.globalAlpha = 0.5;
+    t.drawImage(cur, dx * sh, dy * sh);
+    [cur, tmp] = [tmp, cur];
+  }
+  const out = mk(src.width, src.height);
+  cx(out).drawImage(cur, -p, -p);
+  free(cur); free(tmp);
+  return out;
+}
+
+// Image fantôme (double exposition légère due au tremblement).
+function ghost(src, d, ang, alpha) {
+  if (d < 0.5) return src;
+  const { c: padded, p } = padCanvas(src, d + 2);
+  const out = mk(src.width, src.height), x = cx(out);
+  x.drawImage(src, 0, 0);
+  x.globalAlpha = alpha;
+  x.drawImage(padded, -p + Math.cos(ang) * d, -p + Math.sin(ang) * d);
+  free(padded);
+  return out;
+}
+
+function blurCanvas(src, r) {
+  if (r < 0.3) return src;
+  if (FILTER_OK) {
+    const { c: padded, p } = padCanvas(src, r * 3 + 2);
+    const out = mk(src.width, src.height), x = cx(out);
+    x.filter = `blur(${r}px)`;
+    x.drawImage(padded, -p, -p);
+    x.filter = "none";
+    free(padded);
+    return out;
+  }
+  let c = src;
+  for (let i = 0; i < 2; i++) { c = lineBlur(c, r * 1.2, 0); c = lineBlur(c, r * 1.2, Math.PI / 2); }
+  return c;
+}
+
+function getData(c) { return cx(c).getImageData(0, 0, c.width, c.height); }
+
+function extractBright(c) {
+  const id = getData(c), d = id.data, thr = 0.68;
+  for (let i = 0; i < d.length; i += 4) {
+    const m = Math.max(d[i], d[i + 1], d[i + 2]) / 255;
+    let f = m <= thr ? 0 : (m - thr) / (1 - thr); f *= f;
+    d[i] *= f; d[i + 1] *= f; d[i + 2] *= f;
+  }
+  const out = mk(c.width, c.height); cx(out).putImageData(id, 0, 0);
+  return out;
+}
+
+function tone(c, p) {
+  if (!p.exposure && !p.contrast && !p.saturation && !p.temperature && !p.tint) return;
+  const id = getData(c), d = id.data;
+  const ev = 2 ** p.exposure, t = p.temperature / 100, tn = p.tint / 100;
+  const gains = [(1 + t * 0.35) * ev, (1 - tn * 0.3) * ev, (1 - t * 0.35) * ev];
+  const cf = 1 + p.contrast / 100, sat = 1 + p.saturation / 100;
+  const luts = gains.map(g => {
+    const l = new Float32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let v = Math.pow(Math.min(1, Math.pow(i / 255, 2.2) * g), 1 / 2.2);
+      l[i] = (v - 0.5) * cf + 0.5;
+    }
+    return l;
+  });
+  const [lr, lg, lb] = luts;
+  for (let i = 0; i < d.length; i += 4) {
+    let r = lr[d[i]], g = lg[d[i + 1]], b = lb[d[i + 2]];
+    const l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    d[i] = (l + (r - l) * sat) * 255; d[i + 1] = (l + (g - l) * sat) * 255; d[i + 2] = (l + (b - l) * sat) * 255;
+  }
+  cx(c).putImageData(id, 0, 0);
+}
+
+function aberration(c, e) {
+  const w = c.width, h = c.height, id = getData(c), d = id.data, s = new Uint8ClampedArray(d);
+  const cxm = w / 2, cym = h / 2, f = e / Math.hypot(cxm, cym);
+  for (let y = 0; y < h; y++) {
+    const dy = y - cym;
+    const yr = clamp(Math.round(cym + dy * (1 + f)), 0, h - 1) * w, yb = clamp(Math.round(cym + dy * (1 - f)), 0, h - 1) * w;
+    for (let x = 0; x < w; x++) {
+      const dx = x - cxm, i = (y * w + x) * 4;
+      d[i] = s[(yr + clamp(Math.round(cxm + dx * (1 + f)), 0, w - 1)) * 4];
+      d[i + 2] = s[(yb + clamp(Math.round(cxm + dx * (1 - f)), 0, w - 1)) * 4 + 2];
+    }
+  }
+  cx(c).putImageData(id, 0, 0);
+}
+
+function vignette(c, s) {
+  const w = c.width, h = c.height, x = cx(c), R = Math.hypot(w, h) / 2;
+  const g = x.createRadialGradient(w / 2, h / 2, R * (0.62 - 0.4 * s), w / 2, h / 2, R);
+  const v = Math.round(255 * (1 - 0.92 * s));
+  g.addColorStop(0, "#fff"); g.addColorStop(1, `rgb(${v},${v},${v})`);
+  x.save(); x.globalCompositeOperation = "multiply"; x.fillStyle = g; x.fillRect(0, 0, w, h); x.restore();
+}
+
+function noiseField(w, h, cell, rng, mono) {
+  const nw = Math.ceil(w / cell), nh = Math.ceil(h / cell), small = mk(nw, nh), id = cx(small).createImageData(nw, nh), d = id.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const a = clamp(gauss(rng) * 40 + 128, 0, 255);
+    d[i] = a; d[i + 1] = mono ? a : clamp(gauss(rng) * 40 + 128, 0, 255); d[i + 2] = mono ? a : clamp(gauss(rng) * 40 + 128, 0, 255); d[i + 3] = 255;
+  }
+  if (nw === w && nh === h) return d;
+  cx(small).putImageData(id, 0, 0);
+  const big = mk(w, h), bx = cx(big);
+  bx.imageSmoothingEnabled = true; bx.drawImage(small, 0, 0, w, h);
+  const out = getData(big).data; free(big); free(small);
+  return out;
+}
+
+function addNoise(c, p, rng, k) {
+  const w = c.width, h = c.height, id = getData(c), d = id.data;
+  const la = p.noise / 100 * 0.13, ca = p.chroma / 100 * 0.1;
+  const lf = la > 0 ? noiseField(w, h, Math.max(1, p.grain * k * 0.7), rng, true) : null;
+  const cf = ca > 0 ? noiseField(w, h, Math.max(1.5, p.grain * k * 2.4), rng, false) : null;
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i], g = d[i + 1], b = d[i + 2];
+    const l = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    const wgt = (0.3 + 0.95 * (1 - l) * (1 - l)) * 255 / 40;
+    const nl = lf ? (lf[i] - 128) * la : 0;
+    if (cf) {
+      d[i] = r + (nl + (cf[i] - 128) * ca) * wgt;
+      d[i + 1] = g + (nl + (cf[i + 1] - 128) * ca * 0.7) * wgt;
+      d[i + 2] = b + (nl + (cf[i + 2] - 128) * ca) * wgt;
+    } else { d[i] = r + nl * wgt; d[i + 1] = g + nl * wgt; d[i + 2] = b + nl * wgt; }
+  }
+  cx(c).putImageData(id, 0, 0);
+}
+
+function sharpen(c, amt, k) {
+  const b = blurCanvas(c, Math.max(0.8, 1.3 * k));
+  const id = getData(c), d = id.data, bd = getData(b).data, a = amt * 2.2;
+  for (let i = 0; i < d.length; i += 4) {
+    d[i] = d[i] + (d[i] - bd[i]) * a; d[i + 1] = d[i + 1] + (d[i + 1] - bd[i + 1]) * a; d[i + 2] = d[i + 2] + (d[i + 2] - bd[i + 2]) * a;
+  }
+  cx(c).putImageData(id, 0, 0); free(b);
+}
+
+function pixelate(c, b) {
+  const w = c.width, h = c.height, s = mk(Math.max(1, Math.round(w / b)), Math.max(1, Math.round(h / b))), sx = cx(s);
+  sx.imageSmoothingQuality = "high"; sx.drawImage(c, 0, 0, s.width, s.height);
+  const out = mk(w, h), o = cx(out); o.imageSmoothingEnabled = false; o.drawImage(s, 0, 0, w, h);
+  free(s);
+  return out;
+}
+
+const toBlob = (c, type, q) => new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error("Encodage impossible")), type, q));
+
+async function blobToCanvas(blob, w, h) {
+  const bmp = await createImageBitmap(blob);
+  const o = mk(w, h); cx(o).drawImage(bmp, 0, 0, w, h); bmp.close && bmp.close();
+  return o;
+}
+
+async function jpegPasses(c, q, passes) {
+  let cur = c; const w = c.width, h = c.height;
+  for (let i = 0; i < passes; i++) {
+    if (i > 0) {
+      const f = 0.86, t = mk(w * f, h * f), tx = cx(t); tx.imageSmoothingQuality = "medium"; tx.drawImage(cur, 0, 0, t.width, t.height);
+      const u = mk(w, h); cx(u).drawImage(t, 0, 0, w, h); free(t); cur = u;
+    }
+    const blob = await toBlob(cur, "image/jpeg", clamp(q - i * 0.04, 0.02, 1));
+    cur = await blobToCanvas(blob, w, h);
+  }
+  return cur;
+}
+
+/* ---------- Chaîne de traitement ---------- */
+async function render(src, p, s) {
+  const rng = rngFrom(s);
+  const W0 = src.width, H0 = src.height, r = p.resolution / 100;
+  const w = Math.max(8, Math.round(W0 * r)), h = Math.max(8, Math.round(H0 * r));
+  const k = Math.max(w, h) / 1000;        // les réglages sont exprimés pour une image de 1000 px
+  let c = mk(w, h), x = cx(c);
+  x.imageSmoothingQuality = "high";
+  if (p.tilt) {
+    const th = p.tilt * Math.PI / 180, co = Math.abs(Math.cos(th)), si = Math.abs(Math.sin(th));
+    const sc = Math.max((w * co + h * si) / w, (w * si + h * co) / h);
+    x.translate(w / 2, h / 2); x.rotate(th); x.scale(sc, sc); x.drawImage(src, -w / 2, -h / 2, w, h);
+    x.setTransform(1, 0, 0, 1, 0, 0);
+  } else x.drawImage(src, 0, 0, w, h);
+
+  if (p.motion > 0) c = lineBlur(c, p.motion * k, p.angle * Math.PI / 180);
+  if (p.shake > 0) {
+    const S = p.shake * k, a1 = rng() * Math.PI, a2 = a1 + Math.PI / 2 + (rng() - 0.5) * 1.2;
+    c = lineBlur(c, S * 0.7, a1);
+    c = lineBlur(c, S * 0.45, a2);
+    c = ghost(c, S * 0.4, rng() * Math.PI * 2, 0.35);
+  }
+  if (p.defocus > 0) c = blurCanvas(c, p.defocus * k);
+
+  const bright = p.bloom > 0 ? extractBright(c) : null;
+  tone(c, p);
+  if (bright) {
+    const R = (4 + p.bloom * 0.22) * k, b1 = blurCanvas(bright, R), b2 = blurCanvas(bright, R * 3.2);
+    x = cx(c); x.save(); x.globalCompositeOperation = "screen";
+    x.globalAlpha = Math.min(1, p.bloom / 65); x.drawImage(b1, 0, 0);
+    x.globalAlpha = Math.min(1, p.bloom / 100); x.drawImage(b2, 0, 0);
+    x.restore(); free(b1); free(b2); free(bright);
+  }
+  if (p.aberration > 0) aberration(c, p.aberration * k * 1.3);
+  if (p.vignette > 0) vignette(c, p.vignette / 100);
+  if (p.noise > 0 || p.chroma > 0) addNoise(c, p, rng, k);
+  if (p.sharpen > 0) sharpen(c, p.sharpen / 100, k);
+
+  if (r < 1 && p.keepSize) {
+    const u = mk(W0, H0), ux = cx(u); ux.imageSmoothingQuality = "low"; ux.drawImage(c, 0, 0, W0, H0); c = u;
+  }
+  if (p.pixel > 0) {
+    const b = p.pixel * Math.max(c.width, c.height) / 1000;
+    if (b >= 1.5) c = pixelate(c, b);
+  }
+  if (p.jpeg < 100) c = await jpegPasses(c, p.jpeg / 100, p.passes);
+  return c;
+}
+
+// Variation par photo, pour qu'une série ne paraisse pas faite au même réglage.
+function paramsFor(index) {
+  if (!$("#vary").checked || photos.length < 2) return params;
+  const r = rngFrom(seedFor(index) ^ 0x5bd1e995), p = { ...params };
+  const j = (key, f) => { const it = ITEMS[key]; p[key] = clamp(f(p[key]), it.min, it.max); };
+  if (p.motion) { j("motion", v => v * (0.75 + r() * 0.5)); j("angle", v => v + (r() - 0.5) * 30); }
+  if (p.shake) j("shake", v => v * (0.7 + r() * 0.6));
+  if (p.tilt) j("tilt", v => v + (r() - 0.5) * 4);
+  if (p.noise) j("noise", v => v * (0.85 + r() * 0.3));
+  if (p.chroma) j("chroma", v => v * (0.85 + r() * 0.3));
+  if (p.exposure) j("exposure", v => v + (r() - 0.5) * 0.5);
+  if (p.temperature) j("temperature", v => v + (r() - 0.5) * 12);
+  return p;
+}
+const seedFor = i => (seed + i * 9973) >>> 0;
+
+/* ---------- Chargement des images ---------- */
+async function decode(file) {
+  try { return await createImageBitmap(file, { imageOrientation: "from-image" }); } catch {}
+  const url = URL.createObjectURL(file);
+  try { const img = new Image(); img.src = url; await img.decode(); return img; }
+  finally { setTimeout(() => URL.revokeObjectURL(url), 1000); }
+}
+function fitCanvas(src, maxSide, maxArea = MAX_AREA) {
+  const sw = src.width, sh = src.height;
+  let f = Math.min(1, maxSide / Math.max(sw, sh), Math.sqrt(maxArea / (sw * sh)));
+  const c = mk(sw * f, sh * f), x = cx(c); x.imageSmoothingQuality = "high"; x.drawImage(src, 0, 0, c.width, c.height);
+  return c;
+}
+
+async function addFiles(list) {
+  const files = [...list].filter(f => f.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|bmp|avif|heic)$/i.test(f.name));
+  if (!files.length) return;
+  const failed = [], start = photos.length;
+  setStatus(`Chargement de ${files.length} photo${files.length > 1 ? "s" : ""}…`);
+  for (const file of files) {
+    try {
+      const img = await decode(file);
+      const preview = fitCanvas(img, PREVIEW_MAX);
+      const t = fitCanvas(img, 160);
+      photos.push({ name: file.name, file, preview, thumb: t.toDataURL("image/jpeg", 0.8), w: img.width, h: img.height });
+      img.close && img.close();
+    } catch { failed.push(file.name); }
+  }
+  if (photos.length > start) current = start;
+  setStatus(failed.length ? `Impossible de lire : ${failed.join(", ")}. Le format HEIC de l'iPhone n'est lu que par Safari : convertissez-le en JPG.` : "", !!failed.length);
+  refreshPhotos(); loadCurrent();
+}
+
+/* ---------- Image d'exemple (rue au crépuscule) ---------- */
+function makeSample() {
+  const w = 1500, h = 1000, c = mk(w, h), x = cx(c), r = rngFrom(11);
+  let g = x.createLinearGradient(0, 0, 0, h * 0.7);
+  g.addColorStop(0, "#26355f"); g.addColorStop(0.55, "#7d5b8c"); g.addColorStop(1, "#f3a65b");
+  x.fillStyle = g; x.fillRect(0, 0, w, h);
+  g = x.createRadialGradient(w * 0.68, h * 0.62, 10, w * 0.68, h * 0.62, 380);
+  g.addColorStop(0, "rgba(255,214,150,.9)"); g.addColorStop(1, "rgba(255,214,150,0)");
+  x.fillStyle = g; x.fillRect(0, 0, w, h);
+  for (let X = -20; X < w; X += 70 + r() * 60) { const bh = 180 + r() * 260, bw = 60 + r() * 90; x.fillStyle = "#4a3f60"; x.fillRect(X, h * 0.7 - bh, bw, bh); }
+  const near = [[0, 250, 430], [230, 220, 330], [430, 160, 520], [880, 260, 400], [1120, 200, 560], [1300, 220, 360]];
+  for (const [X, bw, bh] of near) {
+    const top = h * 0.78 - bh;
+    x.fillStyle = "#211d2c"; x.fillRect(X, top, bw, bh);
+    for (let yy = top + 22; yy < h * 0.74; yy += 34) for (let xx = X + 16; xx < X + bw - 24; xx += 30) {
+      const lit = r() < 0.38; x.fillStyle = lit ? (r() < 0.75 ? "#ffd27a" : "#a9dcff") : "#2f2a3e"; x.fillRect(xx, yy, 16, 20);
+    }
+  }
+  x.fillStyle = "#ff4f8b"; x.shadowColor = "#ff4f8b"; x.shadowBlur = 24;
+  x.beginPath(); x.roundRect ? x.roundRect(455, 330, 120, 50, 10) : x.rect(455, 330, 120, 50); x.lineWidth = 5; x.strokeStyle = "#ff7aa8"; x.stroke();
+  x.font = "bold 34px system-ui, sans-serif"; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText("CAFÉ", 515, 357);
+  x.shadowBlur = 0;
+  g = x.createLinearGradient(0, h * 0.78, 0, h); g.addColorStop(0, "#3a3840"); g.addColorStop(1, "#1f1e24");
+  x.fillStyle = g; x.fillRect(0, h * 0.78, w, h * 0.22);
+  x.fillStyle = "#d9d4c8"; for (let X = 20; X < w; X += 150) x.fillRect(X, h * 0.9, 80, 8);
+  x.fillStyle = "#565360"; x.fillRect(0, h * 0.78, w, 10);
+  for (const L of [180, 720, 1250]) {
+    x.fillStyle = "#18161d"; x.fillRect(L - 4, h * 0.42, 8, h * 0.36); x.fillRect(L - 4, h * 0.42, 46, 7);
+    g = x.createRadialGradient(L + 40, h * 0.44, 2, L + 40, h * 0.44, 90); g.addColorStop(0, "rgba(255,236,190,1)"); g.addColorStop(0.15, "rgba(255,200,120,.75)"); g.addColorStop(1, "rgba(255,180,90,0)");
+    x.fillStyle = g; x.fillRect(L - 60, h * 0.44 - 100, 200, 200);
+    x.fillStyle = "#fff8e6"; x.beginPath(); x.arc(L + 40, h * 0.445, 9, 0, Math.PI * 2); x.fill();
+  }
+  x.fillStyle = "#14131a"; x.beginPath(); x.moveTo(930, 850); x.lineTo(960, 790); x.lineTo(1150, 785); x.lineTo(1200, 830); x.lineTo(1215, 870); x.lineTo(930, 875); x.fill();
+  x.fillStyle = "#ff3b30"; x.fillRect(1196, 835, 16, 14); x.fillRect(930, 838, 12, 12);
+  x.fillStyle = "#121117"; x.beginPath(); x.arc(985, 878, 26, 0, 7); x.arc(1165, 878, 26, 0, 7); x.fill();
+  x.fillStyle = "#1b1820"; x.beginPath(); x.arc(330, 640, 26, 0, 7); x.fill(); x.fillRect(302, 664, 56, 140); x.fillRect(306, 800, 18, 70); x.fillRect(336, 800, 18, 70);
+  return c;
+}
+
+/* ---------- Interface ---------- */
+function setStatus(msg, err = false) { const s = $("#status"); s.textContent = msg; s.classList.toggle("err", err); }
+
+function buildControls() {
+  const root = $("#controls"), open = store.get("open", null);
+  GROUPS.forEach((g, gi) => {
+    const det = document.createElement("details");
+    det.className = "group"; det.open = open ? !!open[gi] : gi < 3;
+    det.innerHTML = `<summary><span>${g.title}</span><small>${g.hint}</small></summary>`;
+    det.addEventListener("toggle", () => { const o = store.get("open", GROUPS.map((_, i) => i < 3)); o[gi] = det.open; store.set("open", o); });
+    const rows = document.createElement("div"); rows.className = "rows";
+    for (const it of g.items) {
+      const row = document.createElement("div"); row.className = "row";
+      if (it.type === "check") {
+        row.innerHTML = `<label class="check" style="grid-column:1/-1"><input type="checkbox" id="p-${it.key}"> ${it.label}</label>`;
+        row.querySelector("input").addEventListener("change", e => change(it.key, e.target.checked));
+      } else {
+        row.innerHTML = `<label for="p-${it.key}" id="l-${it.key}" title="Double-clic : remettre à zéro">${it.label}</label><output id="o-${it.key}" for="p-${it.key}"></output>
+          <input type="range" id="p-${it.key}" min="${it.min}" max="${it.max}" step="${it.step}">${it.help ? `<span class="help">${it.help}</span>` : ""}`;
+        row.querySelector("input").addEventListener("input", e => change(it.key, parseFloat(e.target.value)));
+        row.querySelector("label").addEventListener("dblclick", e => { e.preventDefault(); change(it.key, DEFAULTS[it.key]); });
+      }
+      rows.appendChild(row);
+    }
+    det.appendChild(rows); root.appendChild(det);
+  });
+}
+
+function change(key, v) { params[key] = v; activePreset = null; syncUI(); schedule(); persist(); }
+function persist() { store.set("state", { params, preset: activePreset }); }
+
+function syncUI() {
+  for (const [key, it] of Object.entries(ITEMS)) {
+    const inp = $("#p-" + key);
+    if (it.type === "check") { inp.checked = !!params[key]; continue; }
+    inp.value = params[key];
+    $("#o-" + key).textContent = it.fmt ? it.fmt(params[key]) : String(params[key]);
+    $("#l-" + key).classList.toggle("changed", params[key] !== DEFAULTS[key]);
+  }
+  document.querySelectorAll(".preset").forEach(b => b.classList.toggle("active", b.dataset.id === activePreset));
+  const all = [...PRESETS, ...customPresets.map((c, i) => ({ id: "c" + i, name: c.name }))];
+  $("#presetName").textContent = all.find(p => p.id === activePreset)?.name ?? "Personnalisé";
+  readout();
+}
+
+function buildPresets() {
+  const box = $("#presets"); box.innerHTML = "";
+  const add = (id, name, desc, p, removable) => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "preset"; b.dataset.id = id;
+    b.innerHTML = `<b></b><small></small>`; b.querySelector("b").textContent = name; b.querySelector("small").textContent = desc;
+    b.addEventListener("click", e => {
+      if (e.target.closest(".del")) return;
+      params = { ...DEFAULTS, ...p }; activePreset = id; syncUI(); schedule(); persist();
+    });
+    if (removable) {
+      const del = document.createElement("span"); del.className = "del"; del.textContent = "×"; del.title = "Supprimer ce réglage"; del.setAttribute("role", "button");
+      del.addEventListener("click", () => { customPresets.splice(removable - 1, 1); store.set("presets", customPresets); if (activePreset === id) activePreset = null; buildPresets(); syncUI(); });
+      b.appendChild(del);
+    }
+    box.appendChild(b);
+  };
+  PRESETS.forEach(p => add(p.id, p.name, p.desc, p.p, 0));
+  customPresets.forEach((c, i) => add("c" + i, c.name, "Mon réglage", c.p, i + 1));
+}
+
+$("#saveForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = $("#saveName").value.trim() || `Réglage ${customPresets.length + 1}`;
+  customPresets.push({ name, p: { ...params } }); store.set("presets", customPresets);
+  activePreset = "c" + (customPresets.length - 1); $("#saveName").value = "";
+  buildPresets(); syncUI(); persist();
+});
+
+// Ligne façon fiche EXIF, déduite des réglages.
+function readout() {
+  const p = params;
+  const isoStops = p.noise / 100 * 5 + p.chroma / 100 * 1.5 + Math.max(0, -p.exposure) * 0.8;
+  const ISO = [100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 8000, 10000, 12800, 25600];
+  const iso = ISO.reduce((a, b) => Math.abs(Math.log2(b / 100) - isoStops) < Math.abs(Math.log2(a / 100) - isoStops) ? b : a);
+  const m = p.motion + p.shake * 1.6, den = 1000 / 2 ** (m / 9 + Math.max(0, -p.exposure) * 2.5);
+  const SH = [1000, 500, 250, 125, 60, 30, 15, 8, 4, 2];
+  const sh = SH.reduce((a, b) => Math.abs(Math.log2(b / den)) < Math.abs(Math.log2(a / den)) ? b : a);
+  const src = photos[current] || { w: sample?.width ?? 1500, h: sample?.height ?? 1000 };
+  let mp = src.w * src.h * (p.resolution / 100) ** 2;
+  if (p.pixel > 0) mp = Math.min(mp, src.w * src.h / (p.pixel * Math.max(src.w, src.h) / 1000) ** 2);
+  const mpTxt = mp >= 1e6 ? (mp / 1e6).toFixed(1).replace(".", ",") + " Mpx" : Math.round(mp / 1000) + " kpx";
+  const outW = p.keepSize ? src.w : Math.round(src.w * p.resolution / 100), outH = p.keepSize ? src.h : Math.round(src.h * p.resolution / 100);
+  $("#readout").innerHTML = [
+    `ISO <b>${iso}</b>`, `<b>1/${sh}</b> s`, `détail <b>${mpTxt}</b>`,
+    p.jpeg < 100 ? `JPG <b>${p.jpeg} %</b>${p.passes > 1 ? ` ×${p.passes}` : ""}` : `JPG <b>intact</b>`,
+    `fichier <b>${outW} × ${outH}</b>`
+  ].map(s => `<span>${s}</span>`).join("");
+}
+
+function refreshPhotos() {
+  const box = $("#thumbs"); box.innerHTML = "";
+  photos.forEach((ph, i) => {
+    const b = document.createElement("div"); b.className = "thumb" + (i === current ? " active" : ""); b.tabIndex = 0; b.setAttribute("role", "button"); b.title = ph.name;
+    b.setAttribute("aria-label", `Afficher ${ph.name}`);
+    b.innerHTML = `<img alt="">`; b.querySelector("img").src = ph.thumb;
+    const x = document.createElement("button"); x.className = "x"; x.textContent = "×"; x.title = "Retirer"; x.setAttribute("aria-label", `Retirer ${ph.name}`);
+    x.addEventListener("click", e => { e.stopPropagation(); photos.splice(i, 1); current = Math.min(current, Math.max(0, photos.length - 1)); refreshPhotos(); loadCurrent(); });
+    b.appendChild(x);
+    const pick = () => { current = i; refreshPhotos(); loadCurrent(); };
+    b.addEventListener("click", pick);
+    b.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+    box.appendChild(b);
+  });
+  $("#count").textContent = photos.length ? `${photos.length} photo${photos.length > 1 ? "s" : ""}` : "Image d'exemple";
+  $("#exportAll").hidden = photos.length < 2;
+  $("#batchOpts").hidden = photos.length < 2;
+}
+
+function currentSource() { return photos[current]?.preview ?? sample; }
+
+function loadCurrent() {
+  const src = currentSource(), before = $("#before");
+  before.width = src.width; before.height = src.height; cx(before).drawImage(src, 0, 0);
+  $("#frame").style.setProperty("--ar", (src.width / src.height).toFixed(4));
+  readout(); schedule();
+}
+
+let busy = false, dirty = false;
+function schedule() {
+  if (busy) { dirty = true; return; }
+  busy = true; dirty = false;
+  const t = setTimeout(() => { $("#busy").hidden = false; }, 150);
+  requestAnimationFrame(async () => {
+    try {
+      const out = await render(currentSource(), paramsFor(current), seedFor(current));
+      const a = $("#after"); a.width = out.width; a.height = out.height; cx(a).drawImage(out, 0, 0); free(out);
+    } catch (e) { console.error(e); setStatus("Erreur pendant le calcul : " + e.message, true); }
+    clearTimeout(t); $("#busy").hidden = true; busy = false;
+    if (dirty) schedule();
+  });
+}
+
+/* ---------- Export ---------- */
+const EXT = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+function outName(name) { return name.replace(/\.[^.]+$/, "") + "_ratee." + EXT[$("#fmt").value]; }
+function download(blob, name) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+async function renderFull(i) {
+  let src, name;
+  if (photos[i]) { const img = await decode(photos[i].file); src = fitCanvas(img, 1e9); img.close && img.close(); name = photos[i].name; }
+  else { src = sample; name = "exemple.jpg"; }
+  const out = await render(src, paramsFor(i), seedFor(i));
+  if (src !== sample) free(src);
+  const blob = await toBlob(out, $("#fmt").value, $("#q").value / 100);
+  free(out);
+  return { blob, name: outName(name) };
+}
+async function withLock(fn) {
+  const btns = [$("#exportOne"), $("#exportAll")]; btns.forEach(b => b.disabled = true);
+  try { await fn(); } catch (e) { console.error(e); setStatus("L'export a échoué : " + e.message, true); }
+  finally { btns.forEach(b => b.disabled = false); }
+}
+$("#exportOne").addEventListener("click", () => withLock(async () => {
+  setStatus("Calcul en pleine résolution…");
+  const { blob, name } = await renderFull(current);
+  download(blob, name); setStatus(`Enregistré : ${name} (${(blob.size / 1024).toFixed(0)} Ko)`);
+}));
+$("#exportAll").addEventListener("click", () => withLock(async () => {
+  const files = [], used = new Set();
+  for (let i = 0; i < photos.length; i++) {
+    setStatus(`Calcul ${i + 1} / ${photos.length}…`);
+    const f = await renderFull(i);
+    let n = f.name, k = 2; while (used.has(n)) n = f.name.replace(/(\.[^.]+)$/, `-${k++}$1`); used.add(n);
+    files.push({ name: n, blob: f.blob });
+  }
+  setStatus("Création du fichier .zip…");
+  const zip = await makeZip(files);
+  download(zip, "photos_ratees.zip"); setStatus(`Enregistré : photos_ratees.zip (${photos.length} photos, ${(zip.size / 1048576).toFixed(1)} Mo)`);
+}));
+$("#q").addEventListener("input", e => $("#qo").textContent = e.target.value + " %");
+$("#fmt").addEventListener("change", e => { $("#q").disabled = e.target.value === "image/png"; store.set("fmt", e.target.value); });
+
+// ZIP sans compression (les images sont déjà compressées).
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(d) { let c = 0xFFFFFFFF; for (let i = 0; i < d.length; i++) c = CRC[(c ^ d[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+async function makeZip(files) {
+  const enc = new TextEncoder(), parts = [], central = [], now = new Date();
+  const time = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+  const date = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+  let offset = 0;
+  for (const f of files) {
+    const data = new Uint8Array(await f.blob.arrayBuffer()), name = enc.encode(f.name), crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, time, true); lh.setUint16(12, date, true); lh.setUint32(14, crc, true);
+    lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, time, true); ch.setUint16(14, date, true); ch.setUint32(16, crc, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true);
+    ch.setUint16(28, name.length, true); ch.setUint32(42, offset, true);
+    parts.push(lh, name, data); central.push(ch, name);
+    offset += 30 + name.length + data.length;
+  }
+  const cdSize = central.reduce((s, p) => s + p.byteLength, 0), end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+  end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, end], { type: "application/zip" });
+}
+
+/* ---------- Comparaison avant / après ---------- */
+const frame = $("#frame");
+let dragging = false;
+function setSplit(clientX) {
+  const r = frame.getBoundingClientRect();
+  frame.style.setProperty("--split", (clamp((clientX - r.left) / r.width, 0, 1) * 100).toFixed(2) + "%");
+}
+frame.addEventListener("pointerdown", e => { if (frame.classList.contains("no-compare")) return; dragging = true; frame.setPointerCapture(e.pointerId); setSplit(e.clientX); });
+frame.addEventListener("pointermove", e => { if (dragging) setSplit(e.clientX); });
+frame.addEventListener("pointerup", () => dragging = false);
+frame.addEventListener("pointercancel", () => dragging = false);
+$("#compare").addEventListener("change", e => frame.classList.toggle("no-compare", !e.target.checked));
+
+/* ---------- Glisser-déposer ---------- */
+$("#file").addEventListener("change", e => { addFiles(e.target.files); e.target.value = ""; });
+let dragDepth = 0;
+addEventListener("dragenter", e => { if ([...e.dataTransfer.types].includes("Files")) { dragDepth++; document.body.classList.add("dragging"); } });
+addEventListener("dragleave", () => { if (--dragDepth <= 0) { dragDepth = 0; document.body.classList.remove("dragging"); } });
+addEventListener("dragover", e => e.preventDefault());
+addEventListener("drop", e => { e.preventDefault(); dragDepth = 0; document.body.classList.remove("dragging"); if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
+addEventListener("paste", e => { const f = [...(e.clipboardData?.files || [])]; if (f.length) addFiles(f); });
+
+$("#reseed").addEventListener("click", () => { seed = (Math.random() * 1e9) >>> 0; schedule(); });
+$("#vary").addEventListener("change", schedule);
+$("#resetAll").addEventListener("click", () => { params = { ...DEFAULTS }; activePreset = "original"; syncUI(); schedule(); persist(); });
+
+/* ---------- Démarrage ---------- */
+sample = makeSample();
+const fmt = store.get("fmt", "image/jpeg"); $("#fmt").value = fmt; $("#q").disabled = fmt === "image/png";
+buildControls(); buildPresets(); syncUI(); refreshPhotos(); loadCurrent();
+</script>
+</body>
+</html>
