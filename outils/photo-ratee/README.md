@@ -23,6 +23,17 @@ Double-cliquez sur `photo-ratee.html`. Il s'ouvre dans votre navigateur (Chrome,
 donne à chaque photo d'une série un angle, un bruit et une exposition un peu différents.
 Vos propres réglages s'enregistrent avec le bouton « Enregistrer » sous les préréglages.
 
+## Rogner
+
+Cliquez sur « Rogner » sous l'image. Déplacez le cadre en le faisant glisser, et redimensionnez-le
+avec les poignées. Choisissez un format (Libre, Original, 1:1, 4:5, 3:4, 2:3, 9:16, 16:9, 3:2) ;
+« Pivoter le format » passe du portrait au paysage. Validez avec « Valider le cadrage » ou la touche Entrée,
+annulez avec « Annuler » ou Échap. Au clavier, les flèches déplacent le cadre, et Maj + flèches le redimensionnent.
+
+Chaque photo a son propre cadrage. « Appliquer à toutes les photos » donne le même format à toute la série,
+centré sur chaque photo. Les photos rognées sont marquées sur leur miniature, et l'export se fait
+en pleine résolution à la taille rognée.
+
 ## Étalonnage d'après une autre photo
 
 Le bloc « Étalonnage » reprend les couleurs et l'ambiance d'une photo de référence :
