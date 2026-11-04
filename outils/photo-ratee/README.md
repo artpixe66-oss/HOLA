@@ -14,6 +14,7 @@ Double-cliquez sur `photo-ratee.html`. Il s'ouvre dans votre navigateur (Chrome,
 
 1. Glissez une ou plusieurs photos dans la fenêtre (ou cliquez sur « Ajouter des photos »).
 2. Choisissez un préréglage, puis ajustez les curseurs si besoin.
+   Le curseur « Intensité du filtre » (0 à 200 %) atténue ou renforce tous les effets d'un coup.
 3. Glissez sur l'image pour comparer l'original et le résultat.
 4. « Exporter cette photo » enregistre la photo affichée en pleine résolution.
    Avec plusieurs photos, « Tout exporter (.zip) » les traite toutes avec les mêmes réglages.

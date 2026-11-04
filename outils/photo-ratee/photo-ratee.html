@@ -130,6 +130,9 @@ button, input, select { font: inherit; color: inherit; }
 .preset:hover { border-color: var(--muted); }
 .preset.active { border-color: var(--accent); background: var(--accent-soft); }
 .preset .del { position: absolute; top: 4px; right: 4px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 14px; padding: 2px 5px; }
+.intensity { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+.intensity label { font-weight: 600; }
+.intensity output { color: var(--ink); font-weight: 500; }
 .save-row { display: flex; gap: 6px; margin-top: 10px; }
 .save-row input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; padding: 7px 9px; }
 
@@ -209,6 +212,13 @@ button, input, select { font: inherit; color: inherit; }
 
     <section class="card">
       <div class="card-head"><h2>Préréglages</h2><small id="presetName"></small></div>
+      <div class="intensity">
+        <div class="row">
+          <label for="intensity" id="l-intensity" title="Double-clic : remettre à 100 %">Intensité du filtre</label><output id="o-intensity" for="intensity">100 %</output>
+          <input type="range" id="intensity" min="0" max="200" step="5" value="100">
+          <span class="help">Atténue ou renforce tous les effets d'un coup. 100 % = réglages tels quels.</span>
+        </div>
+      </div>
       <div class="presets" id="presets"></div>
       <form class="save-row" id="saveForm">
         <input id="saveName" placeholder="Nom de mon réglage" maxlength="40" aria-label="Nom du réglage à enregistrer">
@@ -301,13 +311,14 @@ const store = {
 const $ = s => document.querySelector(s);
 let params = { ...DEFAULTS, ...PRESETS.find(p => p.id === "nuit").p };
 let activePreset = "nuit";
+let intensity = 100;
 let customPresets = store.get("presets", []);
 let photos = [];          // { name, file, preview, thumb, w, h }
 let current = 0;
 let seed = (Math.random() * 1e9) >>> 0;
 let sample = null;
 const saved = store.get("state", null);
-if (saved && saved.params) { params = { ...DEFAULTS, ...saved.params }; activePreset = saved.preset ?? null; }
+if (saved && saved.params) { params = { ...DEFAULTS, ...saved.params }; activePreset = saved.preset ?? null; intensity = saved.intensity ?? 100; }
 
 /* ---------- Outils canvas ---------- */
 const FILTER_OK = typeof document.createElement("canvas").getContext("2d").filter === "string";
@@ -572,10 +583,26 @@ async function render(src, p, s) {
   return c;
 }
 
+// Intensité globale : rapproche chaque réglage de sa valeur neutre (0 %) ou l'amplifie (jusqu'à 200 %).
+const FIXED = new Set(["angle", "grain", "keepSize"]);
+function effective() {
+  const f = intensity / 100;
+  if (f === 1) return params;
+  const p = { ...params };
+  for (const [key, it] of Object.entries(ITEMS)) {
+    if (FIXED.has(key) || it.type === "check") continue;
+    let v = DEFAULTS[key] + (params[key] - DEFAULTS[key]) * f;
+    if (key === "passes") v = Math.round(v);
+    p[key] = clamp(v, it.min, it.max);
+  }
+  return p;
+}
+
 // Variation par photo, pour qu'une série ne paraisse pas faite au même réglage.
 function paramsFor(index) {
-  if (!$("#vary").checked || photos.length < 2) return params;
-  const r = rngFrom(seedFor(index) ^ 0x5bd1e995), p = { ...params };
+  const base = effective();
+  if (!$("#vary").checked || photos.length < 2) return base;
+  const r = rngFrom(seedFor(index) ^ 0x5bd1e995), p = { ...base };
   const j = (key, f) => { const it = ITEMS[key]; p[key] = clamp(f(p[key]), it.min, it.max); };
   if (p.motion) { j("motion", v => v * (0.75 + r() * 0.5)); j("angle", v => v + (r() - 0.5) * 30); }
   if (p.shake) j("shake", v => v * (0.7 + r() * 0.6));
@@ -689,7 +716,13 @@ function buildControls() {
 }
 
 function change(key, v) { params[key] = v; activePreset = null; syncUI(); schedule(); persist(); }
-function persist() { store.set("state", { params, preset: activePreset }); }
+function persist() { store.set("state", { params, preset: activePreset, intensity }); }
+function setIntensity(v) {
+  intensity = v; $("#intensity").value = v; $("#o-intensity").textContent = v + " %";
+  $("#l-intensity").classList.toggle("changed", v !== 100);
+}
+$("#intensity").addEventListener("input", e => { setIntensity(parseInt(e.target.value, 10)); readout(); schedule(); persist(); });
+$("#l-intensity").addEventListener("dblclick", e => { e.preventDefault(); setIntensity(100); readout(); schedule(); persist(); });
 
 function syncUI() {
   for (const [key, it] of Object.entries(ITEMS)) {
@@ -728,6 +761,7 @@ function buildPresets() {
 $("#saveForm").addEventListener("submit", e => {
   e.preventDefault();
   const name = $("#saveName").value.trim() || `Réglage ${customPresets.length + 1}`;
+  params = { ...effective() }; setIntensity(100);
   customPresets.push({ name, p: { ...params } }); store.set("presets", customPresets);
   activePreset = "c" + (customPresets.length - 1); $("#saveName").value = "";
   buildPresets(); syncUI(); persist();
@@ -735,7 +769,7 @@ $("#saveForm").addEventListener("submit", e => {
 
 // Ligne façon fiche EXIF, déduite des réglages.
 function readout() {
-  const p = params;
+  const p = effective();
   const isoStops = p.noise / 100 * 5 + p.chroma / 100 * 1.5 + Math.max(0, -p.exposure) * 0.8;
   const ISO = [100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 8000, 10000, 12800, 25600];
   const iso = ISO.reduce((a, b) => Math.abs(Math.log2(b / 100) - isoStops) < Math.abs(Math.log2(a / 100) - isoStops) ? b : a);
@@ -891,12 +925,12 @@ addEventListener("paste", e => { const f = [...(e.clipboardData?.files || [])]; 
 
 $("#reseed").addEventListener("click", () => { seed = (Math.random() * 1e9) >>> 0; schedule(); });
 $("#vary").addEventListener("change", schedule);
-$("#resetAll").addEventListener("click", () => { params = { ...DEFAULTS }; activePreset = "original"; syncUI(); schedule(); persist(); });
+$("#resetAll").addEventListener("click", () => { params = { ...DEFAULTS }; activePreset = "original"; setIntensity(100); syncUI(); schedule(); persist(); });
 
 /* ---------- Démarrage ---------- */
 sample = makeSample();
 const fmt = store.get("fmt", "image/jpeg"); $("#fmt").value = fmt; $("#q").disabled = fmt === "image/png";
-buildControls(); buildPresets(); syncUI(); refreshPhotos(); loadCurrent();
+buildControls(); buildPresets(); setIntensity(intensity); syncUI(); refreshPhotos(); loadCurrent();
 </script>
 </body>
 </html>
