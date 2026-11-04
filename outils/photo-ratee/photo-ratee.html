@@ -133,6 +133,17 @@ button, input, select { font: inherit; color: inherit; }
 .intensity { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
 .intensity label { font-weight: 600; }
 .intensity output { color: var(--ink); font-weight: 500; }
+.card-text { margin: -4px 0 10px; color: var(--muted); font-size: 13px; }
+.help-text { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
+.ref { display: flex; gap: 12px; align-items: center; }
+.ref-thumb { width: 72px; height: 72px; flex: none; border-radius: 8px; border: 1.5px dashed var(--line); background: var(--surface-2) center / cover no-repeat; }
+.ref-thumb.on { border: 2px solid var(--accent); }
+.ref-actions { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.ref-actions .btn { display: inline-block; }
+.swatches { display: flex; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 10px; }
+.swatches span { flex: 1; }
+.grade-opts { display: grid; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; }
+.grade-opts .row { font-size: 14px; }
 .save-row { display: flex; gap: 6px; margin-top: 10px; }
 .save-row input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; padding: 7px 9px; }
 
@@ -224,6 +235,29 @@ button, input, select { font: inherit; color: inherit; }
         <input id="saveName" placeholder="Nom de mon réglage" maxlength="40" aria-label="Nom du réglage à enregistrer">
         <button class="btn small" type="submit">Enregistrer</button>
       </form>
+    </section>
+
+    <section class="card" id="gradeCard">
+      <div class="card-head"><h2>Étalonnage</h2><small id="gradeState">Aucune référence</small></div>
+      <p class="card-text">Reprend les couleurs et l'ambiance d'une autre photo. Pratique pour harmoniser une série.</p>
+      <div class="ref">
+        <div class="ref-thumb" id="refThumb" aria-hidden="true"></div>
+        <div class="ref-actions">
+          <label class="btn small" for="refFile" tabindex="0" id="refPick">Choisir une photo de référence</label>
+          <input type="file" id="refFile" accept="image/*" hidden>
+          <button class="btn small" id="refCurrent" type="button">Utiliser la photo affichée</button>
+          <button class="btn small" id="refClear" type="button" hidden>Retirer</button>
+        </div>
+      </div>
+      <div class="grade-opts" id="gradeOpts" hidden>
+        <div class="row">
+          <label for="gradeStrength" id="l-gradeStrength">Force de l'étalonnage</label><output id="o-gradeStrength" for="gradeStrength">80 %</output>
+          <input type="range" id="gradeStrength" min="0" max="100" step="5" value="80">
+        </div>
+        <label class="check"><input type="checkbox" id="gradeLuma" checked> Copier aussi la luminosité et le contraste</label>
+        <label class="check"><input type="checkbox" id="gradeTones" checked> Copier les teintes des ombres et des hautes lumières</label>
+      </div>
+      <p class="help-text">Pour une série : affichez la photo dont les couleurs vous plaisent, cliquez sur « Utiliser la photo affichée », puis « Tout exporter ».</p>
     </section>
 
     <div id="controls" class="panel"></div>
@@ -548,6 +582,8 @@ async function render(src, p, s) {
     x.translate(w / 2, h / 2); x.rotate(th); x.scale(sc, sc); x.drawImage(src, -w / 2, -h / 2, w, h);
     x.setTransform(1, 0, 0, 1, 0, 0);
   } else x.drawImage(src, 0, 0, w, h);
+
+  if (grade.ref && grade.strength > 0) applyGrade(c, grade);
 
   if (p.motion > 0) c = lineBlur(c, p.motion * k, p.angle * Math.PI / 180);
   if (p.shake > 0) {
@@ -927,10 +963,144 @@ $("#reseed").addEventListener("click", () => { seed = (Math.random() * 1e9) >>> 
 $("#vary").addEventListener("change", schedule);
 $("#resetAll").addEventListener("click", () => { params = { ...DEFAULTS }; activePreset = "original"; setIntensity(100); syncUI(); schedule(); persist(); });
 
+/* ---------- Étalonnage d'après une photo de référence ---------- */
+// Travail en Lab : la luminosité suit l'histogramme de la référence, les couleurs suivent
+// sa moyenne et son écart-type, puis la teinte propre aux ombres, tons moyens et hautes lumières.
+const S2L = new Float32Array(256);
+for (let i = 0; i < 256; i++) { const c = i / 255; S2L[i] = c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+const L2S = new Uint8ClampedArray(4096);
+for (let i = 0; i < 4096; i++) { const v = i / 4095; L2S[i] = Math.round((v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055) * 255); }
+const toByte = v => L2S[(v <= 0 ? 0 : v >= 1 ? 4095 : v * 4095 + 0.5) | 0];
+const labF = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+const labFi = f => { const f3 = f * f * f; return f3 > 0.008856 ? f3 : (f - 16 / 116) / 7.787; };
+// Ombres, tons moyens, hautes lumières selon le rang du pixel dans sa propre photo (0 = le plus sombre).
+const BANDS = q => { const ws = clamp(1 - q / 0.4, 0, 1), wh = clamp((q - 0.6) / 0.4, 0, 1); return [ws, 1 - ws - wh, wh]; };
+const rankOf = (cdf, L) => { const pos = clamp(L * 2.55, 0, 254.999), i = pos | 0, f = pos - i; return cdf[i] * (1 - f) + cdf[i + 1] * f; };
+function cdfOf(h) { const c = new Float64Array(256); let s = 0; const tot = h.reduce((a, b) => a + b, 0) || 1; for (let i = 0; i < 256; i++) { s += h[i]; c[i] = s / tot; } return c; }
+
+function rgbToLab(r8, g8, b8, out) {
+  const r = S2L[r8], g = S2L[g8], b = S2L[b8];
+  const fx = labF((0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047), fy = labF(0.2126 * r + 0.7152 * g + 0.0722 * b), fz = labF((0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883);
+  out[0] = 116 * fy - 16; out[1] = 500 * (fx - fy); out[2] = 200 * (fy - fz);
+}
+
+function labStats(c) {
+  const small = fitCanvas(c, 320), d = getData(small).data; free(small);
+  const n = d.length / 4, labs = new Float32Array(n * 3), hist = new Float64Array(256), lab = [0, 0, 0], bA = [0, 0, 0], bB = [0, 0, 0], bW = [0, 0, 0];
+  let sa = 0, sb = 0, qa = 0, qb = 0;
+  for (let i = 0, j = 0; i < d.length; i += 4, j += 3) {
+    rgbToLab(d[i], d[i + 1], d[i + 2], lab);
+    labs[j] = lab[0]; labs[j + 1] = lab[1]; labs[j + 2] = lab[2];
+    hist[clamp(Math.round(lab[0] * 2.55), 0, 255)]++;
+    sa += lab[1]; sb += lab[2]; qa += lab[1] * lab[1]; qb += lab[2] * lab[2];
+  }
+  const cdf = cdfOf(hist);
+  for (let j = 0; j < labs.length; j += 3) {
+    const w = BANDS(rankOf(cdf, labs[j]));
+    for (let k = 0; k < 3; k++) { bA[k] += labs[j + 1] * w[k]; bB[k] += labs[j + 2] * w[k]; bW[k] += w[k]; }
+  }
+  const ma = sa / n, mb = sb / n;
+  return {
+    hist: [...hist], ma, mb,
+    sa: Math.sqrt(Math.max(1e-6, qa / n - ma * ma)), sb: Math.sqrt(Math.max(1e-6, qb / n - mb * mb)),
+    bands: [0, 1, 2].map(k => bW[k] > n * 0.01 ? [bA[k] / bW[k], bB[k] / bW[k], bW[k] / n] : [ma, mb, 0])
+  };
+}
+
+// Courbe qui donne à la luminosité de la cible la répartition de celle de la référence.
+function matchCurve(ht, hr) {
+  const ct = cdfOf(ht), cr = cdfOf(hr), M = new Float32Array(257);
+  let j = 0;
+  for (let i = 0; i < 256; i++) {
+    while (j < 255 && cr[j] < ct[i]) j++;
+    const prev = j > 0 ? cr[j - 1] : 0, span = cr[j] - prev;
+    const frac = span > 1e-9 ? clamp((ct[i] - prev) / span, 0, 1) : 0;
+    M[i] = (j - 1 + frac + 0.5) / 2.55;
+  }
+  M[256] = M[255];
+  // lissage léger pour éviter les cassures de dégradé
+  const S = new Float32Array(257);
+  for (let i = 0; i < 257; i++) { let a = 0, w = 0; for (let k = -4; k <= 4; k++) { const q = i + k; if (q >= 0 && q < 257) { a += M[q]; w++; } } S[i] = a / w; }
+  return S;
+}
+
+function applyGrade(c, g) {
+  const ref = g.ref, tgt = labStats(c), st = g.strength / 100;
+  const ka = clamp(ref.sa / tgt.sa, 0.3, 3), kb = clamp(ref.sb / tgt.sb, 0.3, 3);
+  const off = [0, 1, 2].map(k => {
+    if (!g.tones || !ref.bands[k][2] || !tgt.bands[k][2]) return [0, 0];
+    return [ref.bands[k][0] - ((tgt.bands[k][0] - tgt.ma) * ka + ref.ma), ref.bands[k][1] - ((tgt.bands[k][1] - tgt.mb) * kb + ref.mb)];
+  });
+  const M = g.luma ? matchCurve(tgt.hist, ref.hist) : null, tcdf = cdfOf(tgt.hist);
+  const id = getData(c), d = id.data, lab = [0, 0, 0];
+  for (let i = 0; i < d.length; i += 4) {
+    rgbToLab(d[i], d[i + 1], d[i + 2], lab);
+    const L = lab[0], a = lab[1], b = lab[2], w = BANDS(rankOf(tcdf, L));
+    let a2 = (a - tgt.ma) * ka + ref.ma + w[0] * off[0][0] + w[1] * off[1][0] + w[2] * off[2][0];
+    let b2 = (b - tgt.mb) * kb + ref.mb + w[0] * off[0][1] + w[1] * off[1][1] + w[2] * off[2][1];
+    let L2 = L;
+    if (M) { const pos = clamp(L * 2.55, 0, 255.999), i0 = pos | 0, f = pos - i0; L2 = M[i0] * (1 - f) + M[i0 + 1] * f; }
+    L2 = L + (L2 - L) * st; a2 = a + (a2 - a) * st; b2 = b + (b2 - b) * st;
+    const fy = (L2 + 16) / 116, X = 0.95047 * labFi(fy + a2 / 500), Y = labFi(fy), Z = 1.08883 * labFi(fy - b2 / 200);
+    d[i] = toByte(3.2406 * X - 1.5372 * Y - 0.4986 * Z);
+    d[i + 1] = toByte(-0.9689 * X + 1.8758 * Y + 0.0415 * Z);
+    d[i + 2] = toByte(0.0557 * X - 0.2040 * Y + 1.0570 * Z);
+  }
+  cx(c).putImageData(id, 0, 0);
+}
+
+// Cinq couleurs dominantes de la référence, pour la voir d'un coup d'œil.
+function palette(c) {
+  const s = fitCanvas(c, 60), d = getData(s).data; free(s);
+  const px = []; for (let i = 0; i < d.length; i += 4) px.push([d[i], d[i + 1], d[i + 2], 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]]);
+  px.sort((a, b) => a[3] - b[3]);
+  return [0, 1, 2, 3, 4].map(k => {
+    const part = px.slice(Math.floor(px.length * k / 5), Math.floor(px.length * (k + 1) / 5));
+    const m = [0, 1, 2].map(j => Math.round(part.reduce((a, p) => a + p[j], 0) / part.length));
+    return `rgb(${m.join(",")})`;
+  });
+}
+
+const grade = { ref: null, thumb: null, name: "", colors: [], strength: 80, luma: true, tones: true, ...store.get("grade", {}) };
+function saveGrade() { store.set("grade", grade); }
+function setReference(canvas, name) {
+  grade.ref = labStats(canvas);
+  grade.thumb = fitCanvas(canvas, 160).toDataURL("image/jpeg", 0.8);
+  grade.colors = palette(canvas);
+  grade.name = name;
+  saveGrade(); syncGrade(); schedule();
+  setStatus(`Référence d'étalonnage : ${name}. Les autres photos prennent ses couleurs.`);
+}
+function syncGrade() {
+  const on = !!grade.ref, t = $("#refThumb");
+  t.classList.toggle("on", on);
+  t.style.backgroundImage = on ? `url("${grade.thumb}")` : "";
+  $("#refClear").hidden = !on; $("#gradeOpts").hidden = !on;
+  $("#gradeState").textContent = on ? grade.name : "Aucune référence";
+  $("#gradeStrength").value = grade.strength; $("#o-gradeStrength").textContent = grade.strength + " %";
+  $("#gradeLuma").checked = grade.luma; $("#gradeTones").checked = grade.tones;
+  let sw = $("#swatches");
+  if (on && grade.colors?.length) {
+    if (!sw) { sw = document.createElement("div"); sw.id = "swatches"; sw.className = "swatches"; $(".ref").after(sw); }
+    sw.innerHTML = grade.colors.map(c => `<span style="background:${c}"></span>`).join("");
+  } else if (sw) sw.remove();
+}
+$("#refFile").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try { const img = await decode(f); const c = fitCanvas(img, 800); img.close && img.close(); setReference(c, f.name); free(c); }
+  catch { setStatus(`Impossible de lire ${f.name}.`, true); }
+});
+$("#refPick").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#refFile").click(); } });
+$("#refCurrent").addEventListener("click", () => setReference(currentSource(), photos[current]?.name ?? "Image d'exemple"));
+$("#refClear").addEventListener("click", () => { grade.ref = null; grade.thumb = null; grade.colors = []; grade.name = ""; saveGrade(); syncGrade(); schedule(); setStatus(""); });
+$("#gradeStrength").addEventListener("input", e => { grade.strength = parseInt(e.target.value, 10); $("#o-gradeStrength").textContent = grade.strength + " %"; saveGrade(); schedule(); });
+$("#gradeLuma").addEventListener("change", e => { grade.luma = e.target.checked; saveGrade(); schedule(); });
+$("#gradeTones").addEventListener("change", e => { grade.tones = e.target.checked; saveGrade(); schedule(); });
+
 /* ---------- Démarrage ---------- */
 sample = makeSample();
 const fmt = store.get("fmt", "image/jpeg"); $("#fmt").value = fmt; $("#q").disabled = fmt === "image/png";
-buildControls(); buildPresets(); setIntensity(intensity); syncUI(); refreshPhotos(); loadCurrent();
+buildControls(); buildPresets(); setIntensity(intensity); syncGrade(); syncUI(); refreshPhotos(); loadCurrent();
 </script>
 </body>
 </html>

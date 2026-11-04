@@ -23,6 +23,22 @@ Double-cliquez sur `photo-ratee.html`. Il s'ouvre dans votre navigateur (Chrome,
 donne à chaque photo d'une série un angle, un bruit et une exposition un peu différents.
 Vos propres réglages s'enregistrent avec le bouton « Enregistrer » sous les préréglages.
 
+## Étalonnage d'après une autre photo
+
+Le bloc « Étalonnage » reprend les couleurs et l'ambiance d'une photo de référence :
+luminosité et contraste, couleur générale, et teintes propres aux ombres et aux hautes lumières
+(par exemple ombres bleutées et lumières orangées).
+
+Pour harmoniser une série :
+
+1. Ajoutez toutes les photos de la série.
+2. Affichez celle dont les couleurs vous plaisent, puis cliquez sur « Utiliser la photo affichée ».
+   Vous pouvez aussi prendre une photo extérieure avec « Choisir une photo de référence ».
+3. Réglez la force (80 % par défaut), puis « Tout exporter (.zip) ».
+
+L'étalonnage est appliqué avant les effets (bougé, nuit, grain…), qui s'ajoutent par-dessus.
+La référence reste enregistrée dans le navigateur d'une séance à l'autre.
+
 ## Préréglages
 
 | Préréglage | Effet |
