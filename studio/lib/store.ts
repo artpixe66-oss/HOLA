@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react";
 import type { Content, CreativeAttributes, Influencer, Store } from "./types";
 import { AGENT_V1 } from "./seed/agent-v1";
 import { AGENT_V2 } from "./seed/agent-v2";
-import { GIULIA } from "./seed/giulia";
+import { GIULIA, GIULIA_PREVIOUS } from "./seed/giulia";
 
 const KEY = "studio-influence:v1";
 
@@ -62,8 +62,22 @@ export function newContent(partial: Partial<Content> = {}): Content {
 const V2_ID = "seed-v2";
 const V1_LABEL = "v1 — reverse-video-prompt";
 
+/** Met à jour les blocs d'une fiche Giulia encore identique à l'ancienne version du seed ; une fiche modifiée à la main est laissée telle quelle. */
+function withGiuliaSeed(s: Store): Store {
+  const keys = Object.keys(GIULIA_PREVIOUS) as (keyof typeof GIULIA_PREVIOUS)[];
+  let changed = false;
+  const influencers = s.influencers.map((i) => {
+    const stale = keys.filter((k) => i[k] === GIULIA_PREVIOUS[k]);
+    if (!stale.length) return i;
+    changed = true;
+    return { ...i, ...Object.fromEntries(stale.map((k) => [k, GIULIA[k]])) };
+  });
+  return changed ? { ...s, influencers } : s;
+}
+
 /** Ajoute la v2 (mode viral) aux données existantes ; l'active si la version active était la v1 d'origine. */
-function withSeeds(s: Store): Store {
+function withSeeds(input: Store): Store {
+  const s = withGiuliaSeed(input);
   const existing = s.agentVersions.find((a) => a.id === V2_ID);
   // La v2 d'origine n'est jamais modifiée sur place (une modification crée une nouvelle version) : on la tient à jour.
   if (existing) return existing.instructions === AGENT_V2 ? s : { ...s, agentVersions: s.agentVersions.map((a) => (a.id === V2_ID ? { ...a, instructions: AGENT_V2 } : a)) };
@@ -114,7 +128,7 @@ function read(): Store {
     if (raw) {
       const parsed = JSON.parse(raw) as Store;
       cache = withSeeds({ ...initialStore(), ...parsed, settings: { ...initialStore().settings, ...parsed.settings } });
-      if (JSON.stringify(cache.agentVersions) !== JSON.stringify(parsed.agentVersions)) persist(cache);
+      if (JSON.stringify(cache.agentVersions) !== JSON.stringify(parsed.agentVersions) || JSON.stringify(cache.influencers) !== JSON.stringify(parsed.influencers)) persist(cache);
       return cache;
     }
   } catch {
