@@ -2,7 +2,7 @@
 
 import { useId, useSyncExternalStore, type Ref } from "react";
 import { ARCANES, ELEMENTS, RARITIES, parseCost } from "@/lib/elements";
-import { BODY, DISPLAY, SERIF, fitSize, wrap } from "@/lib/text";
+import { HUMAN, SERIF, fitSize, wrap } from "@/lib/text";
 import type { ArcaneId, BorderId, CardState, ElementId, HoloMode, Rarity } from "@/lib/types";
 
 export const CARD_W = 630;
@@ -113,26 +113,26 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
 
   const stage = STAGES[c.stage];
   const tagW = 20 + stage.length * 8.2;
-  const nameSize = fitSize(c.name || " ", DISPLAY, "400", 360, 38, 20);
+  const nameSize = fitSize(c.name || " ", HUMAN, "700", 370, 42, 20);
 
   // Pouvoir + attaques, empilés puis réduits si ça déborde.
   const top = full ? 492 : 484;
   const bottom = 738;
-  const descFont = `400 17.5px ${BODY}`;
+  const descFont = `400 17.5px ${HUMAN}`;
   const body: React.ReactNode[] = [];
   let y = top;
   if (c.power && (c.power.name || c.power.text)) {
     body.push(
       <g key="power">
         <rect x={40} y={y + 2} width={96} height={24} rx={4} fill="#b3261e" />
-        <text x={88} y={y + 19} textAnchor="middle" fontFamily={BODY} fontWeight={700} fontSize={13} letterSpacing={1.4} fill="#fff">POUVOIR</text>
-        <text x={148} y={y + 23} fontFamily={DISPLAY} fontSize={fitSize(c.power.name, DISPLAY, "400", 440, 23, 15)} fill="#b3261e">{c.power.name}</text>
+        <text x={88} y={y + 19} textAnchor="middle" fontFamily={HUMAN} fontWeight={700} fontSize={13} letterSpacing={1.4} fill="#fff">POUVOIR</text>
+        <text x={148} y={y + 23} fontFamily={HUMAN} fontWeight={700} fontSize={fitSize(c.power.name, HUMAN, "700", 440, 23, 15)} fill="#b3261e">{c.power.name}</text>
       </g>,
     );
     y += 36;
     const lines = wrap(c.power.text, descFont, 550, 3);
     body.push(
-      <text key="power-t" fontFamily={BODY} fontSize={17.5} fill={ink}>
+      <text key="power-t" fontFamily={HUMAN} fontSize={17.5} fill={ink}>
         {lines.map((l, i) => <tspan key={i} x={40} y={y + 13 + i * 21}>{l}</tspan>)}
       </text>,
     );
@@ -144,15 +144,15 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
     body.push(
       <g key={`atk${ai}`}>
         {costs.map((e, i) => <ElementIcon key={i} el={e} x={54 + i * 31} y={y + 16} r={13.5} />)}
-        <text x={nameX} y={y + 25} fontFamily={DISPLAY} fontSize={fitSize(a.name, DISPLAY, "400", 590 - nameX - 84, 25, 15)} fill={ink}>{a.name}</text>
-        <text x={590} y={y + 28} textAnchor="end" fontFamily={DISPLAY} fontSize={30} fill={ink}>{a.damage}</text>
+        <text x={nameX} y={y + 25} fontFamily={HUMAN} fontWeight={700} fontSize={fitSize(a.name, HUMAN, "700", 590 - nameX - 84, 25, 15)} fill={ink}>{a.name}</text>
+        <text x={590} y={y + 28} textAnchor="end" fontFamily={HUMAN} fontWeight={700} fontSize={30} fill={ink}>{a.damage}</text>
       </g>,
     );
     y += 42;
     if (a.text) {
       const lines = wrap(a.text, descFont, 550, 3);
       body.push(
-        <text key={`atk${ai}-t`} fontFamily={BODY} fontSize={17.5} fill={ink}>
+        <text key={`atk${ai}-t`} fontFamily={HUMAN} fontSize={17.5} fill={ink}>
           {lines.map((l, i) => <tspan key={i} x={40} y={y + 11 + i * 21}>{l}</tspan>)}
         </text>,
       );
@@ -161,7 +161,7 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
     y += 14;
   });
   const k = Math.min(1, (bottom - top) / Math.max(1, y - top));
-  const flavorLines = wrap(c.flavor, `italic 400 12px ${BODY}`, 338, 3);
+  const flavorLines = wrap(c.flavor, `italic 400 12px ${HUMAN}`, 338, 3);
 
   return (
     <>
@@ -214,14 +214,14 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
 
       {/* En-tête : stade, nom, PV, élément */}
       <rect x={32} y={30} width={tagW} height={20} rx={4} fill={full ? "#000" : "#fff"} fillOpacity={full ? 0.45 : 0.75} stroke={full ? "#fff" : "#333"} strokeOpacity={0.6} strokeWidth={0.8} />
-      <text x={32 + tagW / 2} y={45} textAnchor="middle" fontFamily={BODY} fontWeight={700} fontSize={12} letterSpacing={1.1} fill={full ? "#fff" : "#222"}>{stage}</text>
+      <text x={32 + tagW / 2} y={45} textAnchor="middle" fontFamily={HUMAN} fontWeight={700} fontSize={12} letterSpacing={1.1} fill={full ? "#fff" : "#222"}>{stage}</text>
       {c.stage !== "base" && c.evolvesFrom && (
-        <text x={40 + tagW} y={45} fontFamily={BODY} fontStyle="italic" fontSize={12.5} {...head} strokeWidth={full ? 3 : 0}>Évolue de {c.evolvesFrom}</text>
+        <text x={40 + tagW} y={45} fontFamily={HUMAN} fontStyle="italic" fontSize={12.5} {...head} strokeWidth={full ? 3 : 0}>Évolue de {c.evolvesFrom}</text>
       )}
-      <text x={34} y={88} fontFamily={DISPLAY} fontSize={nameSize} {...head}>{c.name}</text>
-      <text x={548} y={86} textAnchor="end" fontFamily={DISPLAY} {...head}>
-        <tspan fontFamily={BODY} fontWeight={700} fontSize={14}>PV </tspan>
-        <tspan fontSize={36}>{c.hp}</tspan>
+      <text x={34} y={88} fontFamily={HUMAN} fontWeight={700} fontSize={nameSize} {...head}>{c.name}</text>
+      <text x={548} y={86} textAnchor="end" fontFamily={HUMAN} fontWeight={700} {...head}>
+        <tspan fontSize={15}>PV </tspan>
+        <tspan fontSize={40}>{c.hp}</tspan>
       </text>
       <ElementIcon el={c.element} x={577} y={73} r={21} />
 
@@ -238,7 +238,7 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
                 <rect {...ART} fill={el.color} />
                 <rect {...ART} fill={`url(#${id}-glow)`} />
                 <path d={el.glyph} fill="#fff" opacity={0.22} transform={`translate(${315 - 110} ${268 - 110}) scale(9.2)`} />
-                <text x={315} y={276} textAnchor="middle" fontFamily={BODY} fontWeight={700} fontSize={21} fill="#fff">Ajoute ou génère une illustration</text>
+                <text x={315} y={276} textAnchor="middle" fontFamily={HUMAN} fontWeight={700} fontSize={21} fill="#fff">Ajoute ou génère une illustration</text>
               </g>
             )}
           </g>
@@ -247,7 +247,7 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
 
           {/* Bandeau d'infos sous l'illustration */}
           <polygon points="70,446 560,446 574,457 560,468 70,468 56,457" fill={`url(#${id}-border)`} stroke="#000" strokeOpacity={0.3} />
-          <text x={315} y={461.5} textAnchor="middle" fontFamily={BODY} fontStyle="italic" fontSize={fitSize(c.info || " ", BODY, "italic 400", 480, 12.5, 9)} fill={BORDERS[c.border].ink}>{c.info}</text>
+          <text x={315} y={461.5} textAnchor="middle" fontFamily={HUMAN} fontStyle="italic" fontSize={fitSize(c.info || " ", HUMAN, "italic 400", 480, 12.5, 9)} fill={BORDERS[c.border].ink}>{c.info}</text>
         </g>
       )}
 
@@ -262,18 +262,18 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
           ["repli", 502],
         ] as const
       ).map(([label, x]) => (
-        <text key={label} x={x} y={763} textAnchor="middle" fontFamily={BODY} fontWeight={700} fontSize={11.5} fill={ink}>{label}</text>
+        <text key={label} x={x} y={763} textAnchor="middle" fontFamily={HUMAN} fontWeight={700} fontSize={11.5} fill={ink}>{label}</text>
       ))}
       {c.weakness && (
         <g>
           <ElementIcon el={c.weakness} x={116} y={781} r={11} />
-          <text x={131} y={787} fontFamily={DISPLAY} fontSize={16} fill={ink}>×2</text>
+          <text x={131} y={787} fontFamily={HUMAN} fontWeight={700} fontSize={16} fill={ink}>×2</text>
         </g>
       )}
       {c.resistance && (
         <g>
           <ElementIcon el={c.resistance} x={298} y={781} r={11} />
-          <text x={313} y={787} fontFamily={DISPLAY} fontSize={16} fill={ink}>−30</text>
+          <text x={313} y={787} fontFamily={HUMAN} fontWeight={700} fontSize={16} fill={ink}>−30</text>
         </g>
       )}
       {Array.from({ length: Math.max(0, Math.min(c.retreat, 4)) }, (_, i) => (
@@ -281,13 +281,13 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
       ))}
 
       {/* Pied : illustrateur, numéro, rareté, texte d'ambiance */}
-      <text x={36} y={816} fontFamily={BODY} fontSize={11} fill={ink}>Illus. {s.illustrator}</text>
-      <text x={36} y={838} fontFamily={BODY} fontWeight={700} fontSize={11.5} fill={ink}>{s.setNumber}</text>
+      <text x={36} y={816} fontFamily={HUMAN} fontSize={11} fill={ink}>Illus. {s.illustrator}</text>
+      <text x={36} y={838} fontFamily={HUMAN} fontWeight={700} fontSize={11.5} fill={ink}>{s.setNumber}</text>
       <RarityMark rarity={s.rarity} x={44 + s.setNumber.length * 7.2} y={834} ink={ink} />
       {c.flavor && (
         <g>
           <rect x={240} y={800} width={354} height={50} rx={3} fill="#fff" fillOpacity={0.35} stroke={ink} strokeOpacity={0.45} strokeWidth={0.8} />
-          <text fontFamily={BODY} fontStyle="italic" fontSize={12} fill={ink}>
+          <text fontFamily={HUMAN} fontStyle="italic" fontSize={12} fill={ink}>
             {flavorLines.map((l, i) => <tspan key={i} x={248} y={815 + i * 14.5}>{l}</tspan>)}
           </text>
         </g>

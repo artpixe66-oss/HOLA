@@ -2,12 +2,18 @@
 export const DISPLAY = "CardDisplay, 'Arial Black', sans-serif";
 export const BODY = "CardBody, 'Helvetica Neue', Arial, sans-serif";
 export const SERIF = "CardSerif, Georgia, serif";
+/** Linéale humaniste, épaisse et ronde : le ton des cartes de créatures. */
+export const HUMAN = "CardHuman, 'Gill Sans', 'Trebuchet MS', sans-serif";
 
 const FACES = [
   { family: "CardDisplay", weight: 400, style: "normal", file: "card-display.woff2" },
   { family: "CardBody", weight: 400, style: "normal", file: "card-body-400.woff2" },
   { family: "CardBody", weight: 400, style: "italic", file: "card-body-400i.woff2" },
   { family: "CardBody", weight: 700, style: "normal", file: "card-body-700.woff2" },
+  { family: "CardHuman", weight: 400, style: "normal", file: "card-human-400-normal.woff2" },
+  { family: "CardHuman", weight: 400, style: "italic", file: "card-human-400-italic.woff2" },
+  { family: "CardHuman", weight: 700, style: "normal", file: "card-human-700-normal.woff2" },
+  { family: "CardHuman", weight: 700, style: "italic", file: "card-human-700-italic.woff2" },
   { family: "CardSerif", weight: 400, style: "normal", file: "card-serif-400.woff2" },
   { family: "CardSerif", weight: 400, style: "italic", file: "card-serif-400i.woff2" },
   { family: "CardSerif", weight: 700, style: "normal", file: "card-serif-700.woff2" },

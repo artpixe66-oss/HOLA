@@ -10,9 +10,9 @@ export interface ElementDef {
 }
 
 export const ELEMENTS: Record<ElementId, ElementDef> = {
-  feu: { label: "Feu", color: "#e8492f", light: "#ffd2b8", dark: "#8f2414", glyph: "M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 3 1 4 2 4 0-3-1-6 1-9z" },
+  feu: { label: "Feu", color: "#e8492f", light: "#ffd2b8", dark: "#8f2414", glyph: "M12 1.5c.8 3.6 4.9 5.6 5.9 9.6 1.1 4.6-1.9 9.4-5.9 9.4s-7.3-3.3-6.5-8c.4-2.4 1.9-4 2.9-5.5.2 2 .8 3.4 2.1 4.1-.4-3.6.1-6.7 1.5-9.6z" },
   eau: { label: "Eau", color: "#2f8fe8", light: "#c6e3ff", dark: "#13508c", glyph: "M12 2c4 6 7 9 7 13a7 7 0 0 1-14 0c0-4 3-7 7-13z" },
-  plante: { label: "Plante", color: "#3fae4f", light: "#cdf0c8", dark: "#1d6628", glyph: "M4 20C4 10 10 4 20 4c0 10-6 16-16 16zM6 18l9-9" },
+  plante: { label: "Plante", color: "#3fae4f", light: "#cdf0c8", dark: "#1d6628", glyph: "M20 3C9 3 4 9 4 16c0 2 .6 3.6 1.4 5 1-4 4-8.5 9-11-4 3.2-6.6 6.8-7.7 11.2.8.5 2.2.8 3.3.8 7 0 10-7 10-19z" },
   foudre: { label: "Foudre", color: "#f2c230", light: "#fff1b8", dark: "#9a7409", glyph: "M13 2L4 14h7l-2 8 9-12h-7l2-8z" },
   psy: { label: "Psy", color: "#a24fd6", light: "#ead2fb", dark: "#5d2087", glyph: "M12 5c5 0 9 4 10 7-1 3-5 7-10 7S3 15 2 12c1-3 5-7 10-7zm0 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" },
   roche: { label: "Roche", color: "#a0733f", light: "#ecd9bd", dark: "#5c3e1b", glyph: "M2 20l7-12 4 6 3-4 6 10z" },

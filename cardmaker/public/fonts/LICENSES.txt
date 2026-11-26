@@ -2,3 +2,4 @@ Polices sous licence SIL Open Font License 1.1 :
 - card-display : Archivo Black (Omnibus-Type)
 - card-body-* : Archivo (Omnibus-Type)
 - card-serif-* : Crimson Pro (Jacques Le Bailly)
+- card-human-* : Cabin (Impallari Type)

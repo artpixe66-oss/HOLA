@@ -38,4 +38,4 @@ export function fitSize(text: string, family: string, weight: string, maxWidth: 
   return size;
 }
 
-export { BODY, DISPLAY, SERIF } from "./fonts";
+export { BODY, DISPLAY, HUMAN, SERIF } from "./fonts";
