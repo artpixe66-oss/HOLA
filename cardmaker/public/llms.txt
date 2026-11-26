@@ -1,0 +1,16 @@
+# Holocarte
+
+> Générateur de cartes à collectionner personnalisées avec l'IA (en français). On décrit une créature ou on importe une photo, l'IA dessine l'illustration, puis on règle les statistiques de la carte. Export PNG HD au format carte (63 × 88 mm), effet holographique.
+
+## Modèles de cartes
+- Créature : PV, 9 éléments (Feu, Eau, Plante, Foudre, Psy, Roche, Ombre, Acier, Neutre), stades d'évolution, pouvoir, jusqu'à 3 attaques, faiblesse, résistance, repli.
+- Arcane (fantasy) : coût en gemmes, 6 arcanes, ligne de type, capacités, ATQ/DEF.
+
+## Pages
+- [Créer une carte](/creer)
+- [Carte de monstre IA](/generateur/carte-monstre-ia)
+- [Carte fantasy personnalisée](/generateur/carte-fantasy-personnalisee)
+- [Carte de son animal de compagnie](/generateur/carte-animal-de-compagnie)
+- [Carte cadeau personnalisée](/generateur/carte-cadeau-personnalisee)
+
+Cadres, symboles et éléments de jeu originaux, sans lien avec un jeu de cartes existant.

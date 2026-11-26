@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #07060a;
+  --color-panel: #110f16;
+  --color-line: #26222f;
+  --color-gold: #f2c45a;
+  --color-violet: #8b5cf6;
+  --color-muted: #9a94a8;
+  --color-danger: #ff6b6b;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cinzel), Georgia, serif;
+}
+
+html,
+body {
+  background: var(--color-ink);
+  color: #f4f1fa;
+}
+
+@layer components {
+  .label {
+    @apply mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted;
+  }
+  .input {
+    @apply w-full rounded-lg border border-line bg-black/40 px-3 py-2 text-sm text-white outline-none transition focus:border-gold/70;
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center rounded-xl bg-gold px-4 py-2.5 text-sm font-semibold text-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-xl border border-line px-4 py-2.5 text-sm font-medium text-white transition hover:border-white/40;
+  }
+}
+
+/* Carte qui s'incline + reflet holographique qui suit le pointeur */
+.holo-wrap {
+  perspective: 1200px;
+}
+.holo-card {
+  --rx: 0deg;
+  --ry: 0deg;
+  --px: 50%;
+  --py: 50%;
+  --shine: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 4.4% / 3.2%;
+  overflow: hidden;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.25s ease-out;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  will-change: transform;
+}
+.holo-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  opacity: calc(0.15 + var(--shine) * 0.45);
+  background: repeating-linear-gradient(115deg, #ff7eb3 0%, #ffe07e 8%, #7effc4 16%, #7ec8ff 24%, #c47eff 32%, #ff7eb3 40%);
+  background-size: 300% 300%;
+  background-position: var(--px) var(--py);
+  transition: opacity 0.3s;
+}
+.holo-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--shine);
+  background: radial-gradient(circle at var(--px) var(--py), rgba(255, 255, 255, 0.35), transparent 45%);
+  mix-blend-mode: overlay;
+  transition: opacity 0.3s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .holo-card {
+    transform: none !important;
+  }
+}
