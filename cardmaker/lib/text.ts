@@ -1,7 +1,7 @@
 // Les cartes sont en SVG : on coupe le texte nous-mêmes, mesuré avec un canvas.
 let ctx: CanvasRenderingContext2D | null = null;
 
-function measure(text: string, font: string): number {
+export function measure(text: string, font: string): number {
   if (typeof document === "undefined") return text.length * parseFloat(font.match(/(\d+)px/)?.[1] ?? "16") * 0.55;
   ctx ??= document.createElement("canvas").getContext("2d");
   if (!ctx) return text.length * 9;

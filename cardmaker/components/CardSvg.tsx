@@ -2,7 +2,7 @@
 
 import { useId, useSyncExternalStore, type Ref } from "react";
 import { ARCANES, ELEMENTS, RARITIES, parseCost } from "@/lib/elements";
-import { HUMAN, SERIF, fitSize, wrap } from "@/lib/text";
+import { HUMAN, SERIF, fitSize, measure, wrap } from "@/lib/text";
 import type { ArcaneId, BorderId, CardState, ElementId, HoloMode, Rarity } from "@/lib/types";
 
 export const CARD_W = 630;
@@ -102,7 +102,7 @@ const halo = { stroke: "#000", strokeOpacity: 0.55, strokeWidth: 4, paintOrder: 
 
 const STAGES = { base: "DE BASE", evo1: "ÉVOLUTION 1", evo2: "ÉVOLUTION 2" } as const;
 const FACE = { x: 20, y: 20, width: 590, height: 840, rx: 12 };
-const ART = { x: 40, y: 100, width: 550, height: 336 };
+const ART = { x: 40, y: 96, width: 550, height: 340 };
 
 function CreatureCard({ s, id }: { s: CardState; id: string }) {
   const c = s.creature;
@@ -112,56 +112,81 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
   const head = full ? { fill: "#fff", ...halo } : { fill: ink };
 
   const stage = STAGES[c.stage];
-  const tagW = 20 + stage.length * 8.2;
-  const nameSize = fitSize(c.name || " ", HUMAN, "700", 370, 42, 20);
+  const tagW = 16 + measure(stage, `700 11px ${HUMAN}`) + stage.length * 1;
+  const nameX = 32 + tagW + 10;
+  const nameSize = fitSize(c.name || " ", HUMAN, "700", 452 - nameX, 36, 18);
 
   // Pouvoir + attaques, empilés puis réduits si ça déborde.
-  const top = full ? 492 : 484;
-  const bottom = 738;
-  const descFont = `400 17.5px ${HUMAN}`;
-  const body: React.ReactNode[] = [];
-  let y = top;
+  const top = full ? 490 : 482;
+  const bottom = 734;
+  const descSize = 16.5;
+  const lh = 20;
+  const descFont = `400 ${descSize}px ${HUMAN}`;
+  // Chaque bloc (pouvoir, attaque) connaît sa hauteur ; on les répartit ensuite sur la zone.
+  const blocks: { h: number; draw: (y: number) => React.ReactNode }[] = [];
   if (c.power && (c.power.name || c.power.text)) {
-    body.push(
-      <g key="power">
-        <rect x={40} y={y + 2} width={96} height={24} rx={4} fill="#b3261e" />
-        <text x={88} y={y + 19} textAnchor="middle" fontFamily={HUMAN} fontWeight={700} fontSize={13} letterSpacing={1.4} fill="#fff">POUVOIR</text>
-        <text x={148} y={y + 23} fontFamily={HUMAN} fontWeight={700} fontSize={fitSize(c.power.name, HUMAN, "700", 440, 23, 15)} fill="#b3261e">{c.power.name}</text>
-      </g>,
-    );
-    y += 36;
-    const lines = wrap(c.power.text, descFont, 550, 3);
-    body.push(
-      <text key="power-t" fontFamily={HUMAN} fontSize={17.5} fill={ink}>
-        {lines.map((l, i) => <tspan key={i} x={40} y={y + 13 + i * 21}>{l}</tspan>)}
-      </text>,
-    );
-    y += lines.length * 21 + 16;
+    const power = c.power;
+    const lines = wrap(power.text, descFont, 550, 3);
+    blocks.push({
+      h: 34 + lines.length * lh,
+      draw: (y) => (
+        <g key="power">
+          <rect x={40} y={y + 3} width={92} height={23} rx={4} fill="#b3261e" />
+          <text x={86} y={y + 19.5} textAnchor="middle" fontFamily={HUMAN} fontWeight={700} fontSize={12.5} letterSpacing={1.4} fill="#fff">POUVOIR</text>
+          <text x={144} y={y + 23} fontFamily={HUMAN} fontWeight={700} fontSize={fitSize(power.name, HUMAN, "700", 440, 24, 15)} fill="#b3261e">{power.name}</text>
+          <text fontFamily={HUMAN} fontSize={descSize} fill={ink}>
+            {lines.map((l, i) => <tspan key={i} x={40} y={y + 47 + i * lh}>{l}</tspan>)}
+          </text>
+        </g>
+      ),
+    });
   }
   c.attacks.slice(0, 3).forEach((a, ai) => {
     const costs = a.cost.slice(0, 5);
-    const nameX = 40 + Math.max(costs.length, 1) * 31 + 10;
-    body.push(
-      <g key={`atk${ai}`}>
-        {costs.map((e, i) => <ElementIcon key={i} el={e} x={54 + i * 31} y={y + 16} r={13.5} />)}
-        <text x={nameX} y={y + 25} fontFamily={HUMAN} fontWeight={700} fontSize={fitSize(a.name, HUMAN, "700", 590 - nameX - 84, 25, 15)} fill={ink}>{a.name}</text>
-        <text x={590} y={y + 28} textAnchor="end" fontFamily={HUMAN} fontWeight={700} fontSize={30} fill={ink}>{a.damage}</text>
-      </g>,
-    );
-    y += 42;
-    if (a.text) {
-      const lines = wrap(a.text, descFont, 550, 3);
-      body.push(
-        <text key={`atk${ai}-t`} fontFamily={HUMAN} fontSize={17.5} fill={ink}>
-          {lines.map((l, i) => <tspan key={i} x={40} y={y + 11 + i * 21}>{l}</tspan>)}
-        </text>,
-      );
-      y += lines.length * 21 + 6;
-    }
-    y += 14;
+    const costEnd = 40 + Math.max(costs.length, 1) * 31 + 8;
+    const size = fitSize(a.name, HUMAN, "700", 590 - costEnd - 80, 25, 15);
+    const w = measure(a.name, `700 ${size}px ${HUMAN}`);
+    // Nom d'attaque centré sur la carte, sauf s'il touche les coûts.
+    const centered = 315 - w / 2 >= costEnd && 315 + w / 2 <= 510;
+    const lines = a.text ? wrap(a.text, descFont, 550, 3) : [];
+    blocks.push({
+      h: 34 + (lines.length ? 6 + lines.length * lh : 0),
+      draw: (y) => (
+        <g key={`atk${ai}`}>
+          {costs.map((e, i) => <ElementIcon key={i} el={e} x={54 + i * 31} y={y + 16} r={13.5} />)}
+          <text x={centered ? 315 : costEnd} y={y + 25} textAnchor={centered ? "middle" : "start"} fontFamily={HUMAN} fontWeight={700} fontSize={size} fill={ink}>{a.name}</text>
+          <text x={590} y={y + 27} textAnchor="end" fontFamily={HUMAN} fontWeight={700} fontSize={29} fill={ink}>{a.damage}</text>
+          {lines.length > 0 && (
+            <text fontFamily={HUMAN} fontSize={descSize} fill={ink}>
+              {lines.map((l, i) => <tspan key={i} x={40} y={y + 52 + i * lh}>{l}</tspan>)}
+            </text>
+          )}
+        </g>
+      ),
+    });
   });
-  const k = Math.min(1, (bottom - top) / Math.max(1, y - top));
-  const flavorLines = wrap(c.flavor, `italic 400 12px ${HUMAN}`, 338, 3);
+  const used = blocks.reduce((t, b) => t + b.h, 0);
+  const minGap = 16;
+  const k = Math.min(1, (bottom - top) / Math.max(1, used + minGap * Math.max(0, blocks.length - 1)));
+  // Espace libre réparti entre et autour des blocs (plafonné pour ne pas trop les écarter).
+  const free = Math.max(0, bottom - top - used - minGap * Math.max(0, blocks.length - 1));
+  const gap = minGap + Math.min(free / (blocks.length + 1), 46);
+  const lead = Math.min(free / (blocks.length + 1), 46) * 0.6;
+  let y = top + (k < 1 ? 0 : lead);
+  const body = blocks.map((b) => {
+    const node = b.draw(y);
+    y += b.h + (k < 1 ? minGap : gap);
+    return node;
+  });
+  const flavorLines = wrap(c.flavor, `italic 400 11.5px ${HUMAN}`, 284, 4);
+
+  // Ligne faiblesse / résistance / repli : étiquette puis valeur, sur une seule ligne.
+  const statFont = `700 12px ${HUMAN}`;
+  const stat = (label: string, x: number) => ({ label, x, after: x + measure(label, statFont) + 18 });
+  const weak = stat("faiblesse", 40);
+  const resi = stat("résistance", 236);
+  const retr = stat("repli", 446);
+  const setW = measure(s.setNumber, `700 11.5px ${HUMAN}`);
 
   return (
     <>
@@ -212,18 +237,18 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
         </g>
       )}
 
-      {/* En-tête : stade, nom, PV, élément */}
-      <rect x={32} y={30} width={tagW} height={20} rx={4} fill={full ? "#000" : "#fff"} fillOpacity={full ? 0.45 : 0.75} stroke={full ? "#fff" : "#333"} strokeOpacity={0.6} strokeWidth={0.8} />
-      <text x={32 + tagW / 2} y={45} textAnchor="middle" fontFamily={HUMAN} fontWeight={700} fontSize={12} letterSpacing={1.1} fill={full ? "#fff" : "#222"}>{stage}</text>
+      {/* En-tête : stade, nom, PV, élément sur une même ligne */}
+      <rect x={32} y={42} width={tagW} height={19} rx={4} fill={full ? "#000" : "#fff"} fillOpacity={full ? 0.45 : 0.8} stroke={full ? "#fff" : "#333"} strokeOpacity={0.6} strokeWidth={0.8} />
+      <text x={32 + tagW / 2} y={56} textAnchor="middle" fontFamily={HUMAN} fontWeight={700} fontSize={11} letterSpacing={1} fill={full ? "#fff" : "#222"}>{stage}</text>
+      <text x={nameX} y={72} fontFamily={HUMAN} fontWeight={700} fontSize={nameSize} {...head}>{c.name}</text>
       {c.stage !== "base" && c.evolvesFrom && (
-        <text x={40 + tagW} y={45} fontFamily={HUMAN} fontStyle="italic" fontSize={12.5} {...head} strokeWidth={full ? 3 : 0}>Évolue de {c.evolvesFrom}</text>
+        <text x={nameX} y={86} fontFamily={HUMAN} fontStyle="italic" fontSize={10.5} {...head} strokeWidth={full ? 3 : 0}>Évolue de {c.evolvesFrom}</text>
       )}
-      <text x={34} y={88} fontFamily={HUMAN} fontWeight={700} fontSize={nameSize} {...head}>{c.name}</text>
-      <text x={548} y={86} textAnchor="end" fontFamily={HUMAN} fontWeight={700} {...head}>
-        <tspan fontSize={15}>PV </tspan>
-        <tspan fontSize={40}>{c.hp}</tspan>
+      <text x={551} y={74} textAnchor="end" fontFamily={HUMAN} fontWeight={700} {...head}>
+        <tspan fontSize={14}>PV </tspan>
+        <tspan fontSize={38}>{c.hp}</tspan>
       </text>
-      <ElementIcon el={c.element} x={577} y={73} r={21} />
+      <ElementIcon el={c.element} x={577} y={61} r={19} />
 
       {/* Illustration encadrée */}
       {!full && (
@@ -246,52 +271,45 @@ function CreatureCard({ s, id }: { s: CardState; id: string }) {
           <rect x={ART.x} y={ART.y} width={ART.width} height={ART.height} fill="none" stroke="#000" strokeOpacity={0.25} strokeWidth={2} />
 
           {/* Bandeau d'infos sous l'illustration */}
-          <polygon points="70,446 560,446 574,457 560,468 70,468 56,457" fill={`url(#${id}-border)`} stroke="#000" strokeOpacity={0.3} />
-          <text x={315} y={461.5} textAnchor="middle" fontFamily={HUMAN} fontStyle="italic" fontSize={fitSize(c.info || " ", HUMAN, "italic 400", 480, 12.5, 9)} fill={BORDERS[c.border].ink}>{c.info}</text>
+          <polygon points="72,444 558,444 570,454 558,464 72,464 60,454" fill={`url(#${id}-border)`} stroke="#000" strokeOpacity={0.3} />
+          <text x={315} y={458.5} textAnchor="middle" fontFamily={HUMAN} fontStyle="italic" fontSize={fitSize(c.info || " ", HUMAN, "italic 400", 470, 11.5, 8)} fill={BORDERS[c.border].ink}>{c.info}</text>
         </g>
       )}
 
       <g transform={k < 1 ? `translate(40 ${top}) scale(${k}) translate(-40 -${top})` : undefined}>{body}</g>
 
       {/* Faiblesse / résistance / repli */}
-      <line x1={36} x2={594} y1={746} y2={746} stroke={ink} strokeOpacity={0.45} strokeWidth={1.2} />
-      {(
-        [
-          ["faiblesse", 128],
-          ["résistance", 315],
-          ["repli", 502],
-        ] as const
-      ).map(([label, x]) => (
-        <text key={label} x={x} y={763} textAnchor="middle" fontFamily={HUMAN} fontWeight={700} fontSize={11.5} fill={ink}>{label}</text>
+      <line x1={36} x2={594} y1={742} y2={742} stroke={ink} strokeOpacity={0.35} strokeWidth={1} />
+      <line x1={36} x2={594} y1={772} y2={772} stroke={ink} strokeOpacity={0.35} strokeWidth={1} />
+      {[weak, resi, retr].map((st) => (
+        <text key={st.label} x={st.x} y={761} fontFamily={HUMAN} fontWeight={700} fontSize={12} fill={ink}>{st.label}</text>
       ))}
       {c.weakness && (
         <g>
-          <ElementIcon el={c.weakness} x={116} y={781} r={11} />
-          <text x={131} y={787} fontFamily={HUMAN} fontWeight={700} fontSize={16} fill={ink}>×2</text>
+          <ElementIcon el={c.weakness} x={weak.after} y={757} r={9.5} />
+          <text x={weak.after + 14} y={762} fontFamily={HUMAN} fontWeight={700} fontSize={14} fill={ink}>×2</text>
         </g>
       )}
       {c.resistance && (
         <g>
-          <ElementIcon el={c.resistance} x={298} y={781} r={11} />
-          <text x={313} y={787} fontFamily={HUMAN} fontWeight={700} fontSize={16} fill={ink}>−30</text>
+          <ElementIcon el={c.resistance} x={resi.after} y={757} r={9.5} />
+          <text x={resi.after + 14} y={762} fontFamily={HUMAN} fontWeight={700} fontSize={14} fill={ink}>−30</text>
         </g>
       )}
       {Array.from({ length: Math.max(0, Math.min(c.retreat, 4)) }, (_, i) => (
-        <ElementIcon key={i} el="neutre" x={502 - ((Math.min(c.retreat, 4) - 1) * 25) / 2 + i * 25} y={781} r={10} />
+        <ElementIcon key={i} el="neutre" x={retr.after + i * 22} y={757} r={9} />
       ))}
 
-      {/* Pied : illustrateur, numéro, rareté, texte d'ambiance */}
-      <text x={36} y={816} fontFamily={HUMAN} fontSize={11} fill={ink}>Illus. {s.illustrator}</text>
-      <text x={36} y={838} fontFamily={HUMAN} fontWeight={700} fontSize={11.5} fill={ink}>{s.setNumber}</text>
-      <RarityMark rarity={s.rarity} x={44 + s.setNumber.length * 7.2} y={834} ink={ink} />
+      {/* Pied : illustrateur, numéro et rareté à gauche, texte d'ambiance à droite */}
+      <text x={36} y={796} fontFamily={HUMAN} fontStyle="italic" fontSize={11} fill={ink}>Illus. {s.illustrator}</text>
+      <text x={36} y={818} fontFamily={HUMAN} fontWeight={700} fontSize={11.5} fill={ink}>{s.setNumber}</text>
+      <RarityMark rarity={s.rarity} x={36 + setW + 10} y={814} ink={ink} />
       {c.flavor && (
-        <g>
-          <rect x={240} y={800} width={354} height={50} rx={3} fill="#fff" fillOpacity={0.35} stroke={ink} strokeOpacity={0.45} strokeWidth={0.8} />
-          <text fontFamily={HUMAN} fontStyle="italic" fontSize={12} fill={ink}>
-            {flavorLines.map((l, i) => <tspan key={i} x={248} y={815 + i * 14.5}>{l}</tspan>)}
-          </text>
-        </g>
+        <text fontFamily={HUMAN} fontStyle="italic" fontSize={11.5} fill={ink}>
+          {flavorLines.map((l, i) => <tspan key={i} x={306} y={790 + i * 14}>{l}</tspan>)}
+        </text>
       )}
+      <text x={36} y={846} fontFamily={HUMAN} fontSize={8.5} fill={ink} opacity={0.6}>Création personnelle</text>
 
       {holoLayer(id, s.holo, "card", `${id}-faceclip`)}
     </>
