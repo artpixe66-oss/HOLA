@@ -1,4 +1,5 @@
 import { CARD_H, CARD_W } from "@/components/CardSvg";
+import { embeddedFontCss } from "./fonts";
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -30,6 +31,9 @@ export async function exportPng(svg: SVGSVGElement, filename: string, scale = 2)
   const clone = svg.cloneNode(true) as SVGSVGElement;
   clone.setAttribute("width", String(CARD_W));
   clone.setAttribute("height", String(CARD_H));
+  const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+  style.textContent = await embeddedFontCss();
+  clone.insertBefore(style, clone.firstChild);
   const xml = new XMLSerializer().serializeToString(clone);
   const url = URL.createObjectURL(new Blob([xml], { type: "image/svg+xml;charset=utf-8" }));
   try {

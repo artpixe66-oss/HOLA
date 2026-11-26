@@ -2,18 +2,27 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import HoloCard from "./HoloCard";
+import { BORDERS } from "./CardSvg";
 import { ARCANES, ARCANE_IDS, ELEMENTS, ELEMENT_IDS, RARITIES } from "@/lib/elements";
 import { DEFAULT_CARD } from "@/lib/defaults";
 import { exportPng, toDataUrl } from "@/lib/image";
-import type { ArcaneData, Attack, CardState, CreatureData, ElementId, HoloMode, Rarity, TemplateId } from "@/lib/types";
+import type { ArcaneData, Attack, BorderId, CardState, CreatureData, ElementId, HoloMode, Rarity, TemplateId } from "@/lib/types";
 
-const KEY = "holocarte:card:v1";
+const KEY = "holocarte:card:v2";
 const noop = () => () => {};
 
 function load(): CardState {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return { ...DEFAULT_CARD, ...JSON.parse(raw) };
+    if (raw) {
+      const saved = JSON.parse(raw) as Partial<CardState>;
+      return {
+        ...DEFAULT_CARD,
+        ...saved,
+        creature: { ...DEFAULT_CARD.creature, ...saved.creature },
+        arcane: { ...DEFAULT_CARD.arcane, ...saved.arcane },
+      };
+    }
   } catch {
     /* stockage indisponible : on repart de la carte d'exemple */
   }
@@ -261,6 +270,29 @@ function EditorInner({ initialTemplate, initialPrompt }: { initialTemplate?: Tem
         )}
 
         <Section title="Finition">
+          <div className="mb-4">
+            <span className="label">Bordure</span>
+            <div className="flex flex-wrap gap-2">
+              {(Object.keys(BORDERS) as BorderId[]).map((b) => {
+                const current = card.template === "creature" ? c.border : a.border;
+                return (
+                  <button key={b} onClick={() => (card.template === "creature" ? setCr({ border: b }) : setAr({ border: b }))} className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm ${current === b ? "border-gold bg-gold/10" : "border-line"}`}>
+                    <span className="h-4 w-4 rounded-full border border-white/30" style={{ background: `linear-gradient(135deg, ${BORDERS[b].stops.join(",")})` }} />
+                    {BORDERS[b].label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          {card.template === "creature" && (
+            <label className="mb-4 flex items-center gap-3 rounded-xl border border-line p-3">
+              <input type="checkbox" className="h-4 w-4 accent-[#f2c45a]" checked={c.fullArt} onChange={(e) => setCr({ fullArt: e.target.checked })} />
+              <span>
+                <span className="block text-sm font-semibold">Pleine illustration (full art)</span>
+                <span className="block text-xs text-muted">L&apos;image couvre toute la carte, le texte passe sur un voile. Nécessite une illustration.</span>
+              </span>
+            </label>
+          )}
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Effet holo">
               <select className="input" value={card.holo} onChange={(e) => set({ holo: e.target.value as HoloMode })}>

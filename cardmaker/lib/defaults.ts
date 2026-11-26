@@ -23,6 +23,8 @@ export const DEFAULT_CARD: CardState = {
     resistance: null,
     retreat: 1,
     flavor: "Sa queue s'allume quand il est content. Les nuits froides, il dort roulé autour de sa flamme.",
+    border: "argent",
+    fullArt: false,
   },
   arcane: {
     name: "Wyrm des cendres",
@@ -33,6 +35,7 @@ export const DEFAULT_CARD: CardState = {
     flavor: "« Il ne brûle pas les forêts. Il se souvient de l'époque où elles étaient des cendres. »",
     attack: "5",
     defense: "5",
+    border: "noir",
   },
 };
 
@@ -61,6 +64,7 @@ export const SHOWCASE: CardState[] = [
       resistance: "feu",
       retreat: 3,
       flavor: "Les marins jurent l'avoir vu soulever une vague plus haute qu'un phare.",
+      border: "or",
     },
   },
   { ...DEFAULT_CARD, template: "arcane", rarity: "legendaire", setNumber: "ARC · 007/250", holo: "illustration" },

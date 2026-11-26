@@ -6,7 +6,8 @@ Nom de travail (`lib/brand.ts`) : à remplacer une fois la marque choisie et vé
 
 - **Deux cadres originaux** : *Créature* (PV, 9 éléments, stades, pouvoir, attaques, faiblesse/résistance/repli) et *Arcane* (fantasy : coût en gemmes, ligne de type, capacités, ATQ/DEF). Formes, symboles et éléments sont propres au site : ils reprennent les codes du genre sans copier un jeu existant.
 - **Illustration** : import d'une photo ou génération IA via Higgsfield (clés côté serveur). Les noms de licences connues sont refusés dans les descriptions.
-- **Effet holo** animé au survol, et en option dans l'export.
+- **Finitions** : bordure argent, or, noir, blanc ou arc-en-ciel ; mode pleine illustration (full art) pour les créatures ; effet holo animé au survol (paillettes et reflets), repris dans l'export.
+- **Polices de carte** libres (Archivo, Archivo Black, Crimson Pro, licence OFL) servies depuis `public/fonts` et intégrées aux PNG exportés.
 - **Export PNG HD** 1260 × 1760 px (format carte 63 × 88 mm).
 - **SEO** : pages par niche (`/generateur/[slug]`, définies dans `lib/niches.ts`), `sitemap.xml`, `robots.txt`, `public/llms.txt`.
 

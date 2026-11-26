@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Polices des cartes (SIL OFL), aussi intégrées dans les exports PNG */
+@font-face { font-family: CardDisplay; font-weight: 400; font-display: block; src: url(/fonts/card-display.woff2) format("woff2"); }
+@font-face { font-family: CardBody; font-weight: 400; font-display: block; src: url(/fonts/card-body-400.woff2) format("woff2"); }
+@font-face { font-family: CardBody; font-weight: 400; font-style: italic; font-display: block; src: url(/fonts/card-body-400i.woff2) format("woff2"); }
+@font-face { font-family: CardBody; font-weight: 700; font-display: block; src: url(/fonts/card-body-700.woff2) format("woff2"); }
+@font-face { font-family: CardSerif; font-weight: 400; font-display: block; src: url(/fonts/card-serif-400.woff2) format("woff2"); }
+@font-face { font-family: CardSerif; font-weight: 400; font-style: italic; font-display: block; src: url(/fonts/card-serif-400i.woff2) format("woff2"); }
+@font-face { font-family: CardSerif; font-weight: 700; font-display: block; src: url(/fonts/card-serif-700.woff2) format("woff2"); }
+
 @theme {
   --color-ink: #07060a;
   --color-panel: #110f16;

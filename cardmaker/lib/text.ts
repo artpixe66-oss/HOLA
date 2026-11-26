@@ -38,6 +38,4 @@ export function fitSize(text: string, family: string, weight: string, maxWidth: 
   return size;
 }
 
-export const SANS = "'Arial Black', 'Helvetica Neue', Arial, sans-serif";
-export const BODY = "'Helvetica Neue', Arial, sans-serif";
-export const SERIF = "Georgia, 'Times New Roman', serif";
+export { BODY, DISPLAY, SERIF } from "./fonts";
